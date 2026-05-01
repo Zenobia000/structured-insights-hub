@@ -135,7 +135,8 @@ function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
 
   return (
     <Link
-      to={pathFor(step)}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      to={pathFor(step) as any}
       aria-current={state === "current" ? "step" : undefined}
       aria-label={`卡 ${step}（${state === "completed" ? "已完成" : "進行中"}）`}
       className={cn(

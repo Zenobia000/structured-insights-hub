@@ -66,7 +66,8 @@ function WorksheetIndexPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Link
-                to={continuePath}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                to={continuePath as any}
                 className="inline-flex items-center justify-center gap-2 rounded-md bg-accent text-accent-foreground px-5 py-2.5 font-semibold hover:bg-accent/90 transition-colors"
               >
                 繼續填寫 <ArrowRight className="h-4 w-4" />

@@ -10,33 +10,69 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LearnWorksheetRouteImport } from './routes/learn.worksheet'
+import { Route as LearnWorksheetIndexRouteImport } from './routes/learn.worksheet.index'
+import { Route as LearnWorksheetResultRouteImport } from './routes/learn.worksheet.result'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnWorksheetRoute = LearnWorksheetRouteImport.update({
+  id: '/learn/worksheet',
+  path: '/learn/worksheet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnWorksheetIndexRoute = LearnWorksheetIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheetResultRoute = LearnWorksheetResultRouteImport.update({
+  id: '/result',
+  path: '/result',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/learn/worksheet': typeof LearnWorksheetRouteWithChildren
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet/': typeof LearnWorksheetIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet': typeof LearnWorksheetIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/learn/worksheet': typeof LearnWorksheetRouteWithChildren
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet/': typeof LearnWorksheetIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/learn/worksheet'
+    | '/learn/worksheet/result'
+    | '/learn/worksheet/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/learn/worksheet/result' | '/learn/worksheet'
+  id:
+    | '__root__'
+    | '/'
+    | '/learn/worksheet'
+    | '/learn/worksheet/result'
+    | '/learn/worksheet/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LearnWorksheetRoute: typeof LearnWorksheetRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,12 +84,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn/worksheet': {
+      id: '/learn/worksheet'
+      path: '/learn/worksheet'
+      fullPath: '/learn/worksheet'
+      preLoaderRoute: typeof LearnWorksheetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn/worksheet/': {
+      id: '/learn/worksheet/'
+      path: '/'
+      fullPath: '/learn/worksheet/'
+      preLoaderRoute: typeof LearnWorksheetIndexRouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/result': {
+      id: '/learn/worksheet/result'
+      path: '/result'
+      fullPath: '/learn/worksheet/result'
+      preLoaderRoute: typeof LearnWorksheetResultRouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
   }
 }
 
+interface LearnWorksheetRouteChildren {
+  LearnWorksheetResultRoute: typeof LearnWorksheetResultRoute
+  LearnWorksheetIndexRoute: typeof LearnWorksheetIndexRoute
+}
+
+const LearnWorksheetRouteChildren: LearnWorksheetRouteChildren = {
+  LearnWorksheetResultRoute: LearnWorksheetResultRoute,
+  LearnWorksheetIndexRoute: LearnWorksheetIndexRoute,
+}
+
+const LearnWorksheetRouteWithChildren = LearnWorksheetRoute._addFileChildren(
+  LearnWorksheetRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LearnWorksheetRoute: LearnWorksheetRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

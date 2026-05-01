@@ -166,6 +166,10 @@ type PainCardStore = {
   updateField: (path: string, value: unknown) => void;
   /** 前進到第 n 卡，更新 current_step 與 updated_at */
   advanceStep: (step: CurrentStep) => void;
+  /** 將 PainCard 標記為 draft（用於卡 2 的「先去找人」退場），不改 current_step */
+  markAsDraft: () => void;
+  /** 確保 people.list 至少有 N 個空槽（用於卡 2 永遠 3 組） */
+  ensurePeopleSlots: (n: number) => void;
   /** 完整重置 */
   reset: () => void;
   /** 取得當前 PainCard 完整快照（用於匯出） */
@@ -200,6 +204,33 @@ export const usePainCardStore = create<PainCardStore>()(
             status: step >= 9 ? "structured" : "in_progress",
           },
         }));
+      },
+
+      markAsDraft: () => {
+        set((state) => ({
+          card: {
+            ...state.card,
+            status: "draft",
+            updated_at: new Date().toISOString(),
+          },
+        }));
+      },
+
+      ensurePeopleSlots: (n) => {
+        set((state) => {
+          const list = state.card.people.list;
+          if (list.length >= n) return state;
+          const filled = [...list];
+          while (filled.length < n) {
+            filled.push({ name: "", contact: "", relation: "" });
+          }
+          return {
+            card: {
+              ...state.card,
+              people: { ...state.card.people, list: filled },
+            },
+          };
+        });
       },
 
       reset: () => {

@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LearnWorksheetRouteImport } from './routes/learn.worksheet'
+import { Route as LearnWorksheetIndexRouteImport } from './routes/learn.worksheet.index'
+import { Route as LearnWorksheetResultRouteImport } from './routes/learn.worksheet.result'
+import { Route as LearnWorksheet09RouteImport } from './routes/learn.worksheet.09'
+import { Route as LearnWorksheet08RouteImport } from './routes/learn.worksheet.08'
+import { Route as LearnWorksheet07RouteImport } from './routes/learn.worksheet.07'
+import { Route as LearnWorksheet06RouteImport } from './routes/learn.worksheet.06'
+import { Route as LearnWorksheet05RouteImport } from './routes/learn.worksheet.05'
+import { Route as LearnWorksheet04RouteImport } from './routes/learn.worksheet.04'
+import { Route as LearnWorksheet03RouteImport } from './routes/learn.worksheet.03'
+import { Route as LearnWorksheet02RouteImport } from './routes/learn.worksheet.02'
+import { Route as LearnWorksheet01RouteImport } from './routes/learn.worksheet.01'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnWorksheetRoute = LearnWorksheetRouteImport.update({
+  id: '/learn/worksheet',
+  path: '/learn/worksheet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnWorksheetIndexRoute = LearnWorksheetIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheetResultRoute = LearnWorksheetResultRouteImport.update({
+  id: '/result',
+  path: '/result',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet09Route = LearnWorksheet09RouteImport.update({
+  id: '/09',
+  path: '/09',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet08Route = LearnWorksheet08RouteImport.update({
+  id: '/08',
+  path: '/08',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet07Route = LearnWorksheet07RouteImport.update({
+  id: '/07',
+  path: '/07',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet06Route = LearnWorksheet06RouteImport.update({
+  id: '/06',
+  path: '/06',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet05Route = LearnWorksheet05RouteImport.update({
+  id: '/05',
+  path: '/05',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet04Route = LearnWorksheet04RouteImport.update({
+  id: '/04',
+  path: '/04',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet03Route = LearnWorksheet03RouteImport.update({
+  id: '/03',
+  path: '/03',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet02Route = LearnWorksheet02RouteImport.update({
+  id: '/02',
+  path: '/02',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
+const LearnWorksheet01Route = LearnWorksheet01RouteImport.update({
+  id: '/01',
+  path: '/01',
+  getParentRoute: () => LearnWorksheetRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/learn/worksheet': typeof LearnWorksheetRouteWithChildren
+  '/learn/worksheet/01': typeof LearnWorksheet01Route
+  '/learn/worksheet/02': typeof LearnWorksheet02Route
+  '/learn/worksheet/03': typeof LearnWorksheet03Route
+  '/learn/worksheet/04': typeof LearnWorksheet04Route
+  '/learn/worksheet/05': typeof LearnWorksheet05Route
+  '/learn/worksheet/06': typeof LearnWorksheet06Route
+  '/learn/worksheet/07': typeof LearnWorksheet07Route
+  '/learn/worksheet/08': typeof LearnWorksheet08Route
+  '/learn/worksheet/09': typeof LearnWorksheet09Route
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet/': typeof LearnWorksheetIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/learn/worksheet/01': typeof LearnWorksheet01Route
+  '/learn/worksheet/02': typeof LearnWorksheet02Route
+  '/learn/worksheet/03': typeof LearnWorksheet03Route
+  '/learn/worksheet/04': typeof LearnWorksheet04Route
+  '/learn/worksheet/05': typeof LearnWorksheet05Route
+  '/learn/worksheet/06': typeof LearnWorksheet06Route
+  '/learn/worksheet/07': typeof LearnWorksheet07Route
+  '/learn/worksheet/08': typeof LearnWorksheet08Route
+  '/learn/worksheet/09': typeof LearnWorksheet09Route
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet': typeof LearnWorksheetIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/learn/worksheet': typeof LearnWorksheetRouteWithChildren
+  '/learn/worksheet/01': typeof LearnWorksheet01Route
+  '/learn/worksheet/02': typeof LearnWorksheet02Route
+  '/learn/worksheet/03': typeof LearnWorksheet03Route
+  '/learn/worksheet/04': typeof LearnWorksheet04Route
+  '/learn/worksheet/05': typeof LearnWorksheet05Route
+  '/learn/worksheet/06': typeof LearnWorksheet06Route
+  '/learn/worksheet/07': typeof LearnWorksheet07Route
+  '/learn/worksheet/08': typeof LearnWorksheet08Route
+  '/learn/worksheet/09': typeof LearnWorksheet09Route
+  '/learn/worksheet/result': typeof LearnWorksheetResultRoute
+  '/learn/worksheet/': typeof LearnWorksheetIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/learn/worksheet'
+    | '/learn/worksheet/01'
+    | '/learn/worksheet/02'
+    | '/learn/worksheet/03'
+    | '/learn/worksheet/04'
+    | '/learn/worksheet/05'
+    | '/learn/worksheet/06'
+    | '/learn/worksheet/07'
+    | '/learn/worksheet/08'
+    | '/learn/worksheet/09'
+    | '/learn/worksheet/result'
+    | '/learn/worksheet/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/learn/worksheet/01'
+    | '/learn/worksheet/02'
+    | '/learn/worksheet/03'
+    | '/learn/worksheet/04'
+    | '/learn/worksheet/05'
+    | '/learn/worksheet/06'
+    | '/learn/worksheet/07'
+    | '/learn/worksheet/08'
+    | '/learn/worksheet/09'
+    | '/learn/worksheet/result'
+    | '/learn/worksheet'
+  id:
+    | '__root__'
+    | '/'
+    | '/learn/worksheet'
+    | '/learn/worksheet/01'
+    | '/learn/worksheet/02'
+    | '/learn/worksheet/03'
+    | '/learn/worksheet/04'
+    | '/learn/worksheet/05'
+    | '/learn/worksheet/06'
+    | '/learn/worksheet/07'
+    | '/learn/worksheet/08'
+    | '/learn/worksheet/09'
+    | '/learn/worksheet/result'
+    | '/learn/worksheet/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LearnWorksheetRoute: typeof LearnWorksheetRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,21 +195,129 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn/worksheet': {
+      id: '/learn/worksheet'
+      path: '/learn/worksheet'
+      fullPath: '/learn/worksheet'
+      preLoaderRoute: typeof LearnWorksheetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn/worksheet/': {
+      id: '/learn/worksheet/'
+      path: '/'
+      fullPath: '/learn/worksheet/'
+      preLoaderRoute: typeof LearnWorksheetIndexRouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/result': {
+      id: '/learn/worksheet/result'
+      path: '/result'
+      fullPath: '/learn/worksheet/result'
+      preLoaderRoute: typeof LearnWorksheetResultRouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/09': {
+      id: '/learn/worksheet/09'
+      path: '/09'
+      fullPath: '/learn/worksheet/09'
+      preLoaderRoute: typeof LearnWorksheet09RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/08': {
+      id: '/learn/worksheet/08'
+      path: '/08'
+      fullPath: '/learn/worksheet/08'
+      preLoaderRoute: typeof LearnWorksheet08RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/07': {
+      id: '/learn/worksheet/07'
+      path: '/07'
+      fullPath: '/learn/worksheet/07'
+      preLoaderRoute: typeof LearnWorksheet07RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/06': {
+      id: '/learn/worksheet/06'
+      path: '/06'
+      fullPath: '/learn/worksheet/06'
+      preLoaderRoute: typeof LearnWorksheet06RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/05': {
+      id: '/learn/worksheet/05'
+      path: '/05'
+      fullPath: '/learn/worksheet/05'
+      preLoaderRoute: typeof LearnWorksheet05RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/04': {
+      id: '/learn/worksheet/04'
+      path: '/04'
+      fullPath: '/learn/worksheet/04'
+      preLoaderRoute: typeof LearnWorksheet04RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/03': {
+      id: '/learn/worksheet/03'
+      path: '/03'
+      fullPath: '/learn/worksheet/03'
+      preLoaderRoute: typeof LearnWorksheet03RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/02': {
+      id: '/learn/worksheet/02'
+      path: '/02'
+      fullPath: '/learn/worksheet/02'
+      preLoaderRoute: typeof LearnWorksheet02RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
+    '/learn/worksheet/01': {
+      id: '/learn/worksheet/01'
+      path: '/01'
+      fullPath: '/learn/worksheet/01'
+      preLoaderRoute: typeof LearnWorksheet01RouteImport
+      parentRoute: typeof LearnWorksheetRoute
+    }
   }
 }
 
+interface LearnWorksheetRouteChildren {
+  LearnWorksheet01Route: typeof LearnWorksheet01Route
+  LearnWorksheet02Route: typeof LearnWorksheet02Route
+  LearnWorksheet03Route: typeof LearnWorksheet03Route
+  LearnWorksheet04Route: typeof LearnWorksheet04Route
+  LearnWorksheet05Route: typeof LearnWorksheet05Route
+  LearnWorksheet06Route: typeof LearnWorksheet06Route
+  LearnWorksheet07Route: typeof LearnWorksheet07Route
+  LearnWorksheet08Route: typeof LearnWorksheet08Route
+  LearnWorksheet09Route: typeof LearnWorksheet09Route
+  LearnWorksheetResultRoute: typeof LearnWorksheetResultRoute
+  LearnWorksheetIndexRoute: typeof LearnWorksheetIndexRoute
+}
+
+const LearnWorksheetRouteChildren: LearnWorksheetRouteChildren = {
+  LearnWorksheet01Route: LearnWorksheet01Route,
+  LearnWorksheet02Route: LearnWorksheet02Route,
+  LearnWorksheet03Route: LearnWorksheet03Route,
+  LearnWorksheet04Route: LearnWorksheet04Route,
+  LearnWorksheet05Route: LearnWorksheet05Route,
+  LearnWorksheet06Route: LearnWorksheet06Route,
+  LearnWorksheet07Route: LearnWorksheet07Route,
+  LearnWorksheet08Route: LearnWorksheet08Route,
+  LearnWorksheet09Route: LearnWorksheet09Route,
+  LearnWorksheetResultRoute: LearnWorksheetResultRoute,
+  LearnWorksheetIndexRoute: LearnWorksheetIndexRoute,
+}
+
+const LearnWorksheetRouteWithChildren = LearnWorksheetRoute._addFileChildren(
+  LearnWorksheetRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LearnWorksheetRoute: LearnWorksheetRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

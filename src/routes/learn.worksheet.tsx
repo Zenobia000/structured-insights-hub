@@ -35,7 +35,7 @@ function Header() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <Link to="/learn/worksheet" className="flex items-center gap-2 group">
+        <Link to="/" className="flex items-center gap-2 group">
           <span className="text-lg" aria-hidden>
             🪪
           </span>

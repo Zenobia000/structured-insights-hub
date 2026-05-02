@@ -65,9 +65,25 @@ export type PainCard = {
 
   // === Card 3: 卡關公式 ===
   stuck_formula: {
+    /** 使用者用自然語言描述卡點（不再強制句型，AI 會幫忙整理） */
     user_draft: string;
     ai_polished: string | null;
     ai_clarifying_questions: string[];
+    /**
+     * 對 AI 列的每個釐清問題的回答。
+     * - 以 question 原文為 key，避免 questions 順序變動時錯位
+     * - reserved=true 表示「答不出來、已預約找主人翁問」（逃生口）
+     */
+    ai_clarifying_answers: Array<{
+      question: string;
+      answer: string;
+      reserved: boolean;
+    }>;
+    /**
+     * 舊欄位 — 保留向後相容。
+     * 新邏輯下：當 ai_clarifying_questions 為空時自動為 true；
+     * 否則由 ai_clarifying_answers 衍生 (每題都有 ≥10 字答案 OR reserved)。
+     */
     confirmed: boolean;
   };
 

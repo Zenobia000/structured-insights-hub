@@ -67,7 +67,7 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
           複製這段 prompt 到 ChatGPT / Claude / Gemini
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
-          AI 在這張卡的角色：<span className="font-semibold text-text-primary">校對你的句型</span>，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
+          AI 在這張卡的角色：<span className="font-semibold text-text-primary">把你寫的抱怨整理成卡關公式句型</span>，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
         </p>
       </header>
 

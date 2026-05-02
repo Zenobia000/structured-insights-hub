@@ -47,6 +47,7 @@ function emptyPainCard(): PainCard {
       user_draft: "",
       ai_polished: null,
       ai_clarifying_questions: [],
+      ai_clarifying_answers: [],
       confirmed: false,
     },
 
@@ -318,7 +319,20 @@ export const usePainCardStore = create<PainCardStore>()(
       // 預留 migration hook（目前只有 v1）
       migrate: (persistedState, _version) => persistedState as PainCardStore,
       onRehydrateStorage: () => (state) => {
-        if (state) state.hydrated = true;
+        if (state) {
+          // Backfill: stuck_formula.ai_clarifying_answers (added later)
+          if (state.card?.stuck_formula && !Array.isArray(state.card.stuck_formula.ai_clarifying_answers)) {
+            const questions = state.card.stuck_formula.ai_clarifying_questions ?? [];
+            const wasConfirmed = state.card.stuck_formula.confirmed === true;
+            state.card.stuck_formula.ai_clarifying_answers = questions.map((q) => ({
+              question: q,
+              answer: "",
+              // 舊使用者已勾選 confirmed → 全部當作「已預約找主人翁問」（最寬鬆，不擋繼續）
+              reserved: wasConfirmed,
+            }));
+          }
+          state.hydrated = true;
+        }
       },
     },
   ),

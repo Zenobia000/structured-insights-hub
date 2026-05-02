@@ -21,6 +21,7 @@ import { QuestionForm } from "@/components/worksheet/card08/QuestionForm";
 import { InterviewRulesTable } from "@/components/worksheet/card08/InterviewRulesTable";
 import { InterviewSimulationFlow } from "@/components/worksheet/card08/InterviewSimulationFlow";
 import { CardEightExitGateFooter } from "@/components/worksheet/card08/CardEightExitGateFooter";
+import { ReflectionInlineHint } from "@/components/worksheet/ReflectionInlineHint";
 
 export const Route = createFileRoute("/learn/worksheet/08")({
   head: () => ({

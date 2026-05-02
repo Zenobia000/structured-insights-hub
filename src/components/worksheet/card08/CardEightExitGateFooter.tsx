@@ -34,22 +34,32 @@ export function CardEightExitGateFooter({
         <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
         <ul className="flex flex-col gap-2">
           <ReflectionHint
-            question="這 3 道題，你今晚就能傳給其中一個人嗎？"
+            question="這 3 道題，你今晚就能傳給其中一個人嗎?"
             state={hasContact && questionsAllFilled ? "ok" : "pending"}
             hint={
-              !hasContact
-                ? "至少 1 位有名字 / 聯絡管道的訪談對象。"
-                : !questionsAllFilled
-                  ? "3 題訪談題還沒寫完（推銷題只警告，不擋）。"
-                  : undefined
+              !hasContact && !questionsAllFilled
+                ? "還沒寫完 3 題訪談題，且至少 1 位訪談對象的「聯絡方式 / 去哪找他」欄要填 ≥ 5 字。"
+                : !hasContact
+                  ? "回到第一步「訪談對象」卡片,至少 1 位的「聯絡方式（LINE / 電話 / 名字）」或「你打算去哪找他」欄要填 ≥ 5 字。"
+                  : !questionsAllFilled
+                    ? "3 題訪談題還沒寫完（每題 ≥ 15 字）。"
+                    : undefined
             }
           />
           <ReflectionHint
-            question="你寫的題，是在問他「怎麼做的」，還是在誘導他說「想用你的解法」？"
+            question="你寫的題,是在問他「怎麼做的」,還是在誘導他說「想用你的解法」?"
             state={questionsState}
           />
-          <ReflectionHint question="訪談時哪些事不要做，你有清楚嗎？" state={taboosState} />
-          <ReflectionHint question="你心裡還沒真的找到能訪談的人嗎？" state={contactState} />
+          <ReflectionHint question="訪談時哪些事不要做,你有清楚嗎?" state={taboosState} />
+          <ReflectionHint
+            question="你已經有能訪談的人了嗎?"
+            state={contactState}
+            hint={
+              !hasContact
+                ? "回到第一步「訪談對象」,把至少 1 位的「聯絡方式 / 去哪找他」欄填上（≥ 5 字）。"
+                : undefined
+            }
+          />
         </ul>
 
         {blockedMessage && (

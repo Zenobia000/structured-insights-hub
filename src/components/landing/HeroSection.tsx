@@ -8,7 +8,7 @@
  * - 序列進場：eyebrow → headline → subheadline → CTA
  * - Hero 全寬不受 1280 限制（spec 例外）
  */
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { ProgressVisual } from "./ProgressVisual";
 import { Eyebrow } from "@/components/ui/eyebrow";

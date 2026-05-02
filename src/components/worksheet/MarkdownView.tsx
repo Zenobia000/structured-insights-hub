@@ -12,19 +12,19 @@ interface MarkdownViewProps {
  * task lists). Styled to match the worksheet design system.
  *
  * Implementation: marked → HTML → DOMPurify sanitize → dangerouslySet.
- * Why not react-markdown:
- *   - react-markdown + remark-gfm + micromark add ~30 KB gz to the chunk
- *     that imports them (Card 7 today). marked alone is ~12 KB gz and
- *     we already ship it for PDF export.
- *   - DOMPurify is already in deps (jsPDF transitive), zero net cost.
  *
- * Tailwind classes are injected post-parse via a tiny element-class map
- * applied during DOMPurify's `uponSanitizeElement` hook. This keeps the
- * styling collocated and avoids a global `prose` stylesheet.
- *
- * Safety: external sources of markdown (AI completions, user paste)
- * pass through DOMPurify with the default safe profile. We only allow
- * a small whitelist of tags.
+ * Type & runtime safety:
+ *   - DOMPurify only ships a real implementation in the browser. On the
+ *     server (SSR worker) `window` is undefined, so we short-circuit to
+ *     an empty string instead of crashing.
+ *   - `marked.parse` is forced into sync mode but its return type is
+ *     `string | Promise<string>`. We narrow with a runtime check rather
+ *     than `as string` so a Promise leak surfaces instead of silently
+ *     rendering "[object Promise]".
+ *   - The `uponSanitizeElement` hook receives a generic `Node`. We
+ *     narrow to `Element` before touching attributes, and treat the
+ *     hook payload's `tagName` as optional in case DOMPurify changes
+ *     the contract.
  */
 
 const TAG_CLASS: Record<string, string> = {
@@ -47,20 +47,28 @@ const TAG_CLASS: Record<string, string> = {
   hr: "my-3 border-border",
 };
 
+/** DOMPurify uponSanitizeElement hook payload (only the field we read). */
+type SanitizeElementHookEvent = { tagName?: string };
+
 // One-time hook registration. DOMPurify is module-scoped; hooks added
 // here apply to every sanitize() call. Idempotent under HMR.
 let hookRegistered = false;
-function ensureHook() {
+function ensureHook(): void {
   if (hookRegistered || typeof window === "undefined") return;
-  DOMPurify.addHook("uponSanitizeElement", (node: Node, data: { tagName: string }) => {
+  DOMPurify.addHook("uponSanitizeElement", (node: Node, data: SanitizeElementHookEvent) => {
+    // Narrow Node → Element before any attribute mutation.
     if (!(node instanceof Element)) return;
-    const tag = data.tagName;
+    const tag = data.tagName?.toLowerCase();
+    if (!tag) return;
+
     const cls = TAG_CLASS[tag];
     if (cls) node.setAttribute("class", cls);
+
     if (tag === "a") {
       node.setAttribute("target", "_blank");
       node.setAttribute("rel", "noreferrer noopener");
     }
+
     // Inline code (no className already set by marked) gets pill styling.
     // Block code (inside <pre>) is handled by the <pre> rule above.
     if (tag === "code" && node.parentElement?.tagName !== "PRE") {
@@ -73,14 +81,30 @@ function ensureHook() {
   hookRegistered = true;
 }
 
+/** Sync narrow for marked's `string | Promise<string>` return. */
+function parseMarkdownSync(input: string): string {
+  const out = marked.parse(input, { gfm: true, breaks: false, async: false });
+  return typeof out === "string" ? out : "";
+}
+
+/** Server-safe sanitize: returns "" when DOMPurify cannot run. */
+function sanitizeHtml(raw: string): string {
+  if (typeof window === "undefined") return "";
+  // DOMPurify in some bundles types `sanitize` as `string | TrustedHTML`.
+  // We render via dangerouslySetInnerHTML which needs a string.
+  const cleaned = DOMPurify.sanitize(raw, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ["target", "rel"],
+  });
+  return typeof cleaned === "string" ? cleaned : String(cleaned ?? "");
+}
+
 export function MarkdownView({ children, className = "" }: MarkdownViewProps) {
   const html = useMemo(() => {
+    if (typeof children !== "string" || children.length === 0) return "";
     ensureHook();
-    const raw = marked.parse(children, { gfm: true, breaks: false, async: false }) as string;
-    return DOMPurify.sanitize(raw, {
-      USE_PROFILES: { html: true },
-      ADD_ATTR: ["target", "rel"],
-    });
+    const raw = parseMarkdownSync(children);
+    return sanitizeHtml(raw);
   }, [children]);
 
   return (

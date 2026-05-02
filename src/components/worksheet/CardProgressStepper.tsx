@@ -111,7 +111,7 @@ export function CardProgressStepper() {
                 <div
                   className={cn(
                     "h-px flex-1 mt-3.5 mx-1 transition-colors",
-                    state === "completed" ? "bg-accent-electric/60" : "bg-border-hairline",
+                    step < maxReached ? "bg-accent-electric/60" : "bg-border-hairline",
                   )}
                   aria-hidden
                 />

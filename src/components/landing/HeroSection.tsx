@@ -47,10 +47,10 @@ export function HeroSection() {
             >
               一句抱怨，
               <br />
-              <span className="text-text-secondary">可以是一個</span>
+              <span className="text-text-secondary">可以是一張</span>
               <br />
               <span className="bg-gradient-to-r from-text-primary via-accent-electric to-text-primary bg-clip-text text-transparent">
-                有架構的痛點嗎？
+                痛點 ID card 嗎？
               </span>
             </h1>
 

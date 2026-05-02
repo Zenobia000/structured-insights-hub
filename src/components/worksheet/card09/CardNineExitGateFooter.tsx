@@ -199,14 +199,14 @@ export function CardNineExitGateFooter({
             className="flex flex-1 items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface-hover focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <h3 className="text-sm font-semibold text-text-primary shrink-0">想想看</h3>
+              <h3 className="text-sm font-semibold text-text-primary shrink-0">反思問題</h3>
               {allDone ? (
                 <span className="text-[12px] text-verified inline-flex items-center gap-1">
-                  <Check className="h-3 w-3" /> 三個都想清楚了
+                  <span aria-hidden>✓</span>3 題都已過
                 </span>
               ) : (
                 <span className="text-[12px] text-text-secondary truncate">
-                  還有 <span className="font-semibold text-secondary">{remaining}</span> 件沒想清楚
+                  還有 <span className="font-semibold text-secondary">{remaining}</span> 題沒過
                   {!expanded && <span className="text-text-muted">,點開看細節</span>}
                 </span>
               )}
@@ -215,7 +215,7 @@ export function CardNineExitGateFooter({
               {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
             </span>
             <span className="sr-only">
-              {expanded ? "收合想想看(Esc)" : "展開想想看"}
+              {expanded ? "收合反思問題(Esc)" : "展開反思問題"}
             </span>
           </button>
           {!allDone && (

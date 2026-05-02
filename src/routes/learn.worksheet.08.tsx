@@ -374,7 +374,7 @@ function CardEightPage() {
         </section>
 
         {/* Section 4: questions */}
-        <section className="space-y-4">
+        <section id="card8-questions" className="space-y-4 scroll-mt-24">
           <div>
             <h2 className="text-[20px] font-bold text-text-primary">第二步：寫 3 個訪談題</h2>
             <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">

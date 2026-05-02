@@ -12,6 +12,7 @@ import {
   getToolById,
   type EightAnswersInput,
 } from "@/lib/cardSixHelpers";
+import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 import type { AiTool } from "@/types/painCard";
@@ -133,7 +134,7 @@ function CardSixPage() {
     setBlockedMessage(null);
   }, [ev.raw_response, ev.eight_answers, manualOverride]);
 
-  const handleAdvance = () => {
+  const handleAdvance = async () => {
     setAttempted(true);
     if (!ev.ai_tool) {
       setBlockedMessage("先選一個你想用的 AI 工具。");
@@ -153,11 +154,33 @@ function CardSixPage() {
       );
       return;
     }
+    // hardcoded 偵測到推銷詞 — 請 LLM 看完整脈絡二次確認
+    // 救援情境：使用者貼回的 AI 文字含「市場機會」這類字但其實是分析語境
     if (!noSolutionPassed) {
-      setBlockedMessage(
-        "AI 回覆裡出現了推銷詞 — 用補強 prompt 重跑一次，或者勾選「手動覆寫」表示你已確認。",
-      );
-      return;
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card6.no_solution_push",
+          ev.raw_response.slice(0, 4000),
+          undefined,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card6.no_solution_push", entry);
+          // 自動救援，不需 manualOverride
+        } else if (outcome.source !== "fallback") {
+          setBlockedMessage(`AI 看了一下：${outcome.reason} — 用補強 prompt 重跑或勾「手動覆寫」`);
+          return;
+        } else {
+          setBlockedMessage(
+            "AI 回覆裡出現了推銷詞 — 用補強 prompt 重跑一次，或者勾選「手動覆寫」表示你已確認。",
+          );
+          return;
+        }
+      } finally {
+        setSubmitting(false);
+      }
     }
 
     setBlockedMessage(null);

@@ -12,6 +12,7 @@ import {
   findForbiddenToolKeywords,
   findAbstractDissatisfactionKeywords,
 } from "@/lib/cardFourValidators";
+import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 
@@ -96,15 +97,37 @@ ${stuck}
   const dissatisfactionsPass = checks.dissatisfactionsEnough === "pass";
   const forbiddenTriggered = checks.toolNameNotForbidden === "warn";
 
-  const handleAdvance = () => {
+  const handleAdvance = async () => {
     setAttempted(true);
 
+    // 「沒人解過 / 自己想辦法」這類 hardcoded 命中 — 請 LLM 看完整 context 二次確認
+    // 救援情境：使用者寫「沒人解過，但他每天還是試 Notion/Excel」應該被放行
     if (forbiddenTriggered) {
-      setBlockedMessage(
-        `「${forbiddenHits.join("、")}」代表他可能還沒花時間解這個問題 — 也許這還不夠痛。回卡 1 再想清楚一點再來。`,
-      );
-      setFailureCount((c) => c + 1);
-      return;
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card4.tool_is_real_attempt",
+          w.tool_name,
+          w.why_still_stuck,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card4.tool_is_real_attempt", entry);
+        } else if (outcome.source !== "fallback") {
+          setBlockedMessage(`再想想看：${outcome.reason}`);
+          setFailureCount((c) => c + 1);
+          return;
+        } else {
+          setBlockedMessage(
+            `「${forbiddenHits.join("、")}」代表他可能還沒花時間解這個問題 — 也許這還不夠痛。回卡 1 再想清楚一點再來。`,
+          );
+          setFailureCount((c) => c + 1);
+          return;
+        }
+      } finally {
+        setSubmitting(false);
+      }
     }
     if (checks.toolNameFilled !== "pass") {
       setBlockedMessage(
@@ -124,6 +147,29 @@ ${stuck}
       );
       setFailureCount((c) => c + 1);
       return;
+    }
+    // dissatisfactions 數量夠但抽象詞太多 — LLM 二次確認具體性
+    if (abstractHits.length > 0) {
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card4.dissatisfactions_concrete",
+          w.user_dissatisfactions.join("\n"),
+          undefined,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card4.dissatisfactions_concrete", entry);
+        } else if (outcome.source !== "fallback") {
+          setBlockedMessage(`再想想看：${outcome.reason}`);
+          setFailureCount((c) => c + 1);
+          return;
+        }
+        // LLM fallback 時不擋（這原本只是 inline warning，不是 hard gate）
+      } finally {
+        setSubmitting(false);
+      }
     }
 
     setBlockedMessage(null);

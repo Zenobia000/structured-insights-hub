@@ -11,6 +11,7 @@ import {
   evaluateQuestions,
   evaluateTargets,
 } from "@/lib/cardEightValidators";
+import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { CandidatesPanel } from "@/components/worksheet/card08/CandidatesPanel";
 import { TargetsForm } from "@/components/worksheet/card08/TargetsForm";
 import { QuestionForm } from "@/components/worksheet/card08/QuestionForm";
@@ -132,7 +133,7 @@ function CardEightPage() {
     setBlockedMessage(null);
   }, [plan.targets, plan.questions, plan.interview_taboos_understood]);
 
-  function handleAdvance() {
+  async function handleAdvance() {
     if (!targetsEval.anyContact) {
       setBlockedMessage(`至少要有 1 位你聯絡得到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`);
       return;
@@ -145,6 +146,29 @@ function CardEightPage() {
       setBlockedMessage("讀完訪談規則之後，勾選「我看完了」");
       return;
     }
+
+    // 結構性 gate 都過 → LLM 二次確認 3 題訪談題是否誘導 / 推銷
+    setSubmitting(true);
+    try {
+      const outcome = await judge(
+        "card8.no_selling_questions",
+        plan.questions.join("\n"),
+        undefined,
+        card.llm_cache,
+      );
+      if (outcome.source !== "fallback" && outcome.verdict === "warn") {
+        setBlockedMessage(`UX 研究員看了一眼：${outcome.reason}`);
+        return;
+      }
+      if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+        const entry = toCacheEntry(outcome);
+        if (entry) updateField("llm_cache.card8.no_selling_questions", entry);
+      }
+      // fallback → 既有行為（放行）
+    } finally {
+      setSubmitting(false);
+    }
+
     setBlockedMessage(null);
     setSubmitting(true);
     try {

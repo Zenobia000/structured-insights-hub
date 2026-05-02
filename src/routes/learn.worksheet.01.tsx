@@ -13,6 +13,7 @@ import {
   evaluateCardOne,
   isForbiddenName,
 } from "@/lib/cardOneValidators";
+import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { usePainCardStore } from "@/store/painCard";
 
 export const Route = createFileRoute("/learn/worksheet/01")({
@@ -54,10 +55,10 @@ function CardOnePage() {
   // 自動儲存指示（每次 updated_at 變動就更新顯示，每 15 秒 refresh 相對時間）
   const savedAgo = useSavedAgo(card.updated_at);
 
-  const handleAdvance = () => {
+  const handleAdvance = async () => {
     setAttempted(true);
 
-    // 步驟 a：欄位填滿
+    // 步驟 a：欄位填滿（純結構性，不走 LLM）
     if (checks.allRequiredFilled !== "pass") {
       const tooShort = complaint.verbatim.trim().length < 10;
       setBlockedMessage(
@@ -67,20 +68,58 @@ function CardOnePage() {
       );
       return;
     }
-    // 步驟 b：R2.1
+    // 步驟 b：R2.1 — hardcoded warn 時請 LLM 二次確認原句是否摻入分析語
     if (checks.noAnalysisWords !== "pass") {
-      const found = detectAnalysisWords(complaint.verbatim).join("、");
-      setBlockedMessage(
-        `這聽起來像你的解釋，不是他原本說的話（偵測到：「${found}」)。改寫成你具體聽到的句子，例如：「他在飯局上說『我每週都……』」`,
-      );
-      return;
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card1.analysis_words",
+          complaint.verbatim,
+          undefined,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card1.analysis_words", entry);
+        } else if (outcome.source !== "fallback") {
+          setBlockedMessage(`再想想看：${outcome.reason}`);
+          return;
+        } else {
+          const found = detectAnalysisWords(complaint.verbatim).join("、");
+          setBlockedMessage(
+            `這聽起來像你的解釋，不是他原本說的話（偵測到：「${found}」)。改寫成你具體聽到的句子，例如：「他在飯局上說『我每週都……』」`,
+          );
+          return;
+        }
+      } finally {
+        setSubmitting(false);
+      }
     }
-    // 步驟 c：R2.2
+    // 步驟 c：R2.2 — hardcoded warn 時請 LLM 二次確認 source_name 是否泛稱
     if (checks.realPerson !== "pass") {
-      setBlockedMessage(
-        "「現代人」「上班族」「大家」不是某個你能聯絡到的人。填一個具體姓名（化名也可以，但要是真人）。如果你連一個名字都想不到 — 這還不是你的題目，先去找個真人聊聊再回來。",
-      );
-      return;
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card1.forbidden_source_name",
+          complaint.source_name,
+          undefined,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card1.forbidden_source_name", entry);
+        } else if (outcome.source !== "fallback") {
+          setBlockedMessage(`再想想看：${outcome.reason}`);
+          return;
+        } else {
+          setBlockedMessage(
+            "「現代人」「上班族」「大家」不是某個你能聯絡到的人。填一個具體姓名（化名也可以，但要是真人）。如果你連一個名字都想不到 — 這還不是你的題目，先去找個真人聊聊再回來。",
+          );
+          return;
+        }
+      } finally {
+        setSubmitting(false);
+      }
     }
 
     // 全通過

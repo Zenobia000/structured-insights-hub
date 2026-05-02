@@ -343,6 +343,13 @@ function CardNinePage() {
           onNextActionChange={setNextAction}
         />
 
+        {/* 訪談目標自動預填：依 judgment + next_action 動態調整顯示 */}
+        <InterviewTargetsPrefill
+          targets={card.interview_plan.targets}
+          judgment={v.judgment}
+          nextAction={v.next_action}
+        />
+
         <p className="text-[12px] text-text-muted" aria-live="polite">
           {hydrated && savedAgo
             ? `已自動儲存到瀏覽器 · ${savedAgo}`

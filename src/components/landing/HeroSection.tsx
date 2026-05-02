@@ -67,15 +67,15 @@ export function HeroSection() {
                 onClick={handleStart}
                 className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-text-primary px-6 text-[15px] font-medium text-text-inverse transition-all duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
               >
-                從第一張卡開始
+                從第一張卡開始整理痛點
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <Link
                 to="/"
-                hash="three-step-teaching"
+                hash="example-paincard"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border-default bg-transparent px-6 text-[15px] font-medium text-text-primary transition-colors duration-200 hover:bg-surface-hover hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
               >
-                先看看 9 張卡長什麼樣
+                查看範例 ID card
               </Link>
             </div>
 

@@ -11,6 +11,7 @@ import { JudgmentForm } from "@/components/worksheet/card09/JudgmentForm";
 import { CardNineExitGateFooter } from "@/components/worksheet/card09/CardNineExitGateFooter";
 import { ReflectionInlineHint } from "@/components/worksheet/ReflectionInlineHint";
 import { InterviewTargetsPrefill } from "@/components/worksheet/card09/InterviewTargetsPrefill";
+import { VerdictAuditDialog } from "@/components/worksheet/card09/VerdictAuditDialog";
 
 const searchSchema = z.object({
   id: z.string().optional(),
@@ -213,6 +214,18 @@ function CardNinePage() {
             { label: "我之後最想做哪一件事", done: nextActionChosen },
           ]}
         />
+
+        {/* 紅隊 audit 窄門 — 鐵律例外
+            - 入口故意低調：outline 風格、不像 primary CTA
+            - 不誘導使用：寫滿 100 字後才 enable
+            - Dialog 反覆強調「參考用」、不寫回任何欄位、不影響 ExitGate
+        */}
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <p className="text-[11px] text-text-tertiary leading-[1.6] flex-1 text-right">
+            想驗證自己寫的理由有沒有對齊前面卡？
+          </p>
+          <VerdictAuditDialog />
+        </div>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
           {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}

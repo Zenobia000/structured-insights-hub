@@ -24,6 +24,9 @@ export const JudgeKindSchema = z.enum([
   "card4.dissatisfactions_concrete", // 不滿理由具體性
   "card6.no_solution_push", // AI 回覆是否推銷
   "card8.no_selling_questions", // 訪談題是否誘導 / 推銷
+  // Card 9 紅隊 audit — 鐵律例外：使用者主動觸發、僅供參考、絕不阻擋
+  // 判斷 reason_100w 是否與前面 8 卡證據一致；不替使用者下任何判斷。
+  "card9.verdict_audit",
 ]);
 
 export type JudgeKind = z.infer<typeof JudgeKindSchema>;

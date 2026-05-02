@@ -58,6 +58,29 @@ export function CardEightExitGateFooter({
 
   // 預設摺疊,避免反思內容遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
   const [expanded, setExpanded] = usePersistedToggle("painmap:card8:reflection-expanded", false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  // 標記:這次展開是否來自鍵盤(Enter/Space),若是 → 自動把焦點移進 panel
+  const keyboardOpenRef = useRef(false);
+
+  // 鍵盤觸發展開時,把焦點移到 panel(role=region, tabIndex=-1)
+  // 讓螢幕閱讀器朗讀新內容,Tab 也能順著進入內部 chips/連結
+  useEffect(() => {
+    if (expanded && keyboardOpenRef.current) {
+      keyboardOpenRef.current = false;
+      // 等 panel mount + scrollIntoView 完成
+      requestAnimationFrame(() => {
+        panelRef.current?.focus({ preventScroll: true });
+      });
+    }
+  }, [expanded]);
+
+  function handleToggleClick(e: React.MouseEvent | React.KeyboardEvent) {
+    // detail === 0 表示鍵盤觸發(Enter/Space) → 標記讓焦點進 panel
+    const isKeyboard =
+      "detail" in e && (e as React.MouseEvent).detail === 0;
+    if (isKeyboard && !expanded) keyboardOpenRef.current = true;
+    setExpanded((v) => !v);
+  }
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
   }, [blockedMessage, setExpanded]);

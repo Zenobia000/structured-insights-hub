@@ -49,6 +49,24 @@ export function CardNineExitGateFooter({
 
   // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
   const [expanded, setExpanded] = usePersistedToggle("painmap:card9:reflection-expanded", false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const keyboardOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (expanded && keyboardOpenRef.current) {
+      keyboardOpenRef.current = false;
+      requestAnimationFrame(() => {
+        panelRef.current?.focus({ preventScroll: true });
+      });
+    }
+  }, [expanded]);
+
+  function handleToggleClick(e: React.MouseEvent | React.KeyboardEvent) {
+    const isKeyboard =
+      "detail" in e && (e as React.MouseEvent).detail === 0;
+    if (isKeyboard && !expanded) keyboardOpenRef.current = true;
+    setExpanded((v) => !v);
+  }
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
   }, [blockedMessage, setExpanded]);

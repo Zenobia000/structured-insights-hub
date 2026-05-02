@@ -9,6 +9,7 @@
 
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
+import { memo } from "react";
 
 import { usePainCardStore } from "@/store/painCard";
 import type { CurrentStep } from "@/types/painCard";
@@ -108,7 +109,9 @@ export function CardProgressStepper() {
   );
 }
 
-function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
+// Memo'd: step 與 state 都是 primitive，shallow-equal 後 current_step 跳一格時
+// 只有「先前的 current 點」與「新 current 點」會 re-render，其餘 7 個保持原狀。
+const StepDot = memo(function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
   const content =
     state === "completed" ? (
       <Check className="h-4 w-4" aria-hidden />
@@ -145,4 +148,4 @@ function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
       {content}
     </Link>
   );
-}
+});

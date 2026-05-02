@@ -30,10 +30,10 @@ export function InterviewGuidePreview({ content, card }: Props) {
     }
   }
 
-  function handleExport() {
+  async function handleExport() {
     try {
-      exportInterviewGuide(card);
-      toast.success("已下載訪綱 .md");
+      await exportInterviewGuide(card);
+      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
     } catch (err) {
       toast.error("匯出失敗，請改用複製");
       console.error(err);

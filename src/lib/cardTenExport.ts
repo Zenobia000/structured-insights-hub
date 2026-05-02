@@ -727,7 +727,18 @@ export function buildShareableJson(card: PainCard): string {
 }
 
 export function downloadBlob(filename: string, mime: string, content: string | Blob) {
-  const blob = typeof content === "string" ? new Blob([content], { type: mime }) : content;
+  let blob: Blob;
+  if (typeof content === "string") {
+    // 確保 mime 帶 charset=utf-8，避免 Windows / 部分編輯器以系統預設編碼開啟造成中文亂碼
+    const mimeWithCharset = /charset=/i.test(mime) ? mime : `${mime};charset=utf-8`;
+    // 加上 UTF-8 BOM：讓 Windows 記事本 / Excel / 舊版工具能正確辨識為 UTF-8
+    // 純文字格式（md / json / txt / csv / html）才加 BOM；二進位格式不要動
+    const isText = /^(text\/|application\/(json|xml|javascript|ld\+json))/i.test(mime);
+    const parts: BlobPart[] = isText ? ["\uFEFF", content] : [content];
+    blob = new Blob(parts, { type: mimeWithCharset });
+  } else {
+    blob = content;
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

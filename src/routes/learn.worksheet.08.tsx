@@ -164,7 +164,8 @@ function CardEightPage() {
 
   async function handleAdvance() {
     if (!targetsEval.anyContact) {
-      setBlockedMessage(`至少要有 1 位你聯絡得到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`);
+      setBlockedMessage(`至少要有 1 位你聯絡得到的人(contact 欄位 ≥ ${CONTACT_MIN} 字)`);
+      jumpToMissingContact();
       return;
     }
     if (!questionsEval.allFilled) {

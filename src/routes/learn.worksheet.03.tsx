@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Edit, Sparkles } from "lucide-react";
 
-import { UserDraftInput } from "@/components/worksheet/card03/UserDraftInput";
+
 import { AiPromptBlock } from "@/components/worksheet/card03/AiPromptBlock";
 import { AiResponseInput } from "@/components/worksheet/card03/AiResponseInput";
 import { ClarifyingQAPanel } from "@/components/worksheet/card03/ClarifyingQAPanel";
@@ -54,8 +54,8 @@ function CardThreePage() {
   const [submitting, setSubmitting] = useState(false);
 
   const prompt = useMemo(
-    () => interpolatePrompt(card.complaint.verbatim, card.people.background, card.stuck_formula.user_draft),
-    [card.complaint.verbatim, card.people.background, card.stuck_formula.user_draft],
+    () => interpolatePrompt(card.complaint.verbatim, card.people.background),
+    [card.complaint.verbatim, card.people.background],
   );
 
   const [savedAgo, setSavedAgo] = useState("");
@@ -69,9 +69,8 @@ function CardThreePage() {
   // 任意輸入變更後清除 blocked message
   useEffect(() => {
     setBlockedMessage(null);
-  }, [stuck.user_draft, stuck.ai_clarifying_answers]);
+  }, [stuck.ai_polished, stuck.ai_clarifying_answers]);
 
-  const setUserDraft = (v: string) => updateField("stuck_formula.user_draft", v);
   const setAiPolished = (v: string) =>
     updateField("stuck_formula.ai_polished", v.length > 0 ? v : null);
 
@@ -104,8 +103,12 @@ function CardThreePage() {
 
   const handleAdvance = () => {
     setAttempted(true);
-    if (!checks.userDraftFilled || !checks.userDraftLongEnough) {
-      setBlockedMessage("Step 1 請至少寫 15 字描述卡點，AI 才有材料可以整理。");
+    if (!checks.prereqReady) {
+      setBlockedMessage("請先完成卡 1（抱怨原句）與卡 2（背景）。");
+      return;
+    }
+    if (!checks.aiPolishedFilled || !checks.aiPolishedLongEnough) {
+      setBlockedMessage("Step 2 請貼回 AI 整理後的卡關公式句（至少 15 字）。");
       return;
     }
     if (!checks.confirmed) {
@@ -125,7 +128,7 @@ function CardThreePage() {
     }
   };
 
-  const userDraftPass = checks.userDraftFilled && checks.userDraftLongEnough;
+  const aiPolishedPass = checks.aiPolishedFilled && checks.aiPolishedLongEnough;
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
@@ -151,8 +154,8 @@ function CardThreePage() {
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Edit className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
-              <span className="font-semibold">規則：</span>
-              你<span className="font-semibold">用自然語言</span>描述卡點 → AI 幫你整理成句型 → 你回答 AI 的釐清問題。AI 不替你發明細節。
+              <span className="font-semibold">流程：</span>
+              複製 prompt → AI 把卡 1 抱怨整理成句型 → 你回答 AI 的釐清問題。AI 不替你發明細節。
             </div>
           </div>
 
@@ -162,12 +165,6 @@ function CardThreePage() {
         </header>
 
         <div className="space-y-5">
-          <UserDraftInput
-            value={stuck.user_draft}
-            onChange={setUserDraft}
-            highlight={attempted && !userDraftPass}
-          />
-
           <AiPromptBlock prompt={prompt} prereqReady={checks.prereqReady} />
 
           <AiResponseInput
@@ -199,9 +196,8 @@ function CardThreePage() {
       </main>
 
       <CardThreeExitGateFooter
-        userDraftPass={userDraftPass}
+        aiPolishedPass={aiPolishedPass}
         confirmedPass={checks.confirmed}
-        containsAbstract={checks.containsAbstract}
         submitting={submitting}
         blockedMessage={blockedMessage}
         onAdvance={handleAdvance}

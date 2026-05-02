@@ -50,7 +50,7 @@ export function HeroSection() {
               <span className="text-text-secondary">可以是一張</span>
               <br />
               <span className="bg-gradient-to-r from-text-primary via-accent-electric to-text-primary bg-clip-text text-transparent">
-                痛點 ID card 嗎？
+                痛點 ID card
               </span>
             </h1>
 

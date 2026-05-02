@@ -108,7 +108,7 @@ export function ExamplePainCardPreviewSection() {
                     className="absolute -inset-px rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
                       background:
-                        "radial-gradient(ellipse 400px 200px at 0% 0%, rgba(91,141,239,0.08), transparent 60%)",
+                        "radial-gradient(ellipse 400px 200px at 0% 0%, var(--accent-glow-soft), transparent 60%)",
                     }}
                   />
 

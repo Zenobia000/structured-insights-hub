@@ -107,7 +107,7 @@ function StageBlock({ badge, product, output, time, skills, active }: StageProps
           className="absolute inset-0 -z-10 opacity-40"
           style={{
             background:
-              "radial-gradient(ellipse 400px 200px at 50% 0%, rgba(91,141,239,0.10), transparent 70%)",
+              "radial-gradient(ellipse 400px 200px at 50% 0%, var(--accent-glow-mid), transparent 70%)",
           }}
         />
       )}
@@ -122,7 +122,7 @@ function StageBlock({ badge, product, output, time, skills, active }: StageProps
         <span
           className={
             active
-              ? "h-1.5 w-1.5 rounded-full bg-accent-electric shadow-[0_0_8px_rgba(91,141,239,0.6)]"
+              ? "h-1.5 w-1.5 rounded-full bg-accent-electric shadow-[0_0_8px_var(--accent-glow-strong)]"
               : "h-1.5 w-1.5 rounded-full bg-text-tertiary"
           }
         />

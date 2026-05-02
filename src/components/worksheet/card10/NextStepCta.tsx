@@ -37,7 +37,7 @@ export function NextStepCta() {
           className="absolute inset-0 -z-10 opacity-50"
           style={{
             background:
-              "radial-gradient(ellipse 600px 200px at 50% 0%, rgba(91,141,239,0.10), transparent 70%)",
+              "radial-gradient(ellipse 600px 200px at 50% 0%, var(--accent-glow-mid), transparent 70%)",
           }}
         />
       )}

@@ -30,11 +30,11 @@ function fieldClasses(opts: { warning?: boolean; error?: boolean; highlight?: bo
     "w-full rounded-md border bg-canvas-raised px-3.5 text-[15px] leading-[1.55] text-text-primary",
     "placeholder:text-text-tertiary",
     "transition-all duration-200",
-    "focus:outline-none focus:border-accent-electric focus:shadow-[0_0_0_2px_rgba(91,141,239,0.25)]",
+    "focus:outline-none focus:border-accent-electric focus:shadow-[0_0_0_2px_var(--accent-glow-mid)]",
     !opts.warning && !opts.error && !opts.highlight && "border-border-default hover:border-border-strong",
-    opts.highlight && !opts.error && !opts.warning && "border-accent-electric shadow-[0_0_0_2px_rgba(91,141,239,0.20)]",
+    opts.highlight && !opts.error && !opts.warning && "border-accent-electric shadow-[0_0_0_2px_var(--accent-glow-soft)]",
     opts.warning && !opts.error && "border-status-warning",
-    opts.error && "border-status-danger shadow-[0_0_0_2px_rgba(248,113,113,0.20)]",
+    opts.error && "border-status-danger shadow-[0_0_0_2px_color-mix(in_oklch,var(--status-danger)_30%,transparent)]",
   );
 }
 

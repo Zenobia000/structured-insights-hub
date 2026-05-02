@@ -17,7 +17,7 @@ function WorksheetLayout() {
         className="pointer-events-none fixed inset-0 z-0 opacity-50"
         style={{
           background:
-            "radial-gradient(ellipse 600px 400px at 0% 0%, rgba(91,141,239,0.06), transparent 60%)",
+            "radial-gradient(ellipse 600px 400px at 0% 0%, var(--accent-glow-soft), transparent 60%)",
         }}
       />
       <div className="relative z-10 flex flex-col flex-1">

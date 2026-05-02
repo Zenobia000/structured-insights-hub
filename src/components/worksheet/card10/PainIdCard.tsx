@@ -95,7 +95,7 @@ export function PainIdCard() {
         className="absolute inset-0 -z-10 opacity-40"
         style={{
           background:
-            "radial-gradient(ellipse 800px 400px at 50% 0%, rgba(91,141,239,0.08), transparent 70%)",
+            "radial-gradient(ellipse 800px 400px at 50% 0%, var(--accent-glow-soft), transparent 70%)",
         }}
       />
 

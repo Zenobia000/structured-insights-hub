@@ -133,6 +133,8 @@ export function CardNineExitGateFooter({
         {expanded && (
           <div
             id="card9-reflection-panel"
+            role="region"
+            aria-labelledby="card9-reflection-toggle"
             className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
           >
             <ul className="space-y-1.5">

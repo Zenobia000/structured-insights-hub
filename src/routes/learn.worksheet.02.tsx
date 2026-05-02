@@ -26,7 +26,7 @@ export const Route = createFileRoute("/learn/worksheet/02")({
       {
         name: "description",
         content:
-          "找出 3 個有名字的真人，且你今天就能聯絡到至少 1 位。AI 不能幫忙 — 虛構的人不會付錢。",
+          "找出 3 個你叫得出名字的真人，且今天就能聯絡到至少 1 位。AI 不能幫忙 — 虛構的人不會付錢，也說不出真話。",
       },
     ],
   }),
@@ -86,8 +86,8 @@ function CardTwoPage() {
     if (checks.allRequiredFilled !== "pass") {
       setBlockedMessage(
         background.trim().length < 10
-          ? "背景描述太短了。請寫年齡 / 職業 / 地點等具體屬性（至少 2 項）。"
-          : "請填寫所有欄位。需要 3 位真人 + 各自的聯絡方式 + 你跟他的關係。",
+          ? "背景描述還太簡略。試試寫下年齡、職業、地點這些具體的標記（至少 2 項）。"
+          : "每個欄位都先填上吧。需要 3 位真人 + 各自的聯絡方式 + 你跟他的關係。",
       );
       setFailureCount((c) => c + 1);
       return;
@@ -100,8 +100,8 @@ function CardTwoPage() {
         .join("、");
       setBlockedMessage(
         offenders
-          ? `「${offenders}」這種代稱代表你還不認識這個人。請填具體姓名（可化名但要是真人）。`
-          : "至少有 1 位的姓名還不是具體真人。請填可聯絡到的真名。",
+          ? `「${offenders}」這種代稱代表你還不夠認識這個人。填一個具體姓名（化名也可以，但要是真人）。`
+          : "至少有 1 位還不是具體真人。填一個你聯絡得到的真名。",
       );
       setFailureCount((c) => c + 1);
       return;
@@ -109,20 +109,22 @@ function CardTwoPage() {
     // c：contactable
     if (checks.contactableExists !== "pass") {
       setBlockedMessage(
-        "請至少有 1 位你今天能傳訊息的人（聯絡方式寫 LINE / 電話 / Email / Messenger 等）。",
+        "至少要有 1 位你今天能傳訊息的人（聯絡方式寫 LINE / 電話 / Email / Messenger 都可以）。",
       );
       setFailureCount((c) => c + 1);
       return;
     }
     // d：background 具體性
     if (checks.specificBackground !== "pass") {
-      setBlockedMessage("背景描述太籠統。至少寫 2 個具體屬性（年齡 / 職業 / 地點）。");
+      setBlockedMessage("背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。");
       setFailureCount((c) => c + 1);
       return;
     }
     // e：commitment
     if (!commitment) {
-      setBlockedMessage("請勾選右側「我確認今天能聯絡到至少 1 位」— 這是你對自己的承諾。");
+      setBlockedMessage(
+        "最後勾選右側「我確認今天能聯絡到至少 1 位」— 那是你對自己的承諾，不是給我們的。",
+      );
       setFailureCount((c) => c + 1);
       return;
     }
@@ -163,8 +165,8 @@ function CardTwoPage() {
   }, [background, JSON.stringify(people), commitment]);
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
         {/* Card intro */}
         <header className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -187,14 +189,16 @@ function CardTwoPage() {
             <Users className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">規則：</span>
-              抱怨主人翁是誰？這種人你能聯絡到 <span className="font-semibold">3 個</span>{" "}
-              嗎？必須是<span className="font-semibold">真名</span>（不是「補習班老師 A」），且你
-              <span className="font-semibold">今天</span>就能聯絡到至少 1 位。
+              說那句抱怨的人是誰？像他那樣的人，你能想到 <span className="font-semibold">
+                3 個
+              </span>{" "}
+              嗎？要是 <span className="font-semibold">真名</span>（不是「補習班老師 A」），而且你
+              <span className="font-semibold">今天</span>就能聯絡到其中至少 1 位。
             </div>
           </div>
 
           <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            為什麼是 3 個？因為 1 個可能是個案、2 個可能是巧合，3 個才是模式的開始。
+            為什麼一定要 3 個？1 個可能是個案、2 個可能是巧合，要 3 個 — 模式才開始浮現。
           </p>
         </header>
 
@@ -227,7 +231,7 @@ function CardTwoPage() {
             <PersonGroupRepeater people={people} attempted={attempted} onChange={setPersonField} />
 
             <p className="text-[12px] text-text-muted" aria-live="polite">
-              {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+              {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
             </p>
 
             <ExampleReferenceCard2 />
@@ -290,7 +294,7 @@ function CardTwoPage() {
       />
 
       <span className="sr-only" aria-live="polite">
-        {canAdvance ? "已可進入卡 3" : "尚未達成過關條件"}
+        {canAdvance ? "可以走到卡 3 了" : "再多想一下"}
       </span>
     </div>
   );

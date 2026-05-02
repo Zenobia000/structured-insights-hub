@@ -36,7 +36,7 @@ export function PhaseAGuessForm({
           Phase A：先寫你的猜測（不要偷看下面）
         </h2>
         <p className="text-[15px] text-text-secondary leading-[1.6]">
-          花 2 分鐘寫，不要超過 5 分鐘。沒有對錯，怎麼猜都過關。
+          花 2 分鐘寫，不要超過 5 分鐘。沒有對錯，怎麼猜都可以。
         </p>
         <p className="text-[12px] text-text-muted">建議花 2-5 分鐘</p>
       </header>

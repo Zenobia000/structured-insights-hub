@@ -1,12 +1,13 @@
 /**
- * AntiFakeCheckPanel — 卡 1 即時檢核面板（Desktop 右側 sticky / Mobile 表單下方）。
+ * AntiFakeCheckPanel — 卡 1 即時檢核面板 (Grok dark)。
  *
  * 設計：
- * - 不是評分，是「品質提示」。pending（灰）/ pass（verified green）/ warning（caution amber）
+ * - 不是評分，是「品質提示」。pending（灰）/ pass（accent electric）/ warning（caution amber）
  * - aria-live="polite" 讓螢幕閱讀器讀出狀態變化
  */
 import { Check, AlertTriangle, Circle } from "lucide-react";
 import type { CardOneChecks, CheckStatus } from "@/lib/cardOneValidators";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { cn } from "@/lib/utils";
 
 type Item = {
@@ -16,10 +17,23 @@ type Item = {
 };
 
 function statusIcon(status: CheckStatus) {
-  if (status === "pass") return <Check className="h-4 w-4 text-verified" aria-label="通過" />;
+  if (status === "pass")
+    return (
+      <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-status-success-bg text-status-success">
+        <Check className="h-3 w-3" strokeWidth={2.5} aria-label="通過" />
+      </span>
+    );
   if (status === "warning")
-    return <AlertTriangle className="h-4 w-4 text-caution" aria-label="需要修正" />;
-  return <Circle className="h-4 w-4 text-text-muted" aria-label="尚未開始" />;
+    return (
+      <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-status-warning">
+        <AlertTriangle className="h-3 w-3" aria-label="需要修正" />
+      </span>
+    );
+  return (
+    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-text-tertiary">
+      <Circle className="h-3 w-3" aria-label="尚未開始" />
+    </span>
+  );
 }
 
 function statusText(status: CheckStatus) {
@@ -50,27 +64,32 @@ export function AntiFakeCheckPanel({ checks }: { checks: CardOneChecks }) {
   return (
     <aside
       aria-labelledby="anti-fake-title"
-      className="rounded-xl border border-border bg-surface p-5 shadow-[0_1px_3px_rgba(30,58,95,0.06)]"
+      className="rounded-lg border border-border-hairline bg-canvas-raised p-5"
     >
+      <Eyebrow variant="dotted" className="mb-3">
+        Quality check
+      </Eyebrow>
       <h2
         id="anti-fake-title"
-        className="text-[18px] font-semibold text-text-primary leading-[1.4]"
+        className="text-base font-semibold tracking-[-0.01em] text-text-primary"
       >
         即時檢核
       </h2>
-      <p className="mt-1 text-[13px] leading-[1.5] text-text-secondary">這是品質提示,不是評分。</p>
+      <p className="mt-1 text-[12.5px] leading-[1.55] text-text-tertiary">
+        這是品質提示，不是評分。
+      </p>
 
-      <ul aria-live="polite" className="mt-4 space-y-3.5">
+      <ul aria-live="polite" className="mt-5 space-y-4">
         {items.map((it, i) => (
           <li key={i}>
-            <div className="flex items-start gap-2.5">
-              <span className="mt-0.5 shrink-0">{statusIcon(it.status)}</span>
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5">{statusIcon(it.status)}</span>
               <div className="min-w-0">
                 <p
                   className={cn(
-                    "text-[14px] leading-[1.5]",
+                    "text-[13.5px] leading-[1.55]",
                     it.status === "pass" && "text-text-primary",
-                    it.status === "warning" && "text-caution font-medium",
+                    it.status === "warning" && "text-status-warning font-medium",
                     it.status === "pending" && "text-text-secondary",
                   )}
                 >
@@ -78,7 +97,9 @@ export function AntiFakeCheckPanel({ checks }: { checks: CardOneChecks }) {
                 </p>
                 <span className="sr-only">狀態：{statusText(it.status)}</span>
                 {it.status === "warning" && (
-                  <p className="mt-1 text-[12.5px] leading-[1.55] text-text-secondary">{it.hint}</p>
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-text-tertiary">
+                    {it.hint}
+                  </p>
                 )}
               </div>
             </div>

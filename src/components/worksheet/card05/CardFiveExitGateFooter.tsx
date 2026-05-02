@@ -1,82 +1,61 @@
 /**
  * CardFiveExitGateFooter — sticky 底部
- * AI 回「都不像」或多次失敗 → retreat to 卡 3
+ *
+ * 蘇格拉底改版：拿掉「過關 / 退回」這套對抗框架。
+ * 改用「想想看」 + 中性的條目清單，把判斷交還給使用者。
  */
-import { ArrowRight, AlertTriangle, RotateCcw } from "lucide-react";
+import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  trizPass: boolean;
   sidesPass: boolean;
   sacrificedPass: boolean;
+  sacrificedReasonPass: boolean;
   submitting?: boolean;
   blockedMessage?: string | null;
-  showRetreat: boolean;
   onAdvance: () => void;
-  onRetreat: () => void;
 };
 
 export function CardFiveExitGateFooter({
-  trizPass,
   sidesPass,
   sacrificedPass,
+  sacrificedReasonPass,
   submitting,
   blockedMessage,
-  showRetreat,
   onAdvance,
-  onRetreat,
 }: Props) {
-  const canAdvance = trizPass && sidesPass && sacrificedPass && !submitting;
+  const canAdvance = sidesPass && sacrificedPass && sacrificedReasonPass && !submitting;
 
-  const tooltip = !trizPass
-    ? "請先從 6 種矛盾選 1 個"
-    : !sidesPass
-      ? "A、B 兩端都需要具體（≥ 10 字）"
-      : !sacrificedPass
-        ? "請選通常會犧牲哪邊"
+  const tooltip = !sidesPass
+    ? "回去把 A、B 兩端想清楚再來（每端至少 10 字）"
+    : !sacrificedPass
+      ? "回去想想他通常會犧牲哪邊"
+      : !sacrificedReasonPass
+        ? "回去把「為什麼那邊會被犧牲」用一句話寫清楚"
         : undefined;
 
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem passed={trizPass} label="只選 1 個矛盾" />
-          <ConditionItem passed={sidesPass} label="A、B 兩端都具體" />
-          <ConditionItem passed={sacrificedPass} label="已標記犧牲哪邊" />
-        </ul>
+        <div>
+          <p className="text-[12px] font-semibold tracking-wide uppercase text-text-secondary mb-1.5">
+            想想看
+          </p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
+            <ConditionItem passed={sidesPass} label="A、B 兩端都寫具體了嗎" />
+            <ConditionItem passed={sacrificedPass} label="標出通常會犧牲哪邊了嗎" />
+            <ConditionItem passed={sacrificedReasonPass} label="為什麼那邊會被犧牲，寫清楚了嗎" />
+          </ul>
+        </div>
 
-        {blockedMessage && !showRetreat && (
+        {blockedMessage && (
           <div
             role="alert"
             className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary"
           >
             <AlertTriangle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
             <span>{blockedMessage}</span>
-          </div>
-        )}
-
-        {showRetreat && (
-          <div className="rounded-lg border-2 border-secondary/30 bg-secondary/5 p-4">
-            <div className="flex items-start gap-3">
-              <RotateCcw className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-bold text-text-primary leading-[1.4]">
-                  6 個都不像？拆得不夠細
-                </h3>
-                <p className="mt-1.5 text-[13.5px] leading-[1.6] text-text-secondary">
-                  過不了 → 退回卡片 3 再聊一次主人翁，把卡關句寫得更具體。 卡 3-5
-                  的資料會保留，修改卡 3 後請回來重新跑卡 5 的 AI prompt。
-                </p>
-                <button
-                  type="button"
-                  onClick={onRetreat}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3.5 py-1.5 text-[13px] font-semibold text-text-primary hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  退回卡 3 重新拆
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
@@ -126,14 +105,10 @@ function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
       <span
         aria-hidden
         className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
+          "mt-[7px] inline-block h-1.5 w-1.5 rounded-full shrink-0",
+          passed ? "bg-text-primary" : "bg-text-muted/50",
         )}
-      >
-        ✓
-      </span>
+      />
       <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
     </li>
   );

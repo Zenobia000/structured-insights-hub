@@ -1,9 +1,10 @@
 /**
- * ThreeStepTeachingSection — 三段教學預覽。
+ * ThreeStepTeachingSection — 三段教學預覽 (Grok Feature Triplet pattern)。
  * 不是「賣特色」，是「告訴你流程怎麼跑」— 透明度本身是 epic meaning。
  */
 import { Ear, Search, Scale } from "lucide-react";
 import { SectionFade } from "./SectionFade";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 type Step = {
   index: string;
@@ -11,32 +12,32 @@ type Step = {
   cards: string;
   body: string;
   output: string;
-  Icon: React.ComponentType<{ className?: string }>;
+  Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
 };
 
 const STEPS: Step[] = [
   {
     index: "01",
-    title: "聽抱怨",
+    title: "先安靜地聽",
     cards: "卡 1-2",
-    body: "把聽到的原句寫下來、找出 3 個有名字的真人。AI 在這兩張卡完全不能介入。",
-    output: "抱怨原句 + 3 個真名 + 聯絡方式",
+    body: "把聽到的那句抱怨一字不改寫下來，找出 3 個說得出名字的真人。這兩張卡 AI 不能進來 — 因為有些事，只有真人會說出口。",
+    output: "抱怨原句 · 3 個有名字的人 · 聯絡方式",
     Icon: Ear,
   },
   {
     index: "02",
-    title: "用 AI 找證據",
+    title: "再請 AI 一起對證據",
     cards: "卡 3-7",
-    body: "把抱怨改寫成卡關公式、找出現有解法、選矛盾、跑 AI 證據蒐集，自己先猜再對照 AI。",
-    output: "卡關公式 + 5 個 workaround + 痛點判斷表",
+    body: "把那句抱怨翻譯成卡關公式，看看他現在怎麼解、卡在哪個矛盾。AI 來找線索，但你先自己猜一輪 — 這樣你才知道，自己跟證據之間差了多少。",
+    output: "卡關公式 · 5 種 workaround · 痛點判斷表",
     Icon: Search,
   },
   {
     index: "03",
-    title: "真假判斷",
+    title: "最後，你自己寫下判斷",
     cards: "卡 8-9",
-    body: "規劃真人訪談、書面回答「真痛點 / 假痛點 / 待訪談」並寫下下一步。",
-    output: "書面判斷 + 訪談題目 3 題 + 下一步行動",
+    body: "把證據攤開來，規劃要找誰真人聊聊。最後一張卡，留給你一個人安靜地寫：這是真痛點、假痛點、還是要再訪談？接下來你打算做什麼？",
+    output: "書面判斷 · 3 題訪談題目 · 下一步行動",
     Icon: Scale,
   },
 ];
@@ -46,42 +47,51 @@ export function ThreeStepTeachingSection() {
     <SectionFade
       id="three-step-teaching"
       ariaLabelledBy="three-step-title"
-      className="bg-surface border-b border-border scroll-mt-20"
+      className="relative scroll-mt-20 border-t border-border-hairline bg-canvas-base"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 md:py-32">
+        <div className="max-w-2xl mb-16">
+          <Eyebrow variant="numbered" index={1}>
+            How it works
+          </Eyebrow>
           <h2
             id="three-step-title"
-            className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary"
+            className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary"
           >
-            三段教學，從一句抱怨到書面判斷
+            從一句抱怨，
+            <br />
+            到一張你說得清楚的判斷。
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-text-secondary">
-            這不是「找答案」的工具，是判斷力訓練器。
+          <p className="mt-5 text-base sm:text-lg leading-[1.6] text-text-secondary">
+            我們不會給你答案。我們陪你練習，怎麼自己想清楚。
           </p>
         </div>
 
-        <ol className="grid md:grid-cols-3 gap-4 md:gap-5">
+        {/* Feature Triplet: gap-px on hairline bg = 自動產生分隔線 */}
+        <ol className="grid md:grid-cols-3 gap-px bg-border-hairline border border-border-hairline rounded-lg overflow-hidden">
           {STEPS.map(({ index, title, cards, body, output, Icon }) => (
             <li
               key={index}
-              className="group relative rounded-xl border border-border bg-surface p-6 shadow-[0_1px_3px_rgba(30,58,95,0.06)] hover:border-secondary hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(30,58,95,0.08)] transition-all"
+              className="group relative bg-canvas-base p-8 md:p-10 transition-colors duration-300 hover:bg-surface-hover"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="flex items-center justify-center h-10 w-10 rounded-md bg-primary-light text-primary">
-                  <Icon className="h-5 w-5" />
+              {/* Icon + step marker */}
+              <div className="flex items-start justify-between mb-8">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-md bg-accent-electric-subtle text-accent-electric ring-1 ring-accent-electric/20">
+                  <Icon className="h-6 w-6" strokeWidth={1.5} />
                 </span>
-                <span className="text-xs font-mono font-semibold text-text-muted">
-                  {index} · {cards}
+                <span className="font-mono text-xs uppercase tracking-[0.08em] text-text-tertiary">
+                  {index} / {cards}
                 </span>
               </div>
-              <h3 className="text-[18px] font-semibold text-text-primary leading-[1.4]">{title}</h3>
-              <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">{body}</p>
-              <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-[11px] font-semibold text-text-muted tracking-wider uppercase mb-1">
-                  產出
-                </p>
-                <p className="text-[13px] leading-[1.5] text-text-primary">{output}</p>
+
+              <h3 className="text-xl font-semibold tracking-[-0.01em] text-text-primary">
+                {title}
+              </h3>
+              <p className="mt-3 text-[15px] leading-[1.65] text-text-secondary">{body}</p>
+
+              <div className="mt-8 pt-6 border-t border-border-subtle">
+                <Eyebrow className="mb-2">你會帶走</Eyebrow>
+                <p className="text-[14px] leading-[1.55] text-text-primary">{output}</p>
               </div>
             </li>
           ))}

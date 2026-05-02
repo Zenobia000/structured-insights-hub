@@ -1,7 +1,7 @@
 /**
  * CardThreeExitGateFooter — 卡 3 sticky 底部行動列。
  *
- * 過關條件（2026-05 簡化）：
+ * 反思問題（2026-05 簡化）：
  * - aiPolishedPass：使用者已貼回 AI 整理後的卡關公式句
  * - confirmedPass：AI 沒列釐清問題，或全部已回答 / 預約問
  */
@@ -9,6 +9,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ReflectionHint } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   aiPolishedPass: boolean;
@@ -35,9 +36,20 @@ export function CardThreeExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem passed={aiPolishedPass} label="已貼回 AI 整理後的卡關公式句" />
-          <ConditionItem passed={confirmedPass} label="AI 列的釐清問題已全部回答（或標記預約問）" />
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="你寫的公式句，能不能被一個外人聽完就重複給第三個人？"
+            state={aiPolishedPass ? "ok" : "pending"}
+            hint={
+              !aiPolishedPass
+                ? "貼回 AI 整理後的句子，再讀一次：自己聽得懂跟別人聽得懂，是兩件事。"
+                : undefined
+            }
+          />
+          <ReflectionHint
+            question="AI 列的釐清問題，你回答了嗎？或者你打算回去問當事人？"
+            state={confirmedPass ? "ok" : aiPolishedPass ? "thinking" : "pending"}
+          />
         </ul>
 
         {blockedMessage && (
@@ -72,7 +84,7 @@ export function CardThreeExitGateFooter({
                   : "bg-muted text-text-muted cursor-not-allowed",
               )}
             >
-              {submitting ? "儲存中…" : "儲存並進入卡 4"}
+              {submitting ? "儲存中…" : "繼續到卡 4"}
               <ArrowRight className="h-4 w-4" />
             </button>
             {tooltip && !canAdvance && (
@@ -87,24 +99,5 @@ export function CardThreeExitGateFooter({
         </div>
       </div>
     </div>
-  );
-}
-
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
-        )}
-      >
-        ✓
-      </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
   );
 }

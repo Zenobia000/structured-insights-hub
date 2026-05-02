@@ -1,7 +1,7 @@
 /**
  * Card 8 validators — interview plan
  *
- * - 推銷題偵測：警告但不擋過關（人類自由意志優先；audit-log 留在 LocalStorage）
+ * - 推銷題偵測：警告但不擋下使用者（人類自由意志優先；audit-log 留在 LocalStorage）
  * - rules_table 文案 100% 引自 worksheet 卡 8
  */
 
@@ -100,7 +100,7 @@ export function parseQ8Candidates(q8Raw: string): string[] {
   const candidates: string[] = [];
   for (const line of lines) {
     // 去掉編號、標號、emoji
-    const stripped = line.replace(/^[-•·\d]+[\.\)、:：\s]*/, "").trim();
+    const stripped = line.replace(/^[-•·\d]+[.)、:：\s]*/, "").trim();
     if (!stripped) continue;
     // 取冒號 / 破折號前一段，如「中小型補習班數學老師：…」→「中小型補習班數學老師」
     const head = stripped.split(/[：:—\-—（(]/)[0].trim();

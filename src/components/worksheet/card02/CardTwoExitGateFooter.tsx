@@ -6,6 +6,7 @@
 import { ArrowRight, AlertTriangle, Coffee } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   realNamesPass: boolean;
@@ -57,13 +58,27 @@ export function CardTwoExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        {/* Exit conditions */}
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem
-            passed={realNamesPass && allFilledPass}
-            label="3 個都有真名（不是「補習班老師 A」）"
+        {/* Reflection hints (Socratic, not pass/fail) */}
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="你能不能今天就傳訊息給其中一個？如果不能，那他算「有名字的人」嗎？"
+            state={
+              realNamesPass && contactablePass && commitment && allFilledPass
+                ? "ok"
+                : !allFilledPass
+                  ? "pending"
+                  : "thinking"
+            }
+            hint={
+              allFilledPass && !realNamesPass
+                ? "代稱（例如「補習班老師 A」）很難讓你今天就傳訊息出去。"
+                : undefined
+            }
           />
-          <ConditionItem passed={contactablePass && commitment} label="你今天就能聯絡到至少 1 位" />
+          <ReflectionHint
+            question="這 3 個人的背景，你能不能用一句話告訴別人他們是誰？"
+            state={backgroundPass ? "ok" : !allFilledPass ? "pending" : "thinking"}
+          />
         </ul>
 
         {/* Blocked message */}
@@ -124,7 +139,7 @@ export function CardTwoExitGateFooter({
                   : "bg-muted text-text-muted cursor-not-allowed",
               )}
             >
-              {submitting ? "儲存中…" : "儲存並進入卡 3"}
+              {submitting ? "儲存中…" : "繼續到卡 3"}
               <ArrowRight className="h-4 w-4" />
             </button>
             {tooltip && !canAdvance && (
@@ -139,24 +154,5 @@ export function CardTwoExitGateFooter({
         </div>
       </div>
     </div>
-  );
-}
-
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
-        )}
-      >
-        ✓
-      </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
   );
 }

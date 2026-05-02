@@ -1,8 +1,10 @@
 /**
- * CompletionHeader — 卡 10 沉穩標頭（不慶祝、不徽章）
+ * CompletionHeader — 卡 10 沉穩標頭 (Grok dark hero variant)
  */
 import { usePainCardStore } from "@/store/painCard";
 import { JUDGMENT_LABEL } from "@/lib/cardTenExport";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { CheckCircle2, Clock, Archive } from "lucide-react";
 
 export function CompletionHeader() {
   const card = usePainCardStore((s) => s.card);
@@ -11,22 +13,25 @@ export function CompletionHeader() {
   const statusBadge = (() => {
     if (card.status === "structured" || j === "true_pain") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-verified-light text-verified">
-          ✓ 真痛點
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-status-success/40 bg-status-success-bg px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.06em] text-status-success">
+          <CheckCircle2 className="h-3 w-3" />
+          Verified pain
         </span>
       );
     }
     if (j === "pending_interview") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-accent-light text-caution">
-          待訪談
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-status-warning/40 bg-status-warning-bg px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.06em] text-status-warning">
+          <Clock className="h-3 w-3" />
+          Pending interview
         </span>
       );
     }
     if (j === "fake_pain" || card.status === "archived_fake") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-muted text-text-secondary">
-          假痛點（已封存）
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-border-default bg-surface-elevated px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.06em] text-text-secondary">
+          <Archive className="h-3 w-3" />
+          Archived (fake)
         </span>
       );
     }
@@ -34,29 +39,52 @@ export function CompletionHeader() {
   })();
 
   return (
-    <header className="bg-surface px-6 sm:px-12 py-10 sm:py-12 max-w-3xl mx-auto rounded-lg border border-border">
-      <div className="flex items-start gap-4 mb-4">
-        <div className="text-4xl text-secondary" aria-hidden>
-          🪪
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-bold text-text-primary">你的痛點身份證</h1>
-          <p className="mt-2 text-text-secondary text-base sm:text-lg">
-            9 卡的精華組合在這裡。看一遍，匯出一份，去做你的下一步。
-          </p>
-        </div>
-      </div>
+    <header className="relative isolate overflow-hidden rounded-lg border border-border-hairline bg-canvas-raised">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 opacity-50"
+        style={{
+          background:
+            "radial-gradient(ellipse 600px 300px at 50% 0%, var(--accent-glow-mid), transparent 70%)",
+        }}
+      />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-dot-dim opacity-40" />
 
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted pt-4 border-t border-border">
-        <span>建立日期：{card.created_at.slice(0, 10)}</span>
-        <span>最後更新：{card.updated_at.slice(0, 16).replace("T", " ")}</span>
-        {statusBadge}
-      </div>
+      <div className="px-7 sm:px-12 py-10 sm:py-14 max-w-4xl mx-auto">
+        <Eyebrow variant="dotted">You finished · Pain ID is ready</Eyebrow>
 
-      <p className="mt-4 italic text-sm text-text-secondary">
-        這份身份證裡沒有「錢」。階段一只訓練判斷力。
-      </p>
-      {j && <p className="sr-only">當前判斷：{JUDGMENT_LABEL[j]}</p>}
+        <h1 className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
+          你寫完了 —<br />
+          <span className="bg-gradient-to-r from-text-primary via-accent-electric to-text-primary bg-clip-text text-transparent">
+            這是你的痛點身份證。
+          </span>
+        </h1>
+
+        <p className="mt-5 text-base sm:text-lg leading-[1.65] text-text-secondary max-w-2xl">
+          9 張卡走過的痕跡，全部收在這一頁。看一遍，挑一個格式匯出帶走，再去做你想做的下一步。
+        </p>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-8 pt-6 border-t border-border-subtle">
+          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-tertiary">
+            <span className="text-text-secondary">Started</span>{" "}
+            <span className="text-text-primary tabular-nums">
+              {card.created_at.slice(0, 10)}
+            </span>
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-tertiary">
+            <span className="text-text-secondary">Last edit</span>{" "}
+            <span className="text-text-primary tabular-nums">
+              {card.updated_at.slice(0, 16).replace("T", " ")}
+            </span>
+          </span>
+          {statusBadge}
+        </div>
+
+        <p className="mt-5 text-[13px] italic text-text-tertiary">
+          這份身份證裡沒有「錢」也沒有「分數」 — 階段一只練一件事：判斷力。
+        </p>
+        {j && <p className="sr-only">當前判斷：{JUDGMENT_LABEL[j]}</p>}
+      </div>
     </header>
   );
 }

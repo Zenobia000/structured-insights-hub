@@ -127,7 +127,7 @@ export function QuestionForm({ questions, onChange }: Props) {
                   <p className="font-semibold">這題像在推銷（命中：{hits.join("、")}）。</p>
                   <p className="text-text-secondary mt-0.5">
                     建議改成「你現在用什麼方法在解這個問題？」這類只問現況的題目。
-                    （仍可保留原句，這只是提醒，不會擋過關。）
+                    （仍可保留原句，這只是提醒，不會擋下你。）
                   </p>
                 </div>
               </div>

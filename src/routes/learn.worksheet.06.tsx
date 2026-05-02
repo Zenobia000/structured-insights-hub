@@ -24,7 +24,8 @@ export const Route = createFileRoute("/learn/worksheet/06")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "用 AI 跑 8 題證據蒐集 prompt，把回覆原文與結構化結果保存。AI 不可推銷產品。",
+        content:
+          "用 AI 跑 8 題證據蒐集，把回覆原文與整理後的答案存下來。AI 在這張卡只能找證據 — 不能推銷產品。",
       },
     ],
   }),
@@ -135,11 +136,11 @@ function CardSixPage() {
   const handleAdvance = () => {
     setAttempted(true);
     if (!ev.ai_tool) {
-      setBlockedMessage("請先選 1 個 AI 工具。");
+      setBlockedMessage("先選一個你想用的 AI 工具。");
       return;
     }
     if (!rawLong) {
-      setBlockedMessage("請把 AI 回覆原文整段貼上（≥ 200 字）。");
+      setBlockedMessage("把 AI 回覆原文整段貼上來吧（≥ 200 字）。");
       return;
     }
     if (!eightEval.allPassed) {
@@ -148,12 +149,14 @@ function CardSixPage() {
         .map(([k]) => k.replace(/_.*/, "").toUpperCase())
         .join("、");
       setBlockedMessage(
-        `8 題中還有 ${8 - eightEval.passedCount} 題未達最少字數（${missing}）。請貼上 AI 給的完整答案。`,
+        `8 題中還有 ${8 - eightEval.passedCount} 題寫得太短（${missing}）。把 AI 完整給你的答案貼進來。`,
       );
       return;
     }
     if (!noSolutionPassed) {
-      setBlockedMessage("AI 回覆出現推銷詞 — 請使用補強 prompt 重跑，或勾選「手動覆寫」確認。");
+      setBlockedMessage(
+        "AI 回覆裡出現了推銷詞 — 用補強 prompt 重跑一次，或者勾選「手動覆寫」表示你已確認。",
+      );
       return;
     }
 
@@ -170,8 +173,8 @@ function CardSixPage() {
   const selectedTool = getToolById(ev.ai_tool);
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-8">
         {/* card_intro */}
         <header>
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -187,25 +190,26 @@ function CardSixPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            用 AI 蒐集證據
+            讓 AI 幫你找公開證據
           </h1>
 
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            你已經有自己的猜測（卡 1-5）。現在用 AI 去找公開證據，看看你的猜測有沒有支撐。
+            你已經有自己的猜測（卡 1-5）。現在請 AI 一起翻翻公開資料，看看你的猜測有沒有人佐證。
           </p>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border-2 border-caution/40 bg-caution/5 p-4">
             <Search className="h-5 w-5 text-caution shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">這張不是什麼：</p>
+              <p className="font-semibold">這張卡不是要做什麼：</p>
               <ul className="list-disc pl-5 space-y-0.5">
                 <li>不是設計產品</li>
                 <li>不是談商業模式</li>
-                <li>不是想 App</li>
+                <li>不是想要做 App</li>
               </ul>
               <p className="pt-1">
-                最重要的一句 prompt 是：「
-                <span className="font-semibold">請不要幫我設計產品，也不要提出商業模式</span>」。
+                所以 prompt 裡最關鍵的一句是：「
+                <span className="font-semibold">請不要幫我設計產品，也不要提出商業模式</span>」 —
+                守住這條，AI 才會專心找證據。
               </p>
             </div>
           </div>
@@ -307,7 +311,7 @@ function CardSixPage() {
         </section>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
       </main>
 

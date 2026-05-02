@@ -1,30 +1,27 @@
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Sparkles, ShieldOff, Award, Lightbulb, AlertTriangle } from "lucide-react";
+import { Sparkles, ShieldOff, Award, MessageCircleQuestion } from "lucide-react";
 
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
-import { useDisplayModeStore, type DisplayMode } from "@/store/displayMode";
-import {
-  REASON_MIN,
-  bandHint,
-  defaultNextAction,
-  evaluateScores,
-  judgmentToStatus,
-  type DimensionKey,
-} from "@/lib/cardNineValidators";
-import type { Judgment, NextAction, Score } from "@/types/painCard";
-import { ScoresForm } from "@/components/worksheet/card09/ScoresForm";
-import { ScoresSummary } from "@/components/worksheet/card09/ScoresSummary";
+import { REASON_MIN, defaultNextAction, judgmentToStatus } from "@/lib/cardNineValidators";
+import type { Judgment, NextAction } from "@/types/painCard";
 import { JudgmentForm } from "@/components/worksheet/card09/JudgmentForm";
 import { CardNineExitGateFooter } from "@/components/worksheet/card09/CardNineExitGateFooter";
 import { InterviewTargetsPrefill } from "@/components/worksheet/card09/InterviewTargetsPrefill";
 
 const searchSchema = z.object({
-  mode: z.enum(["teaching", "production"]).optional(),
   id: z.string().optional(),
 });
+
+const SOCRATIC_PROMPTS: string[] = [
+  "你叫得出 3 個人的名字嗎？他們各自怎麼遇到這個問題？",
+  "這件事每週發生幾次 — 是你猜的，還是有人親口告訴你？",
+  "他為這個問題付出了什麼（時間、錢、心力、關係）？最多的那一樣是什麼？",
+  "他現在的解法，最讓他受不了的一個點是什麼？用他的話寫。",
+  "你最有把握的證據是什麼？最不踏實的環節又是什麼？",
+];
 
 export const Route = createFileRoute("/learn/worksheet/09")({
   validateSearch: (s) => searchSchema.parse(s),
@@ -35,7 +32,7 @@ export const Route = createFileRoute("/learn/worksheet/09")({
       {
         name: "description",
         content:
-          "走到這裡，你要做的只有一件事：書面回答「這是真痛點還是假痛點？為什麼？」AI 不參與判斷。",
+          "走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」AI 不參與判斷 — 這一題，留給你自己。",
       },
     ],
   }),
@@ -44,53 +41,14 @@ export const Route = createFileRoute("/learn/worksheet/09")({
 
 function CardNinePage() {
   const navigate = useNavigate();
-  const search = useSearch({ from: "/learn/worksheet/09" });
   const card = usePainCardStore((s) => s.card);
   const hydrated = usePainCardStore((s) => s.hydrated);
   const updateField = usePainCardStore((s) => s.updateField);
   const commitVerdict = usePainCardStore((s) => s.commitVerdict);
 
-  const mode = useDisplayModeStore((s) => s.mode);
-  const setMode = useDisplayModeStore((s) => s.setMode);
-
-  // URL ?mode 同步至 store
-  useEffect(() => {
-    if (search.mode && search.mode !== mode) {
-      setMode(search.mode);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search.mode]);
-
-  function switchMode(next: DisplayMode) {
-    setMode(next);
-    navigate({
-      to: "/learn/worksheet/09",
-      search: { ...search, mode: next },
-      replace: true,
-    });
-  }
-
   const v = card.verdict;
 
-  const scoreValues = useMemo(
-    () => ({
-      people_specificity: v.scores.people_specificity,
-      frequency: v.scores.frequency,
-      intensity: v.scores.intensity,
-      workaround_dissatisfaction: v.scores.workaround_dissatisfaction,
-      evidence_credibility: v.scores.evidence_credibility,
-    }),
-    [v.scores],
-  );
-
-  const scoresEval = useMemo(() => evaluateScores(v), [v]);
-  const total = scoresEval.total;
-  const hint = bandHint(total);
-
   // setters
-  const setScore = (key: DimensionKey, value: Score) => {
-    updateField(`verdict.scores.${key}`, value);
-  };
   const setJudgment = (j: Judgment) => {
     updateField("verdict.judgment", j);
     // 自動預選 next_action（若使用者尚未選）
@@ -104,13 +62,6 @@ function CardNinePage() {
   const setLeast = (s: string) => updateField("verdict.least_confident", s);
   const setNextAction = (n: NextAction) => updateField("verdict.next_action", n);
 
-  // total_score 同步寫入（teaching 與 production 都寫；資料層永遠存）
-  useEffect(() => {
-    if (scoresEval.allFilled && v.total_score !== total) {
-      updateField("verdict.total_score", total);
-    }
-  }, [scoresEval.allFilled, total, v.total_score, updateField]);
-
   // Exit gate
   const reasonLen = v.reason_100w.trim().length;
   const reasonPassed = reasonLen >= REASON_MIN;
@@ -122,24 +73,19 @@ function CardNinePage() {
 
   useEffect(() => {
     setBlockedMessage(null);
-  }, [v.scores, v.judgment, v.reason_100w, v.next_action]);
+  }, [v.judgment, v.reason_100w, v.next_action]);
 
   function handleAdvance() {
-    if (!scoresEval.allFilled) {
-      const remain = 5 - scoresEval.filledCount;
-      setBlockedMessage(`還有 ${remain} 個維度沒打分（教學模式下打完即可）`);
-      return;
-    }
     if (!judgmentChosen) {
-      setBlockedMessage("請選真 / 假 / 待訪談");
+      setBlockedMessage("先選一種判斷吧（真 / 假 / 待訪談）");
       return;
     }
     if (!reasonPassed) {
-      setBlockedMessage(`再多寫 ${REASON_MIN - reasonLen} 字。具體說你看到 / 沒看到什麼`);
+      setBlockedMessage(`再多寫 ${REASON_MIN - reasonLen} 字。具體說你看到了什麼、沒看到什麼`);
       return;
     }
     if (!nextActionChosen) {
-      setBlockedMessage("請選下一步行動");
+      setBlockedMessage("再想想 — 寫完這張之後，你最想做的下一件事是什麼？");
       return;
     }
     setBlockedMessage(null);
@@ -151,7 +97,7 @@ function CardNinePage() {
       const result = commitVerdict({ status: newStatus, nextStep: 10 });
       if (!result.ok) {
         setBlockedMessage(
-          `提交失敗，已自動回復為提交前狀態：${result.error}。請再試一次或重新整理。`,
+          `沒能提交出去，內容已經幫你保留住了：${result.error}。再試一次，或重新整理頁面看看。`,
         );
         return;
       }
@@ -169,8 +115,8 @@ function CardNinePage() {
   const savedAgo = useSavedAgo(card.updated_at);
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-8">
         {/* card_intro */}
         <header>
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -186,10 +132,10 @@ function CardNinePage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            真假痛點的書面判斷
+            最後這一題，留給你自己
           </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            走到這裡，你要做的只有一件事：書面回答「這是真痛點還是假痛點？為什麼？」
+            走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」
           </p>
 
           <div
@@ -198,10 +144,10 @@ function CardNinePage() {
           >
             <ShieldOff className="h-5 w-5 text-destructive shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">這張卡片 AI 完全不參與</p>
+              <p className="font-semibold">這張卡 AI 完全不參與</p>
               <p>
-                真假判斷是這套訓練的唯一交付物。AI 可以幫你蒐集證據（卡 6）、整理表（卡
-                7）、模擬訪談（卡 8），但「真的嗎」「值得嗎」這兩題永遠是你來判。
+                真假判斷是這套訓練最後也最重要的事。AI 可以幫你蒐集證據（卡 6）、整理表（卡
+                7）、模擬訪談（卡 8） — 但「這真的嗎、值得嗎」這兩題，永遠由你來判。
               </p>
             </div>
           </div>
@@ -209,93 +155,34 @@ function CardNinePage() {
           <div className="mt-3 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
             <Award className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">這份填空簿的唯一交付物</p>
-              <p>你不需要做產品、不需要架網站、不需要收錢。你只需要交出這個書面判斷。</p>
+              <p className="font-semibold">這份填空簿要你帶走的，就只有這個</p>
+              <p>你不需要做產品、不需要架網站、不需要收錢 — 只需要交出這份你親手寫的判斷。</p>
             </div>
           </div>
         </header>
 
-        {/* mode_indicator */}
-        <div
-          className={
-            "rounded-lg border px-4 py-3 flex flex-wrap items-center justify-between gap-3 max-w-3xl " +
-            (mode === "teaching"
-              ? "border-verified/40 bg-verified/10"
-              : "border-primary/30 bg-primary/5")
-          }
+        {/* Socratic prompts — 純文字提示，不存欄位 */}
+        <section
+          aria-label="動筆前先在心裡走一遍這 5 件事"
+          className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-3"
         >
-          <div>
-            <p className="text-[14px] font-bold text-text-primary">
-              {mode === "teaching"
-                ? "📖 教學模式（顯示 5 維度反思評分）"
-                : "📦 生產模式（只顯示判斷狀態，不顯示分數）"}
-            </p>
-            <p className="text-[12.5px] text-text-secondary leading-[1.55]">
-              {mode === "teaching"
-                ? "分數是讓你反思「為什麼給這個維度 X 分？」，不是答案。"
-                : "在 PainMap App 內，痛點以狀態分類，不以分數排名。"}
-            </p>
+          <div className="flex items-center gap-2">
+            <MessageCircleQuestion className="h-5 w-5 text-secondary shrink-0" aria-hidden />
+            <h2 className="text-[18px] font-bold text-text-primary">
+              動筆前，先在心裡走一遍這 5 件事
+            </h2>
           </div>
-          <button
-            type="button"
-            onClick={() => switchMode(mode === "teaching" ? "production" : "teaching")}
-            className="text-[13px] text-secondary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary rounded px-1"
-          >
-            {mode === "teaching" ? "切到生產模式 →" : "切到教學模式 →"}
-          </button>
-        </div>
+          <p className="text-[13.5px] text-text-secondary leading-[1.6]">
+            這幾題你不用回答，只需要靜靜想一遍。想清楚了，下面那段判斷就會自然從筆下流出來。
+          </p>
+          <ol className="space-y-2 list-decimal pl-5 text-[14.5px] text-text-primary leading-[1.7]">
+            {SOCRATIC_PROMPTS.map((q, i) => (
+              <li key={i}>{q}</li>
+            ))}
+          </ol>
+        </section>
 
-        {/* Section 4 / 5: scores */}
-        {mode === "teaching" ? (
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-[20px] font-bold text-text-primary">第一步：5 維度反思評分</h2>
-              <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
-                這 5 個維度幫你檢視卡 1-8 的證據強度。每個維度問自己：「我為什麼給這個分數？」
-              </p>
-            </div>
-
-            <ScoresForm values={scoreValues} onChange={setScore} />
-
-            {/* total_score_display */}
-            <div className="rounded-lg border border-border bg-surface p-4 sm:p-5 space-y-2">
-              <div className="flex items-baseline justify-between">
-                <span className="text-[15px] font-semibold text-text-primary">總分</span>
-                <span className="font-mono text-[20px] font-bold text-text-primary">
-                  {total ?? "—"} <span className="text-[14px] text-text-muted">/ 25</span>
-                </span>
-              </div>
-              {hint && (
-                <div className="flex items-start gap-2 text-[13px] text-text-secondary leading-[1.55]">
-                  <Lightbulb className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5" aria-hidden />
-                  <span>下一步建議：{hint}</span>
-                </div>
-              )}
-            </div>
-
-            {/* teaching_warning */}
-            <div className="flex items-start gap-3 rounded-lg border-2 border-caution/40 bg-caution/5 p-4">
-              <AlertTriangle className="h-5 w-5 text-caution shrink-0 mt-0.5" aria-hidden />
-              <div className="text-[14px] leading-[1.6] text-text-primary space-y-1">
-                <p className="font-semibold">為什麼分數只是工具，不是答案？</p>
-                <ul className="list-disc pl-5 space-y-0.5 text-text-secondary">
-                  <li>24 分的痛點，仍可能是假痛點（你還沒真人訪談）</li>
-                  <li>14 分的抱怨，仍可能是真痛點（你還沒挖深）</li>
-                  <li>分數只訓練判斷力，不是給你答案。</li>
-                  <li>答案永遠來自真人訪談（卡 8）。</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-        ) : (
-          <ScoresSummary
-            filled={scoresEval.filled}
-            allFilled={scoresEval.allFilled}
-            onSwitchToTeaching={() => switchMode("teaching")}
-          />
-        )}
-
-        {/* Section 6: judgment_form */}
+        {/* judgment_form */}
         <JudgmentForm
           judgment={v.judgment}
           onJudgmentChange={setJudgment}
@@ -317,12 +204,11 @@ function CardNinePage() {
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
       </main>
 
       <CardNineExitGateFooter
-        scoresAllFilled={scoresEval.allFilled}
         judgmentChosen={judgmentChosen}
         reasonPassed={reasonPassed}
         nextActionChosen={nextActionChosen}

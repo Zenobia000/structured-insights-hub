@@ -1,5 +1,5 @@
 /**
- * CardProgressStepper — 9 步進度條 + 結果頁身份證
+ * CardProgressStepper — 9 步進度條 + 結果頁身份證 (Grok dark theme)
  *
  * 唯一目的：讓使用者知道自己在哪、之前完成了哪幾張、後面還有哪幾張。
  * 不是排名工具、不是評分工具、不是激勵工具。
@@ -26,8 +26,6 @@ function stateOf(step: CurrentStep, current: CurrentStep): StepState {
   return "locked";
 }
 
-// Lookup 表取代 template literal — 讓 pathFor 返回 literal union 型別，
-// TanStack Router 的 <Link to> 才能在編譯期驗證路徑（消除 `as any` 逃逸）。
 const STEP_PATHS = {
   1: "/learn/worksheet/01",
   2: "/learn/worksheet/02",
@@ -49,22 +47,30 @@ function pathFor(step: CurrentStep | 10): StepPath {
 
 export function CardProgressStepper() {
   const current = usePainCardStore((s) => s.card.current_step);
-  const resultState: StepState =
-    current === 10 ? "completed" : current >= 10 ? "completed" : "locked";
+  const resultState: StepState = current === 10 ? "completed" : "locked";
 
   return (
-    <nav aria-label="痛點填空簿進度" className="w-full">
+    <nav
+      aria-label="痛點填空簿進度"
+      className="w-full border-b border-border-hairline bg-canvas-base/80 backdrop-blur-md"
+    >
       {/* Mobile: 折疊文字 */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 text-sm">
-        <span className="text-text-secondary">
-          卡 <span className="font-semibold text-text-primary">{current}</span> / 9
-          {current === 10 && " · 已完成"}
+      <div className="md:hidden flex items-center justify-between px-5 py-3">
+        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
+          Card{" "}
+          <span className="text-text-primary tabular-nums">
+            {String(current).padStart(2, "0")}
+          </span>
+          {" / 09"}
+          {current === 10 && " · DONE"}
         </span>
-        <span className="text-text-muted text-xs">{STEP_LABELS[current]}</span>
+        <span className="text-[13px] text-text-secondary truncate max-w-[60%]">
+          {STEP_LABELS[current]}
+        </span>
       </div>
 
       {/* Desktop / Tablet: 水平 stepper */}
-      <ol className="hidden md:flex items-start justify-between gap-2 px-6 py-5 max-w-5xl mx-auto">
+      <ol className="hidden md:flex items-start justify-between gap-1 px-8 py-5 max-w-6xl mx-auto">
         {STEPS.map((step, i) => {
           const state = stateOf(step, current);
           const isLast = i === STEPS.length - 1;
@@ -74,10 +80,10 @@ export function CardProgressStepper() {
                 <StepDot step={step} state={state} />
                 <span
                   className={cn(
-                    "mt-2 text-xs font-medium truncate max-w-[64px]",
-                    state === "completed" && "text-verified",
-                    state === "current" && "text-secondary",
-                    state === "locked" && "text-text-muted",
+                    "mt-2.5 font-mono text-[10px] uppercase tracking-[0.06em] truncate max-w-[72px]",
+                    state === "completed" && "text-text-secondary",
+                    state === "current" && "text-accent-electric",
+                    state === "locked" && "text-text-tertiary",
                   )}
                 >
                   {STEP_LABELS[step]}
@@ -86,8 +92,10 @@ export function CardProgressStepper() {
               {!isLast && (
                 <div
                   className={cn(
-                    "h-px flex-1 mt-5 mx-1",
-                    state === "completed" ? "bg-verified" : "bg-border border-dashed",
+                    "h-px flex-1 mt-3.5 mx-1 transition-colors",
+                    state === "completed"
+                      ? "bg-accent-electric/60"
+                      : "bg-border-hairline",
                   )}
                   aria-hidden
                 />
@@ -99,8 +107,8 @@ export function CardProgressStepper() {
         <li className="flex items-start">
           <div
             className={cn(
-              "h-px w-6 mt-5 mr-1",
-              resultState === "completed" ? "bg-verified" : "bg-border border-dashed",
+              "h-px w-6 mt-3.5 mr-1 transition-colors",
+              resultState === "completed" ? "bg-accent-electric/60" : "bg-border-hairline",
             )}
             aria-hidden
           />
@@ -109,15 +117,17 @@ export function CardProgressStepper() {
               to="/learn/worksheet/result"
               aria-label="痛點身份證 (結果頁)"
               className={cn(
-                "h-10 w-10 rounded-full flex items-center justify-center text-lg transition-colors",
+                "h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-medium transition-all duration-200",
                 resultState === "completed"
-                  ? "bg-verified text-verified-foreground"
-                  : "bg-muted text-text-muted",
+                  ? "bg-accent-electric text-text-primary glow-accent-sm"
+                  : "border border-border-hairline bg-canvas-raised text-text-tertiary hover:border-border-default",
               )}
             >
-              🪪
+              ◆
             </Link>
-            <span className="mt-2 text-xs font-medium text-text-muted">身份證</span>
+            <span className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
+              ID
+            </span>
           </div>
         </li>
       </ol>
@@ -125,42 +135,54 @@ export function CardProgressStepper() {
   );
 }
 
-// Memo'd: step 與 state 都是 primitive，shallow-equal 後 current_step 跳一格時
-// 只有「先前的 current 點」與「新 current 點」會 re-render，其餘 7 個保持原狀。
 const StepDot = memo(function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
-  const content =
-    state === "completed" ? (
-      <Check className="h-4 w-4" aria-hidden />
-    ) : (
-      <span className="text-sm font-semibold">{step}</span>
-    );
+  const baseClasses =
+    "h-7 w-7 rounded-full flex items-center justify-center transition-all duration-200 font-mono text-[11px] tabular-nums";
 
-  const baseClasses = "h-10 w-10 rounded-full flex items-center justify-center transition-colors";
+  const numberLabel = String(step).padStart(2, "0");
 
   if (state === "locked") {
     return (
       <div
         aria-current={undefined}
         aria-label={`卡 ${step}（鎖定）`}
-        className={cn(baseClasses, "bg-muted text-text-muted")}
+        className={cn(
+          baseClasses,
+          "border border-border-hairline bg-canvas-raised text-text-tertiary",
+        )}
       >
-        {content}
+        {numberLabel}
       </div>
     );
   }
 
+  if (state === "completed") {
+    return (
+      <Link
+        to={pathFor(step)}
+        aria-label={`卡 ${step}（已完成）`}
+        className={cn(
+          baseClasses,
+          "border border-accent-electric/40 bg-accent-electric-subtle text-accent-electric hover:bg-accent-electric-subtle hover:border-accent-electric",
+        )}
+      >
+        <Check className="h-3 w-3" strokeWidth={2.5} aria-hidden />
+      </Link>
+    );
+  }
+
+  // current
   return (
     <Link
       to={pathFor(step)}
-      aria-current={state === "current" ? "step" : undefined}
-      aria-label={`卡 ${step}（${state === "completed" ? "已完成" : "進行中"}）`}
+      aria-current="step"
+      aria-label={`卡 ${step}（進行中）`}
       className={cn(
         baseClasses,
-        state === "completed" && "bg-verified text-verified-foreground hover:opacity-90",
-        state === "current" && "bg-secondary text-secondary-foreground ring-4 ring-secondary/20",
+        "bg-accent-electric text-text-primary glow-accent-sm",
       )}
     >
-      {content}
+      {numberLabel}
     </Link>
   );
 });

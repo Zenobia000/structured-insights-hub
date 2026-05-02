@@ -1,13 +1,17 @@
 /**
- * HeroSection — landing 第一屏。
+ * HeroSection — landing 第一屏 (Grok Hero pattern)。
  *
- * 排版：Desktop 左右分欄（文案 + ProgressVisual）；Mobile 堆疊。
- * 例外：Hero 全寬不受 1200px Grid 限制（spec 例外規則 #1）。
+ * Grok pattern:
+ * - Eyebrow.dotted 開場
+ * - display.2xl 主標題（96px desktop / 56px mobile）
+ * - spotlight-top + dot-dim 背景組合
+ * - 序列進場：eyebrow → headline → subheadline → CTA
+ * - Hero 全寬不受 1280 限制（spec 例外）
  */
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { ProgressVisual } from "./ProgressVisual";
-import { SectionFade } from "./SectionFade";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { startNewPainCard } from "@/lib/painCardActions";
 
 export function HeroSection() {
@@ -19,58 +23,94 @@ export function HeroSection() {
   };
 
   return (
-    <SectionFade eager ariaLabelledBy="hero-headline" className="bg-page border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left: copy */}
+    <section
+      aria-labelledby="hero-headline"
+      className="relative isolate overflow-hidden bg-canvas-base bg-spotlight-top"
+    >
+      {/* Dot grid texture overlay */}
+      <div aria-hidden className="absolute inset-0 bg-dot-dim opacity-50" />
+      {/* Bottom hairline */}
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-border-hairline" />
+
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          {/* Left: copy (col 1-7) */}
           <div className="lg:col-span-7">
-            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary mb-4">
-              PainMap Worksheet · 教學模式
-            </p>
+            <div className="animate-grok-fade-up" style={{ animationDelay: "0ms" }}>
+              <Eyebrow variant="dotted">PainMap Worksheet · 9 張卡，陪你走一次</Eyebrow>
+            </div>
+
             <h1
               id="hero-headline"
-              className="text-3xl sm:text-4xl lg:text-[36px] font-bold leading-[1.2] tracking-tight text-text-primary"
+              className="mt-6 font-display text-[44px] sm:text-6xl lg:text-[80px] xl:text-[96px] font-bold leading-[0.96] tracking-[-0.04em] text-text-primary animate-grok-fade-up"
+              style={{ animationDelay: "120ms" }}
             >
-              9 張卡片填空，學會判斷一句抱怨
-              <br className="hidden sm:block" />
-              是真痛點還是假痛點。
+              聽到一句抱怨，
+              <br />
+              <span className="text-text-secondary">你怎麼知道</span>
+              <br />
+              <span className="bg-gradient-to-r from-text-primary via-accent-electric to-text-primary bg-clip-text text-transparent">
+                那是不是真的？
+              </span>
             </h1>
-            <p className="mt-6 text-base sm:text-[17px] leading-[1.7] text-text-secondary max-w-2xl">
-              第一次 90 分鐘，熟練後 30 分鐘。你不需要懂創新理論、AI
-              模型、創業框架；你只需要會抄、會問、會打電話。
+
+            <p
+              className="mt-8 max-w-xl text-base sm:text-lg leading-[1.7] text-text-secondary animate-grok-fade-up"
+              style={{ animationDelay: "280ms" }}
+            >
+              這份填空簿陪你做的事很簡單：把那句話原原本本寫下來，找出說這句話的人，再用 AI
+              找證據對照你自己的猜測。第一次 90 分鐘，熟了 30 分鐘 — 你只需要會抄、會問、會打電話。
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div
+              className="mt-10 flex flex-col sm:flex-row gap-3 animate-grok-fade-up"
+              style={{ animationDelay: "420ms" }}
+            >
               <button
                 type="button"
                 onClick={handleStart}
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-accent text-accent-foreground px-6 py-3.5 font-semibold text-base shadow-sm hover:bg-accent/90 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-text-primary px-6 text-[15px] font-medium text-text-inverse transition-all duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
               >
-                30 秒開始第一張卡
-                <ArrowRight className="h-4 w-4" />
+                從第一張卡開始
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <Link
                 to="/"
                 hash="three-step-teaching"
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-surface px-6 py-3.5 font-medium text-text-primary hover:border-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border-default bg-transparent px-6 text-[15px] font-medium text-text-primary transition-colors duration-200 hover:bg-surface-hover hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
               >
-                看看 9 張卡片長什麼樣
+                先看看 9 張卡長什麼樣
               </Link>
             </div>
+
+            <p
+              className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary animate-grok-fade-up"
+              style={{ animationDelay: "560ms" }}
+            >
+              <span className="h-1 w-1 rounded-full bg-status-success" />
+              No sign-up · Local-only · 隨時匯出帶走
+            </p>
           </div>
 
-          {/* Right: 9-dot ProgressVisual */}
-          <div className="lg:col-span-5">
-            <div className="rounded-xl border border-border bg-surface p-5 sm:p-6 shadow-[0_1px_3px_rgba(30,58,95,0.06)]">
-              <p className="text-xs font-semibold text-text-secondary mb-1">你會走過的 9 個步驟</p>
-              <p className="text-[11px] text-text-muted mb-5">
-                每張卡都有明確產出，可隨時暫停儲存。
+          {/* Right: 9-dot ProgressVisual (col 8-12) */}
+          <div className="lg:col-span-5 animate-grok-fade-up" style={{ animationDelay: "320ms" }}>
+            <div className="relative rounded-lg border border-border-hairline bg-canvas-raised p-6 sm:p-8">
+              <div
+                aria-hidden
+                className="absolute inset-0 -z-10 rounded-lg bg-dot-dense opacity-40"
+              />
+              <Eyebrow variant="dotted" className="mb-4">
+                Flow preview
+              </Eyebrow>
+              <p className="text-base font-semibold text-text-primary mb-1">9 張卡，3 個階段</p>
+              <p className="text-[13px] leading-[1.6] text-text-tertiary mb-6">
+                從聽見一句抱怨，到寫下你自己的判斷 — 陪你走完一次。
               </p>
               <ProgressVisual />
             </div>
           </div>
         </div>
       </div>
-    </SectionFade>
+    </section>
   );
 }

@@ -19,7 +19,7 @@ export const Route = createFileRoute("/learn/worksheet/03")({
       {
         name: "description",
         content:
-          "用「我每次要 X，都會卡在 Y」把抱怨變成卡關公式：你先寫初版，再讓 AI 校對並列出需要再問清楚的問題。",
+          "把那句模糊的抱怨翻譯成「我每次要 X，都會卡在 Y」。你先寫初版，再讓 AI 校對並列出還沒問清楚的事。",
       },
     ],
   }),
@@ -80,17 +80,17 @@ function CardThreePage() {
   const handleAdvance = () => {
     setAttempted(true);
     if (!checks.prereqReady) {
-      setBlockedMessage("請先完成卡 1（抱怨原句）與卡 2（背景）。");
+      setBlockedMessage("先回去把卡 1（抱怨原句）和卡 2（背景）寫完，這張卡才有素材可以翻譯。");
       return;
     }
     if (!checks.aiPolishedFilled || !checks.aiPolishedLongEnough) {
-      setBlockedMessage("Step 2 請貼回 AI 整理後的卡關公式句（至少 15 字）。");
+      setBlockedMessage("Step 2 把 AI 整理後的卡關公式句貼回來吧（至少 15 字）。");
       return;
     }
     if (!checks.confirmed) {
       const remaining = checks.clarifying.totalCount - checks.clarifying.resolvedCount;
       setBlockedMessage(
-        `還有 ${remaining} 題 AI 釐清問題未處理 — 請寫下回答（≥10 字）或勾「已預約找主人翁問」。`,
+        `還有 ${remaining} 題 AI 想問清楚的事 — 寫下你的回答（≥10 字），或勾「已預約找主人翁問」也可以。`,
       );
       return;
     }
@@ -107,8 +107,8 @@ function CardThreePage() {
   const aiPolishedPass = checks.aiPolishedFilled && checks.aiPolishedLongEnough;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
         {/* card intro */}
         <header className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -124,19 +124,20 @@ function CardThreePage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            把抱怨變成「卡關公式」
+            把抱怨翻譯成「卡關公式」
           </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Edit className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">流程：</span>
-              複製 prompt → AI 把卡 1 抱怨整理成句型 → 你回答 AI 的釐清問題。AI 不替你發明細節。
+              複製 prompt → 讓 AI 幫你把卡 1 那段抱怨整理成句型 → 你回答 AI 還沒問清楚的事。AI
+              不會替你發明細節，那些得你自己補。
             </div>
           </div>
 
           <p className="mt-4 text-[14.5px] leading-[1.65] text-text-secondary">
-            最終會整理成的句型：
+            最後會整理成這個句型：
             <code className="font-mono px-1.5 py-0.5 rounded bg-muted-bg text-text-primary">
               「我每次要 [想做的事]，都會卡在 [障礙]。」
             </code>
@@ -165,7 +166,7 @@ function CardThreePage() {
           />
 
           <p className="text-[12px] text-text-muted" aria-live="polite">
-            {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+            {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
           </p>
 
           <ExampleReferenceCard3 />

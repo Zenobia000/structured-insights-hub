@@ -1,18 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { GitMerge, Sparkles, AlertTriangle, AlertCircle } from "lucide-react";
+import { GitMerge, AlertCircle } from "lucide-react";
 
-import { TextField, TextareaField } from "@/components/worksheet/card01/FormFields";
-import { AIPromptCopyBlock } from "@/components/worksheet/AIPromptCopyBlock";
-import { SixContradictionsPreview } from "@/components/worksheet/card05/SixContradictionsPreview";
-import { TrizRadioSelector } from "@/components/worksheet/card05/TrizRadioSelector";
+import { TextareaField } from "@/components/worksheet/card01/FormFields";
 import { ExampleReferenceCard5 } from "@/components/worksheet/card05/ExampleReferenceCard5";
 import { CardFiveExitGateFooter } from "@/components/worksheet/card05/CardFiveExitGateFooter";
 import { evaluateCardFive } from "@/lib/cardFiveValidators";
-import { getTrizById } from "@/lib/trizOptions";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
-import type { TrizId } from "@/types/painCard";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/learn/worksheet/05")({
@@ -22,7 +17,8 @@ export const Route = createFileRoute("/learn/worksheet/05")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "從 6 種 TRIZ 矛盾中選 1 個最像的：拆出他想要的 A、B 兩件事，以及通常會犧牲哪邊。",
+        content:
+          "用主人翁自己的話，寫出他同時想要的 A、B 兩件事 — 以及他通常會放掉哪一邊、為什麼放得下。",
       },
     ],
   }),
@@ -39,87 +35,44 @@ function CardFivePage() {
   const c = card.contradiction;
   const checks = useMemo(() => evaluateCardFive(c), [c]);
 
-  // Prompt 變數插值
   const stuck = card.stuck_formula.ai_polished?.trim() ?? "";
-  const workaroundStr = useMemo(() => {
-    const w = card.workaround;
-    const dis = w.user_dissatisfactions.filter(Boolean).join("、") || "（尚未填寫）";
-    return `${w.tool_name || "（尚未填寫工具名）"} — ${w.why_still_stuck || "（尚未填寫卡點）"}（不滿：${dis}）`;
-  }, [card.workaround]);
-
-  const promptText = useMemo(
-    () => `有一個人遇到這個卡關：
-${stuck || "（請先到卡 3 填寫卡關公式）"}
-
-他現在用：
-${workaroundStr}
-
-從以下 6 種「兩件事不能同時要」中，挑出最符合他的 1 種：
-
-1. 想快但又想做得好
-2. 想客製化但又想規模化
-3. 想快但又想正確
-4. 想很專業但又想新手好上手
-5. 想自動化但又怕失控
-6. 想多嘗試但又怕出包
-
-請挑 1 個，並用主人翁的話說明這 2 件事在他身上具體是什麼。
-不要挑超過 1 個。如果你覺得 6 個都不像，回答「不像，請我退回卡片 3」。`,
-    [stuck, workaroundStr],
-  );
-
-  // Step 2 暫存（page-local，不寫進 PainCard schema）
-  const [aiRecommendation, setAiRecommendation] = useState("");
-  const [aiExplanation, setAiExplanation] = useState("");
-  const [aiResponse, setAiResponse] = useState("");
+  const stuckOrWorkaroundMissing = !stuck || !card.workaround.tool_name.trim();
 
   // 嘗試送出
   const [attempted, setAttempted] = useState(false);
   const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [failureCount, setFailureCount] = useState(0);
-  const [aiSaysNoneFit, setAiSaysNoneFit] = useState(false);
 
   // autosave
   const savedAgo = useSavedAgo(card.updated_at);
 
   useEffect(() => {
     setBlockedMessage(null);
-  }, [c.triz_id, c.side_a, c.side_b, c.sacrificed]);
+  }, [c.side_a, c.side_b, c.sacrificed, c.sacrificed_reason]);
 
-  const setTriz = (id: TrizId) => {
-    const o = getTrizById(id);
-    updateField("contradiction.triz_id", id);
-    updateField("contradiction.triz_label", o?.label ?? null);
-  };
   const setSideA = (v: string) => updateField("contradiction.side_a", v);
   const setSideB = (v: string) => updateField("contradiction.side_b", v);
   const setSacrificed = (v: "a" | "b") => updateField("contradiction.sacrificed", v);
+  const setSacrificedReason = (v: string) => updateField("contradiction.sacrificed_reason", v);
 
-  const trizPass = checks.trizSelected === "pass";
   const sidesPass = checks.sideAFilled === "pass" && checks.sideBFilled === "pass";
   const sacrificedPass = checks.sacrificedSelected === "pass";
-  const downstreamDisabled = !trizPass;
-
-  const stuckOrWorkaroundMissing = !stuck || !card.workaround.tool_name.trim();
+  const sacrificedReasonPass = checks.sacrificedReasonFilled === "pass";
 
   const handleAdvance = () => {
     setAttempted(true);
-    if (!trizPass) {
-      setBlockedMessage("請選 1 種矛盾。如果 6 個都不像，點下方「退回卡 3 重新拆」。");
-      setFailureCount((c) => c + 1);
-      return;
-    }
     if (checks.sideAFilled !== "pass" || checks.sideBFilled !== "pass") {
       setBlockedMessage(
-        "兩端要具體（不是「想要好」「想要快」這種抽象詞）。每端至少 10 字。看林老師範例。",
+        "兩端都要寫具體（不是「想要好」「想要快」這種抽象詞）。每端至少 10 字 — 想想他真正想要的是什麼。",
       );
-      setFailureCount((c) => c + 1);
       return;
     }
     if (!sacrificedPass) {
-      setBlockedMessage("請選通常會犧牲哪邊。");
-      setFailureCount((c) => c + 1);
+      setBlockedMessage("再想想他通常會放掉哪一邊。");
+      return;
+    }
+    if (!sacrificedReasonPass) {
+      setBlockedMessage("為什麼那一邊會被放掉？用一句話描述他實際遇到的情況（至少 10 字）。");
       return;
     }
 
@@ -133,43 +86,35 @@ ${workaroundStr}
     }
   };
 
-  const handleRetreat = () => {
-    navigate({ to: "/learn/worksheet/03" });
-  };
-
-  const showRetreat = aiSaysNoneFit || (failureCount >= 3 && !trizPass);
-
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-8">
         {/* card_intro */}
         <header>
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary">
-              卡 5 / 9
-            </p>
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md border-2 border-verified/50 bg-verified/5 px-2 py-1 text-[11px] font-bold text-verified"
-              aria-label="這張卡 AI 介入：TRIZ 提案"
-            >
-              <Sparkles className="h-3 w-3" aria-hidden />
-              AI 介入：✅ TRIZ 提案
-            </span>
-          </div>
+          <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary mb-3">
+            卡 5 / 9
+          </p>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            找出「兩件事不能同時要」
+            兩件他都想要，可是只能選一個
           </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <GitMerge className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
-              <span className="font-semibold">為什麼這張卡關鍵：</span>
-              很多痛點背後其實是「他想要兩件事，但只能選一個」。看清這個矛盾，後面才知道訪談要怎麼問、產品要怎麼切。
+              <span className="font-semibold">為什麼要看這個：</span>
+              很多痛點底下藏的是「他想要兩件事，但只能選一個」。看清這個矛盾，後面才知道訪談該怎麼問、解法該往哪邊切。
             </div>
           </div>
 
-          <div className="mt-5">
-            <SixContradictionsPreview />
+          {/* Socratic prompt — 不再列 6 種分類 */}
+          <div className="mt-5 rounded-lg border border-border bg-surface px-4 sm:px-5 py-4">
+            <p className="text-[12px] font-semibold tracking-wide uppercase text-text-secondary mb-2">
+              先在腦中問自己一遍
+            </p>
+            <p className="text-[15px] sm:text-[15.5px] leading-[1.7] text-text-primary">
+              「他想要 ___，但又同時想要 ___。如果他能放掉其中一邊，他不會卡在這裡——所以他
+              <span className="font-semibold">放不下哪邊</span>？為什麼？」
+            </p>
           </div>
         </header>
 
@@ -177,148 +122,63 @@ ${workaroundStr}
           <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary">
             <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
             <span>
-              卡 3「卡關公式」或卡 4「現有解法」尚未填寫，下方 prompt 變數會缺。建議先補完。
+              卡 3「卡關公式」或卡 4「現有解法」尚未填寫，這張卡的描述會缺脈絡。建議先補完。
             </span>
           </div>
         )}
 
-        {/* Step 1 */}
-        <section className="space-y-4">
-          <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 1：請 AI 從 6 種挑 1 個最像的
-            </h2>
-            <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              複製下方 prompt → 貼到外部 AI → 回來填 Step 2。
-            </p>
-          </div>
-
-          <AIPromptCopyBlock
-            prompt={promptText}
-            response={aiResponse}
-            onResponseChange={setAiResponse}
-            title="🤖 AI 從 6 種挑 1 個"
-          />
-          <p className="text-[12px] text-text-muted">
-            Prompt 來源：worksheet 卡片 5「🤖 AI 幫你提案」段落（逐字引用）
-          </p>
-        </section>
-
-        {/* Step 2 */}
-        <section className="space-y-4">
-          <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 2：AI 推薦的是哪個？（記下來）
-            </h2>
-            <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              這一格只是給你自己對照用，<span className="font-semibold">不會替你做選擇</span>。Step
-              3 才是正式選擇。
-            </p>
-          </div>
-
-          <TextField
-            id="ai_recommendation"
-            label="AI 推薦的矛盾類型"
-            helper="把 AI 推薦的編號（1-6）填這裡。如果 AI 回「不像」，勾下方核取方塊。"
-            placeholder="2"
-            value={aiRecommendation}
-            onChange={setAiRecommendation}
-          />
+        {/* Section A — 他想要的第一件事 */}
+        <section className="space-y-3">
+          <h2 className="text-[18px] font-bold text-text-primary">A：他想要這個</h2>
           <TextareaField
-            id="ai_explanation"
-            label="AI 用主人翁的話說明的版本"
-            helper="貼 AI 的解釋（之後抄到 Step 3 的 A/B 兩端參考）"
-            placeholder="A 端：家長要看見「我的孩子」… / B 端：老師一週只有 2-3 小時…"
-            value={aiExplanation}
-            onChange={setAiExplanation}
-            rows={4}
-            maxLength={800}
+            id="side_a"
+            label="他想要 A："
+            helper="用主人翁自己的話寫具體（≥ 10 字）— 不是抽象詞如「想要好」。"
+            placeholder="家長要看見「我的孩子」被個別關照（具體事件、語氣有溫度）"
+            value={c.side_a}
+            onChange={setSideA}
+            required
+            rows={3}
+            maxLength={300}
+            error={
+              attempted && checks.sideAFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
+            }
+            highlight={attempted && checks.sideAFilled !== "pass"}
           />
-
-          <label className="inline-flex items-start gap-2 text-[13.5px] text-text-primary cursor-pointer">
-            <input
-              type="checkbox"
-              checked={aiSaysNoneFit}
-              onChange={(e) => setAiSaysNoneFit(e.target.checked)}
-              className="mt-0.5 h-4 w-4 accent-secondary"
-            />
-            <span>AI 回「6 個都不像，請退回卡 3」— 顯示退回提示</span>
-          </label>
         </section>
 
-        {/* Step 3 */}
+        {/* Section B — 他同時想要的第二件事 */}
+        <section className="space-y-3">
+          <h2 className="text-[18px] font-bold text-text-primary">B：他同時又想要這個</h2>
+          <TextareaField
+            id="side_b"
+            label="他同時又想要 B："
+            helper="跟 A 對立的另一邊（≥ 10 字）。寫到這兩件事「同時要」會撞在一起。"
+            placeholder="老師一週只有 2-3 小時可寫 30 則（每則 < 6 分鐘）"
+            value={c.side_b}
+            onChange={setSideB}
+            required
+            rows={3}
+            maxLength={300}
+            error={
+              attempted && checks.sideBFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
+            }
+            highlight={attempted && checks.sideBFilled !== "pass"}
+          />
+        </section>
+
+        {/* Section C — 通常犧牲哪邊 + 為什麼 */}
         <section className="space-y-5">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 3：確認選擇 + 填 A/B 兩端
-            </h2>
+            <h2 className="text-[18px] font-bold text-text-primary">C：通常會犧牲哪邊？為什麼？</h2>
+            <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
+              真實情況中，這 2 件事撞在一起時，他通常先放掉哪邊？
+            </p>
           </div>
 
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-md border-2 border-caution/40 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary"
-          >
-            <AlertTriangle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
-            <span>
-              <span className="font-bold">單選</span>（不可複選）—
-              複選代表你還沒拆乾淨，會被擋過關。如果你覺得超過一個，退回卡 3 再聊。
-            </span>
-          </div>
-
-          <TrizRadioSelector
-            value={c.triz_id}
-            onChange={setTriz}
-            highlight={attempted && !trizPass}
-          />
-
-          <div
-            className={cn(
-              "grid sm:grid-cols-2 gap-5 transition-opacity",
-              downstreamDisabled && "opacity-50 pointer-events-none select-none",
-            )}
-            aria-disabled={downstreamDisabled}
-          >
-            <TextareaField
-              id="side_a"
-              label="A 端（他想要這個）"
-              helper="選了矛盾後，A 端是什麼？用主人翁的話寫具體（≥ 10 字）"
-              placeholder="家長要看見「我的孩子」被個別關照（具體事件、語氣有溫度）"
-              value={c.side_a}
-              onChange={setSideA}
-              required
-              rows={3}
-              maxLength={300}
-              error={
-                attempted && checks.sideAFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
-              }
-              highlight={attempted && checks.sideAFilled !== "pass"}
-            />
-            <TextareaField
-              id="side_b"
-              label="B 端（他也想要這個）"
-              helper="B 端是什麼？跟 A 端對立的另一邊（≥ 10 字）"
-              placeholder="老師一週只有 2-3 小時可寫 30 則（每則 < 6 分鐘）"
-              value={c.side_b}
-              onChange={setSideB}
-              required
-              rows={3}
-              maxLength={300}
-              error={
-                attempted && checks.sideBFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
-              }
-              highlight={attempted && checks.sideBFilled !== "pass"}
-            />
-          </div>
-
-          <fieldset
-            className={cn(
-              "space-y-2 transition-opacity",
-              downstreamDisabled && "opacity-50 pointer-events-none select-none",
-            )}
-            aria-disabled={downstreamDisabled}
-          >
-            <legend className="text-[18px] font-semibold text-text-primary">
-              如果只能選一邊，他通常會犧牲哪邊？
+          <fieldset className="space-y-2">
+            <legend className="text-[15px] font-semibold text-text-primary">
+              通常會犧牲：
               <span aria-hidden className="text-text-muted ml-1">
                 *
               </span>
@@ -356,24 +216,40 @@ ${workaroundStr}
               <p className="text-[12.5px] text-destructive">請選通常會犧牲哪邊</p>
             )}
           </fieldset>
+
+          <TextareaField
+            id="sacrificed_reason"
+            label="為什麼那邊會被犧牲？用一句話寫真實情況。"
+            helper="不用講大道理，講他實際遇到時會發生什麼事（≥ 10 字）。"
+            placeholder="時間到了就用罐頭訊息頂著，家長一看就知道沒在用心，但老師也沒辦法。"
+            value={c.sacrificed_reason}
+            onChange={setSacrificedReason}
+            required
+            rows={3}
+            maxLength={400}
+            error={
+              attempted && checks.sacrificedReasonFilled !== "pass"
+                ? "請用一句話寫清楚（至少 10 字）"
+                : undefined
+            }
+            highlight={attempted && checks.sacrificedReasonFilled !== "pass"}
+          />
         </section>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
 
         <ExampleReferenceCard5 />
       </main>
 
       <CardFiveExitGateFooter
-        trizPass={trizPass}
         sidesPass={sidesPass}
         sacrificedPass={sacrificedPass}
+        sacrificedReasonPass={sacrificedReasonPass}
         submitting={submitting}
         blockedMessage={blockedMessage}
-        showRetreat={showRetreat}
         onAdvance={handleAdvance}
-        onRetreat={handleRetreat}
       />
     </div>
   );

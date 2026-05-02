@@ -5,19 +5,22 @@ import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-canvas-base px-4 bg-spotlight-center">
+      <div className="relative max-w-md text-center">
+        <p className="eyebrow mb-6">● ERROR / NOT_FOUND</p>
+        <h1 className="font-mono text-7xl font-bold tracking-tight text-text-primary tabular-nums">
+          404
+        </h1>
+        <h2 className="mt-6 text-xl font-semibold text-text-primary">這條路不通</h2>
+        <p className="mt-3 text-sm text-text-secondary">
+          你要找的頁面不在這裡 — 可能拼錯了，或這頁已經被收起來了。
         </p>
-        <div className="mt-6">
+        <div className="mt-10 flex justify-center gap-3">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-text-primary px-5 text-sm font-medium text-text-inverse transition-colors hover:bg-text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric/40"
           >
-            Go home
+            回首頁
           </Link>
         </div>
       </div>
@@ -34,13 +37,13 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "把混亂的痛點訊號整理成結構化的問題格式 — 9 張卡片帶你從「我覺得有問題」走到「我知道問題是什麼」。",
+          "把一團模糊的抱怨整理成你說得清楚的問題 — 9 張卡片，陪你從「我覺得有問題」走到「我知道問題在哪」。",
       },
       { name: "author", content: "PainMap" },
       { property: "og:title", content: "PainMap 題眼 · 痛點填空簿" },
       {
         property: "og:description",
-        content: "結構化痛點引擎，幫助有能力的人發現並驗證值得解決的問題。",
+        content: "9 張卡片，陪你親手寫出一張屬於自己的痛點身份證。",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -74,9 +77,18 @@ export const Route = createRootRoute({
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap",
+        href: "https://cdn.jsdelivr.net/npm/geist@1.5.1/dist/fonts/geist-sans/style.css",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://cdn.jsdelivr.net/npm/geist@1.5.1/dist/fonts/geist-mono/style.css",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap",
       },
       {
         rel: "stylesheet",
@@ -89,13 +101,34 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundComponent,
 });
 
+/**
+ * Inline FOUC-prevention script.
+ *
+ * Runs synchronously before any React hydration so the correct theme class
+ * (light / dark) is on <html> by the time the first paint happens. This
+ * avoids the dark→light flash for users who chose 'light' on a prior visit.
+ *
+ * Storage key & resolution must match src/hooks/useTheme.ts.
+ */
+const themeBootstrap = `(function(){try{
+var k='painmap.theme';
+var stored=localStorage.getItem(k);
+var pref=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+var theme=(stored==='light'||stored==='dark')?stored:pref;
+var html=document.documentElement;
+html.classList.remove('light','dark');
+html.classList.add(theme);
+html.style.colorScheme=theme;
+}catch(e){document.documentElement.classList.add('dark');}})();`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="zh-Hant" className="dark">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-canvas-base text-text-primary antialiased">
         {children}
         <Scripts />
       </body>

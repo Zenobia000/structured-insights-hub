@@ -1,9 +1,12 @@
 /**
- * PainCard — 痛點身份證 v1.0
+ * PainCard — 痛點身份證 v2.0 (蘇格拉底大一統)
  * 對應 docs/workshop/painpoint_beginner_worksheet.md 的 9 張卡片 + 1 張結果頁。
  *
  * 設計原則：
  * - 9 張卡片 = 同一個 PainCard 物件的 9 個欄位（不是 9 個獨立資料）
+ * - 不打分數、不分模式（無 teaching/production 雙軌）
+ * - 不套分類學標籤（卡 5 無 TRIZ）
+ * - 卡 9 的判斷以使用者書寫為唯一輸出
  * - MVP 階段全部存 LocalStorage，無雲端同步
  * - 此檔為 Single Source of Truth，page spec / API spec 必須與此一致
  */
@@ -15,19 +18,7 @@ export type PainCardStatus =
   | "pending_interview"
   | "archived_fake";
 
-export type TrizId = 1 | 2 | 3 | 4 | 5 | 6;
-
-export type TrizLabel =
-  | "想快但又想做得好"
-  | "想客製化但又想規模化"
-  | "想快但又想正確"
-  | "想很專業但又想新手好上手"
-  | "想自動化但又怕失控"
-  | "想多嘗試但又怕出包";
-
 export type AiTool = "chatgpt_dr" | "claude" | "perplexity" | "gemini";
-
-export type Score = 1 | 2 | 3 | 4 | 5;
 
 export type Judgment = "true_pain" | "fake_pain" | "pending_interview";
 
@@ -38,7 +29,7 @@ export type CurrentStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export type PainCard = {
   // === Meta ===
   id: string;
-  schema_version: "1.0";
+  schema_version: "2.0";
   status: PainCardStatus;
   created_at: string;
   updated_at: string;
@@ -97,13 +88,14 @@ export type PainCard = {
     user_dissatisfactions: string[];
   };
 
-  // === Card 5: 兩件事不能同時要 (TRIZ) ===
+  // === Card 5: 兩件事不能同時要 ===
+  // 純粹由使用者用自己的話陳述取捨。不套分類學標籤，不對矛盾分類。
   contradiction: {
-    triz_id: TrizId | null;
-    triz_label: TrizLabel | null;
     side_a: string;
     side_b: string;
     sacrificed: "a" | "b" | null;
+    /** 為什麼那邊會被犧牲（一句話說明取捨真實存在） */
+    sacrificed_reason: string;
   };
 
   // === Card 6: AI 證據蒐集 ===
@@ -160,17 +152,9 @@ export type PainCard = {
     ai_simulated_response: string | null;
   };
 
-  // === Card 9: Pain Quality Score + 真假判斷 ===
-  // 注意：scores 僅教學模式內部使用，正式輸出禁止顯示
+  // === Card 9: 真假判斷 ===
+  // 蘇格拉底式：使用者的書寫本身就是判斷。不打分數、不分模式。
   verdict: {
-    scores: {
-      people_specificity: Score | null;
-      frequency: Score | null;
-      intensity: Score | null;
-      workaround_dissatisfaction: Score | null;
-      evidence_credibility: Score | null;
-    };
-    total_score: number | null;
     judgment: Judgment | null;
     reason_100w: string;
     most_confident_evidence: string;
@@ -186,7 +170,7 @@ export type PainCard = {
   };
 };
 
-export const SCHEMA_VERSION = "1.0" as const;
+export const SCHEMA_VERSION = "2.0" as const;
 
 export const STEP_LABELS: Record<CurrentStep, string> = {
   1: "抱怨",

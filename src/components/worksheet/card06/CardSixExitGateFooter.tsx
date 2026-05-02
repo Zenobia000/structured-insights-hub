@@ -5,6 +5,7 @@
 import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   answersAllPassed: boolean;
@@ -38,13 +39,29 @@ export function CardSixExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem
-            passed={answersAllPassed}
-            label={`AI 回了 8 題（已填 ${answersPassedCount} / 8）`}
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="AI 給你的 8 個答案裡，哪一個讓你最意外？為什麼意外？"
+            state={answersAllPassed ? "ok" : answersPassedCount > 0 ? "thinking" : "pending"}
+            hint={
+              !answersAllPassed
+                ? `8 題中已填 ${answersPassedCount} 題（每題需達最少字數）。`
+                : undefined
+            }
           />
-          <ConditionItem passed={noSolutionPassed} label="AI 沒有推銷解法" />
-          <ConditionItem passed={rawResponseLong} label="raw_response 已完整保存" />
+          <ReflectionHint
+            question="AI 是在描述這群人，還是在試圖賣你一個解法？"
+            state={noSolutionPassed ? "ok" : "thinking"}
+            hint={
+              !noSolutionPassed
+                ? "AI 回覆出現推銷詞 — 用補強 prompt 重跑、或把推銷段落手動覆寫掉。"
+                : undefined
+            }
+          />
+          <ReflectionHint
+            question="原始回覆都留下來了嗎？以後你要回看的是 AI 原話，不是你的摘要。"
+            state={rawResponseLong ? "ok" : "pending"}
+          />
         </ul>
 
         {blockedMessage && (
@@ -62,7 +79,7 @@ export function CardSixExitGateFooter({
             to="/learn/worksheet/05"
             className="text-[13px] text-text-secondary hover:text-text-primary underline-offset-2 hover:underline self-center sm:self-auto"
           >
-            ← 退回卡 5 補資訊
+            ← 回去把卡 5 想清楚再來
           </Link>
 
           <div className="relative group">
@@ -79,7 +96,7 @@ export function CardSixExitGateFooter({
                   : "bg-muted text-text-muted cursor-not-allowed",
               )}
             >
-              {submitting ? "儲存中…" : "進入卡 7：自己先猜 + 讀 AI"}
+              {submitting ? "儲存中…" : "繼續到卡 7：自己先猜 + 讀 AI"}
               <ArrowRight className="h-4 w-4" />
             </button>
             {tooltip && !canAdvance && (
@@ -94,24 +111,5 @@ export function CardSixExitGateFooter({
         </div>
       </div>
     </div>
-  );
-}
-
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
-        )}
-      >
-        ✓
-      </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
   );
 }

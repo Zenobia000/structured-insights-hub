@@ -48,7 +48,7 @@ export function AntiFakeCheckPanelCard2({
   return (
     <aside
       aria-labelledby="anti-fake-title-card2"
-      className="rounded-xl border border-border bg-surface p-5 shadow-[0_1px_3px_rgba(30,58,95,0.06)]"
+      className="rounded-xl border border-border bg-surface p-5"
     >
       <h2
         id="anti-fake-title-card2"

@@ -107,8 +107,8 @@ function CardThreePage() {
   const aiPolishedPass = checks.aiPolishedFilled && checks.aiPolishedLongEnough;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
         {/* card intro */}
         <header className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">

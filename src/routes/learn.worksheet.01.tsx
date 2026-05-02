@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Info, ShieldOff } from "lucide-react";
 
 import { AntiFakeCheckPanel } from "@/components/worksheet/card01/AntiFakeCheckPanel";
 import { CardOneExitGateFooter } from "@/components/worksheet/card01/CardOneExitGateFooter";
 import { ExampleReference } from "@/components/worksheet/card01/ExampleReference";
 import { TextField, TextareaField } from "@/components/worksheet/card01/FormFields";
+import { WorksheetCardHeader } from "@/components/worksheet/WorksheetCardHeader";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import {
   CARD_ONE_ANALYSIS_WORDS,
@@ -115,43 +115,29 @@ function CardOnePage() {
       : null;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 pb-32">
-        {/* Card intro */}
-        <header className="mb-8">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary">
-              卡 1 / 9
-            </p>
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/5 px-2 py-1 text-[11px] font-semibold text-destructive"
-              aria-label="這張卡禁止使用 AI"
-            >
-              <ShieldOff className="h-3 w-3" aria-hidden />
-              AI 介入：禁用
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            把那句話原原本本寫下來
-          </h1>
-
-          <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
-            <Info className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" aria-hidden />
-            <div className="text-[15px] leading-[1.6] text-text-primary">
+    <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
+        <WorksheetCardHeader
+          cardNumber={1}
+          aiStatus="disabled"
+          title="把那句話原原本本寫下來"
+          rule={
+            <>
               <span className="font-semibold">規則：</span>
               一字不改寫下你聽到的原話 — 不美化、不解釋、不分析。一字不改，是對說那句話的人的尊重。
-            </div>
-          </div>
-
-          <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            你應該有聽過某人說：「欸，要是有人做一個 ___ 就好了！」這張卡只請你做一件事：
-            <span className="font-semibold text-text-primary">忠實複述</span>。分析的事，留給後面 8
-            張卡。
-          </p>
-        </header>
+            </>
+          }
+          intro={
+            <>
+              你應該有聽過某人說：「欸，要是有人做一個 ___ 就好了！」這張卡只請你做一件事：
+              <span className="font-semibold text-text-primary">忠實複述</span>。分析的事，留給後面 8
+              張卡。
+            </>
+          }
+        />
 
         {/* 70/30 layout — Desktop right sticky panel, Mobile stacked */}
-        <div className="grid lg:grid-cols-[1fr_320px] gap-8 lg:gap-10 items-start">
+        <div className="grid lg:grid-cols-[1fr_340px] gap-10 lg:gap-14 items-start">
           {/* Form */}
           <section aria-labelledby="form-title" className="space-y-6">
             <h2 id="form-title" className="sr-only">
@@ -225,8 +211,21 @@ function CardOnePage() {
             />
 
             {/* Autosave indicator */}
-            <p className="text-[12px] text-text-muted" aria-live="polite">
-              {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
+            <p
+              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.06em] text-text-tertiary"
+              aria-live="polite"
+            >
+              {hydrated && savedAgo ? (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+                  Saved locally · {savedAgo}
+                </>
+              ) : (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-text-tertiary" />
+                  Not started yet
+                </>
+              )}
             </p>
 
             {/* Example reference (collapsed by default) */}
@@ -239,16 +238,23 @@ function CardOnePage() {
           </section>
 
           {/* Right sticky anti-fake panel — Desktop only */}
-          <aside className="hidden lg:block lg:sticky lg:top-6">
+          <aside className="hidden lg:block lg:sticky lg:top-24">
             <AntiFakeCheckPanel checks={checks} />
-            <p className="mt-3 text-[11px] leading-[1.5] text-text-muted">
-              偵測到的分析詞：
-              {CARD_ONE_ANALYSIS_WORDS.map((w) => (
-                <code key={w} className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">
-                  {w}
-                </code>
-              ))}
-            </p>
+            <div className="mt-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary mb-2">
+                Detected analysis words
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {CARD_ONE_ANALYSIS_WORDS.map((w) => (
+                  <code
+                    key={w}
+                    className="inline-block font-mono text-[11px] px-1.5 py-0.5 rounded border border-border-hairline bg-canvas-raised text-text-tertiary"
+                  >
+                    {w}
+                  </code>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </main>

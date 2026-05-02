@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Brain, AlertCircle } from "lucide-react";
+import { Sparkles, Brain, AlertCircle, RotateCcw } from "lucide-react";
 
 import { Textarea } from "@/components/ui/textarea";
 import { usePainCardStore } from "@/store/painCard";
@@ -61,6 +61,18 @@ function CardSevenPage() {
   const [unlocked, setUnlocked] = useState<boolean>(
     Boolean(sg.phase_a_completed_at),
   );
+
+  // hydrate 完成後，若偵測到任何已存在的 Card 7 草稿，顯示「已恢復」橫幅
+  const hasDraft = useMemo(() => {
+    const anyGuess = Object.values(sg.guesses).some((v) => v.trim().length > 0);
+    const anyCheckpoint = Object.values(sg.ai_checkpoints_passed).some(Boolean);
+    const anyDelta = Object.values(sg.deltas).some((v) => v.trim().length > 0);
+    const anyTable = sg.pain_judgment_table.trim().length > 0;
+    return anyGuess || anyCheckpoint || anyDelta || anyTable;
+  }, [sg]);
+  const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
+  const showDraftBanner = hydrated && hasDraft && !draftBannerDismissed;
+
 
   // 同步 store 變化（當 reset / 退回時清空）
   useEffect(() => {
@@ -192,6 +204,22 @@ function CardSevenPage() {
     [sg.ai_checkpoints_passed],
   );
 
+  if (!hydrated) {
+    return (
+      <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
+        <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
+          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+          <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
+          <div className="h-32 w-full bg-muted rounded animate-pulse" />
+          <div className="h-64 w-full bg-muted rounded animate-pulse" />
+          <p className="text-[12px] text-text-muted text-center">
+            正在從瀏覽器恢復草稿…
+          </p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
@@ -237,6 +265,29 @@ function CardSevenPage() {
             <span>
               卡 6 還沒貼上 AI 回覆。Phase B 解鎖後仍可繼續，但 AI 回覆區會空白。建議先回卡 6 補完。
             </span>
+          </div>
+        )}
+
+        {showDraftBanner && (
+          <div
+            role="status"
+            className="flex items-start gap-2.5 rounded-md border-2 border-verified/50 bg-verified/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary"
+          >
+            <RotateCcw className="h-4 w-4 text-verified shrink-0 mt-0.5" aria-hidden />
+            <div className="flex-1">
+              <p className="font-semibold">已從瀏覽器恢復你的草稿</p>
+              <p className="text-text-secondary mt-0.5">
+                Phase A 猜測、checkpoint 勾選、痛點判斷表與 3 個差異都還在。繼續填即可。
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDraftBannerDismissed(true)}
+              className="text-[12px] text-text-muted hover:text-text-primary px-2 py-1 -my-1"
+              aria-label="關閉恢復提示"
+            >
+              知道了
+            </button>
           </div>
         )}
 

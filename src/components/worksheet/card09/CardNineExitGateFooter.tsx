@@ -118,7 +118,7 @@ export function CardNineExitGateFooter({
 
   return (
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2.5">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 space-y-2 sm:space-y-2.5">
         {/* 摺疊 header */}
         <div className="flex items-center gap-2">
           <button
@@ -169,7 +169,7 @@ export function CardNineExitGateFooter({
             role="region"
             aria-labelledby="card9-reflection-toggle"
             tabIndex={-1}
-            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
+            className="min-h-[5rem] max-h-[min(38dvh,18rem)] sm:max-h-[min(44dvh,24rem)] overflow-y-auto overscroll-contain pr-1 -mr-1 space-y-2 sm:space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
           >
             <ul className="space-y-1.5">
               {hints.map((h, i) => (

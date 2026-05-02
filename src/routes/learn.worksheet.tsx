@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 
 import { CardProgressStepper } from "@/components/worksheet/CardProgressStepper";
@@ -40,7 +41,13 @@ function formatSavedTime(iso: string | undefined | null): string {
 }
 
 function Header() {
-  const savedTime = usePainCardStore((s) => formatSavedTime(s.card.updated_at));
+  const updatedAt = usePainCardStore((s) => s.card.updated_at);
+  // 時間以使用者本地時區格式化 — server render 用 server tz 會與 client 不一致，
+  // 故 mount 後才設值，避免 hydration mismatch。
+  const [savedTime, setSavedTime] = useState("");
+  useEffect(() => {
+    setSavedTime(formatSavedTime(updatedAt));
+  }, [updatedAt]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border-hairline bg-canvas-base/80 backdrop-blur-md">

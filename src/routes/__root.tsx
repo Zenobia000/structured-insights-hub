@@ -75,6 +75,12 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      // Inline SVG favicon — 避免 favicon.ico 404，用品牌 ◆ glyph
+      {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2300d4ff'/%3E%3Ctext x='50%25' y='52%25' text-anchor='middle' dominant-baseline='middle' font-size='40' font-weight='bold' fill='%23000'%3E%E2%97%86%3C/text%3E%3C/svg%3E",
+      },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
@@ -122,8 +128,11 @@ html.style.colorScheme=theme;
 }catch(e){document.documentElement.classList.add('dark');}})();`;
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  // suppressHydrationWarning：themeBootstrap inline script 會在 React hydrate 前
+  // 動態調整 <html> 的 className / colorScheme，server render 與 client 看到的
+  // attribute 必然不同（這是設計意圖，不是 bug），告訴 React 別警告。
   return (
-    <html lang="zh-Hant" className="dark">
+    <html lang="zh-Hant" className="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <HeadContent />

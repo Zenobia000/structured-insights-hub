@@ -33,9 +33,10 @@ export function InterviewGuidePreview({ content, card }: Props) {
   async function handleExport() {
     try {
       await exportInterviewGuide(card);
-      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
+      toast.success("已開啟列印對話框 — 選擇「另存為 PDF」即可");
     } catch (err) {
-      toast.error("匯出失敗，請改用複製");
+      const msg = err instanceof Error ? err.message : "匯出失敗，請改用複製";
+      toast.error(msg, { duration: 8000 });
       console.error(err);
     }
   }

@@ -315,9 +315,9 @@ function CardSevenPage() {
                 AI 第一輪回覆（從卡 6 帶入）
               </h3>
               {rawAi ? (
-                <pre className="font-mono text-[12.5px] leading-[1.6] bg-muted-bg p-4 max-h-96 overflow-auto whitespace-pre-wrap text-text-primary rounded-md border border-border">
-                  {rawAi}
-                </pre>
+                <div className="bg-muted-bg p-4 max-h-96 overflow-auto rounded-md border border-border">
+                  <MarkdownView>{rawAi}</MarkdownView>
+                </div>
               ) : (
                 <p className="text-[13px] text-text-secondary italic">（卡 6 尚未貼上 AI 回覆）</p>
               )}

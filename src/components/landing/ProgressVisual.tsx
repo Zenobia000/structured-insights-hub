@@ -1,53 +1,52 @@
 /**
- * ProgressVisual — 9 個圓點水平排列 (Grok dark theme)。
+ * ProgressVisual — Hero 右側 flow preview (Grok dark theme)。
  *
- * 嚴格規定：
- * - 不顯示百分比、不顯示分數、不是進度條
- * - 純路徑視覺：圓點 + 序號（時間總承諾交給 Hero 文案 90 / 30 分鐘）
- * - 圓點呼吸動畫（純視覺，無 score 含意）
- * - aria 給螢幕閱讀器列出每一步名稱
+ * 設計意圖：
+ * - 不再是 9 點 stepper（純裝飾、對首次造訪者沒意義）
+ * - 用 3 段 micro card 行銷型回答「這 9 張卡到底要我做什麼」
+ * - 與下方 ThreeStepTeachingSection 形成「縮影 → 詳述」遞進關係
+ * - 標題與卡片範圍直接借用 ThreeStep 的單一真相源
  */
-import { cn } from "@/lib/utils";
-import { STEP_TITLES, type CurrentStep } from "@/types/painCard";
+import { Ear, Search, Scale } from "lucide-react";
+
+type FlowStep = {
+  index: string;
+  cards: string;
+  title: string;
+  Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+};
+
+const FLOW_STEPS: FlowStep[] = [
+  { index: "01", cards: "卡 1-2", title: "先安靜地聽", Icon: Ear },
+  { index: "02", cards: "卡 3-7", title: "再請 AI 一起對證據", Icon: Search },
+  { index: "03", cards: "卡 8-9", title: "最後你自己寫下判斷", Icon: Scale },
+];
 
 export function ProgressVisual() {
-  const steps = Array.from({ length: 9 }, (_, i) => (i + 1) as CurrentStep);
-
   return (
-    <div role="list" aria-label="9 個步驟概覽，從卡 1 抱怨原句到卡 9 真假判斷" className="w-full">
-      <ol className="flex items-start justify-between gap-1">
-        {steps.map((n, idx) => (
-          <li
-            key={n}
-            role="listitem"
-            aria-label={`第 ${n} 步：${STEP_TITLES[n]}`}
-            className="group flex flex-1 flex-col items-center text-center min-w-0"
+    <ol role="list" aria-label="3 段流程概覽：先聽、再對證據、最後自己判斷" className="space-y-3">
+      {FLOW_STEPS.map(({ index, cards, title, Icon }, idx) => (
+        <li
+          key={index}
+          className="group flex items-center gap-4 rounded-md border border-border-hairline bg-canvas-base/60 px-4 py-3.5 transition-colors hover:bg-surface-hover hover:border-border-default animate-grok-fade-up"
+          style={{ animationDelay: `${400 + idx * 120}ms` }}
+        >
+          <span
+            aria-hidden
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-electric-subtle text-accent-electric ring-1 ring-accent-electric/20 transition-all group-hover:ring-accent-electric/40"
           >
-            <div className="relative flex h-5 items-center justify-center w-full">
-              {idx > 0 && (
-                <span
-                  aria-hidden
-                  className="absolute right-1/2 left-0 top-1/2 -translate-y-1/2 h-px bg-border-hairline"
-                />
-              )}
-              <span
-                aria-hidden
-                className={cn(
-                  "relative z-10 flex items-center justify-center",
-                  "h-2.5 w-2.5 rounded-full",
-                  "bg-accent-electric/70 ring-[3px] ring-accent-electric/15",
-                  "transition-all duration-300 group-hover:bg-accent-electric group-hover:ring-accent-electric/25",
-                  "animate-pulse",
-                )}
-                style={{ animationDelay: `${idx * 120}ms`, animationDuration: "2.4s" }}
-              />
-            </div>
-            <span className="mt-3 font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {String(n).padStart(2, "0")}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </div>
+            <Icon className="h-5 w-5" strokeWidth={1.5} />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+              {index} · {cards}
+            </p>
+            <p className="mt-0.5 text-[14.5px] font-semibold text-text-primary leading-tight">
+              {title}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }

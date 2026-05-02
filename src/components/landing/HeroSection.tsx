@@ -99,12 +99,12 @@ export function HeroSection() {
                 aria-hidden
                 className="absolute inset-0 -z-10 rounded-lg bg-dot-dense opacity-40"
               />
-              <Eyebrow variant="numbered" index={9} className="mb-4">
-                Steps overview
+              <Eyebrow variant="dotted" className="mb-4">
+                Flow preview
               </Eyebrow>
-              <p className="text-base font-semibold text-text-primary mb-1">你會走過的 9 步路</p>
-              <p className="text-[13px] leading-[1.6] text-text-tertiary mb-7">
-                每張卡有屬於它自己的產出，走累了隨時停下來，下次回來繼續。
+              <p className="text-base font-semibold text-text-primary mb-1">9 張卡，3 個階段</p>
+              <p className="text-[13px] leading-[1.6] text-text-tertiary mb-6">
+                從聽見一句抱怨，到寫下你自己的判斷 — 陪你走完一次。
               </p>
               <ProgressVisual />
             </div>

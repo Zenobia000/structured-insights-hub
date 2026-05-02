@@ -404,6 +404,17 @@ function CardEightPage() {
           onGuideGenerated={markGuideGenerated}
         />
 
+        <ReflectionInlineHint
+          title="反思問題"
+          expandEventName="painmap:card8:expand-reflection"
+          items={[
+            { label: "今晚就能傳訪談題給某個人", done: targetsEval.anyContact && questionsEval.allFilled },
+            { label: "問「上次怎麼做」而非引導用你的解法", done: questionsEval.allFilled },
+            { label: "訪談時不要做的事我清楚了", done: tablePassed },
+            { label: "我已經有能訪談的人", done: targetsEval.anyContact },
+          ]}
+        />
+
         <p className="text-[12px] text-text-muted" aria-live="polite">
           {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>

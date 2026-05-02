@@ -70,13 +70,20 @@ export function HeroSection() {
                 從第一張卡開始整理痛點
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
-              <Link
-                to="/"
-                hash="example-paincard"
+              <a
+                href="#example-paincard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("example-paincard")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  // 設定 hash 觸發 modal 自動開啟（Section 內 useEffect 監聽）
+                  window.location.hash = "example-paincard-open";
+                }}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border-default bg-transparent px-6 text-[15px] font-medium text-text-primary transition-colors duration-200 hover:bg-surface-hover hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
               >
                 查看範例 ID card
-              </Link>
+              </a>
             </div>
 
             <p

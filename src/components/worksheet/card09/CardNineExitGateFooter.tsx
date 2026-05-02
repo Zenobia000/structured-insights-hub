@@ -52,34 +52,64 @@ export function CardNineExitGateFooter({
     if (blockedMessage) setExpanded(true);
   }, [blockedMessage]);
 
+  // 找第一個沒想清楚的反思題,跳到對應欄位
+  function jumpToFirstUnmet() {
+    // 優先順序: 判斷 → 書面理由 → 下一步
+    const targetId = !judgmentChosen
+      ? "j-true_pain"
+      : !reasonPassed
+        ? "reason-100w"
+        : !nextActionChosen
+          ? "na-interview"
+          : null;
+    if (!targetId) return;
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => (el as HTMLElement).focus({ preventScroll: true }), 350);
+    }
+  }
+
   return (
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2.5">
         {/* 摺疊 header */}
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          aria-controls="card9-reflection-panel"
-          className="flex w-full items-center justify-between gap-3 rounded-md px-1 py-1 text-left transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
-        >
-          <div className="flex items-center gap-2 min-w-0">
-            <h3 className="text-sm font-semibold text-text-primary shrink-0">想想看</h3>
-            {allDone ? (
-              <span className="text-[12px] text-verified inline-flex items-center gap-1">
-                <Check className="h-3 w-3" /> 三個都想清楚了
-              </span>
-            ) : (
-              <span className="text-[12px] text-text-secondary truncate">
-                還有 <span className="font-semibold text-secondary">{remaining}</span> 件沒想清楚
-                {!expanded && <span className="text-text-muted">,點開看細節</span>}
-              </span>
-            )}
-          </div>
-          <span className="shrink-0 text-text-muted">
-            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-controls="card9-reflection-panel"
+            className="flex flex-1 items-center justify-between gap-3 rounded-md px-1 py-1 text-left transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-sm font-semibold text-text-primary shrink-0">想想看</h3>
+              {allDone ? (
+                <span className="text-[12px] text-verified inline-flex items-center gap-1">
+                  <Check className="h-3 w-3" /> 三個都想清楚了
+                </span>
+              ) : (
+                <span className="text-[12px] text-text-secondary truncate">
+                  還有 <span className="font-semibold text-secondary">{remaining}</span> 件沒想清楚
+                  {!expanded && <span className="text-text-muted">,點開看細節</span>}
+                </span>
+              )}
+            </div>
+            <span className="shrink-0 text-text-muted">
+              {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </span>
+          </button>
+          {!allDone && (
+            <button
+              type="button"
+              onClick={jumpToFirstUnmet}
+              className="shrink-0 inline-flex items-center gap-1 rounded-md border border-secondary/40 bg-secondary/10 px-2.5 py-1 text-[12px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+              title="跳到第一個沒想清楚的反思題"
+            >
+              ↑ 帶我去填
+            </button>
+          )}
+        </div>
 
         {/* 反思內容 — 摺疊區,加上 max-h + overflow-auto 避免吃掉主畫面 */}
         {expanded && (

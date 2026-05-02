@@ -343,7 +343,7 @@ function CardEightPage() {
         </header>
 
         {/* Section 3: targets */}
-        <section className="space-y-4">
+        <section id="card8-targets" className="space-y-4 scroll-mt-24">
           <div>
             <h2 className="text-[20px] font-bold text-text-primary">第一步：挑 2 位訪談對象</h2>
             <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
@@ -374,7 +374,7 @@ function CardEightPage() {
         </section>
 
         {/* Section 4: questions */}
-        <section className="space-y-4">
+        <section id="card8-questions" className="space-y-4 scroll-mt-24">
           <div>
             <h2 className="text-[20px] font-bold text-text-primary">第二步：寫 3 個訪談題</h2>
             <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
@@ -385,7 +385,7 @@ function CardEightPage() {
         </section>
 
         {/* Section 5: rules */}
-        <section className="space-y-4">
+        <section id="card8-rules" className="space-y-4 scroll-mt-24">
           <div>
             <h2 className="text-[20px] font-bold text-text-primary">第三步：訪談規則（很重要）</h2>
           </div>

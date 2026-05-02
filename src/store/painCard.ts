@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import type { CurrentStep, PainCard } from "@/types/painCard";
+import type { CurrentStep, PainCard, PainCardStatus } from "@/types/painCard";
 import { SCHEMA_VERSION } from "@/types/painCard";
 
 const STORAGE_KEY = "painmap-worksheet-v1";

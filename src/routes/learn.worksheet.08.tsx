@@ -309,6 +309,7 @@ function CardEightPage() {
             highlightIndex={highlightIndex}
             onUpdate={setTargetField}
             onAdd={addTarget}
+            onAddFromTemplate={addTargetFromTemplate}
             onRemove={removeTarget}
           />
 

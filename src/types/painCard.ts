@@ -126,6 +126,7 @@ export type PainCard = {
       ai_added: string;
       guess_unsupported: string;
     };
+    phase_a_completed_at?: string | null;
   };
 
   // === Card 8: 真人訪談規劃 ===

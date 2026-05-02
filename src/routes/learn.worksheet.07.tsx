@@ -1,26 +1,347 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { CardStub } from "@/components/worksheet/CardStub";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles, Brain, AlertCircle } from "lucide-react";
+
+import { Textarea } from "@/components/ui/textarea";
+import { usePainCardStore } from "@/store/painCard";
+import {
+  evaluateCheckpoints,
+  evaluateDeltas,
+  evaluatePhaseA,
+  evaluateTable,
+  TABLE_MIN,
+  type CheckpointKey,
+  type DeltaKey,
+  type GuessKey,
+} from "@/lib/cardSevenValidators";
+import { ContextSummary } from "@/components/worksheet/card07/ContextSummary";
+import { PhaseAGuessForm } from "@/components/worksheet/card07/PhaseAGuessForm";
+import { PhaseBLockedPreview } from "@/components/worksheet/card07/PhaseBLockedPreview";
+import { CheckpointList } from "@/components/worksheet/card07/CheckpointList";
+import { SecondRoundPromptBlock } from "@/components/worksheet/card07/SecondRoundPromptBlock";
+import { DeltasForm } from "@/components/worksheet/card07/DeltasForm";
+import { CardSevenExitGateFooter } from "@/components/worksheet/card07/CardSevenExitGateFooter";
 
 export const Route = createFileRoute("/learn/worksheet/07")({
   head: () => ({
-    meta: [{ title: "卡 7 自己先猜 + 讀 AI — PainMap" }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: "卡 7 自己先猜，再讀 AI — PainMap Worksheet" },
+      { name: "robots", content: "noindex" },
+      {
+        name: "description",
+        content:
+          "兩段式練習：先寫下你對痛點主人翁的 4 欄猜測，再對照 AI 回覆找出差異。AI 是補強，不是替代。",
+      },
+    ],
   }),
-  component: () => (
-    <CardStub
-      cardNumber={7}
-      title="自己先猜 + 讀 AI"
-      goal="讀 AI 之前，先憑直覺寫下你的猜測。讀完之後比對差異，看看自己的盲點在哪。"
-      fields={[
-        "4 項猜測：最痛的人 / 最常場景 / 最大不滿 / 可能假痛點",
-        "4 個讀 AI 檢查點（人群分群 / 場景可觀察 / workaround 不滿列出 / 假痛點標記）",
-        "AI 整理的痛點判斷表（pain_judgment_table）",
-        "差異分析：最大差異 / AI 補了什麼 / 你的猜測沒證據支撐的",
-      ]}
-      checks={[
-        "4 項猜測已填寫",
-        "4 個 AI 檢查點全部通過",
-        "差異分析 3 欄已填寫",
-      ]}
-    />
-  ),
+  component: CardSevenPage,
 });
+
+function relativeTime(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso).getTime();
+  const diffSec = Math.max(0, Math.floor((Date.now() - d) / 1000));
+  if (diffSec < 5) return "剛剛";
+  if (diffSec < 60) return `${diffSec} 秒前`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
+  return new Date(iso).toLocaleString("zh-TW", { hour: "2-digit", minute: "2-digit" });
+}
+
+function CardSevenPage() {
+  const navigate = useNavigate();
+  const card = usePainCardStore((s) => s.card);
+  const hydrated = usePainCardStore((s) => s.hydrated);
+  const updateField = usePainCardStore((s) => s.updateField);
+  const advanceStep = usePainCardStore((s) => s.advanceStep);
+
+  const sg = card.self_guess;
+  const rawAi = card.ai_evidence.raw_response.trim();
+
+  // Phase A 解鎖：state-driven，初始值依「已存在 phase_a_completed_at」
+  const [unlocked, setUnlocked] = useState<boolean>(
+    Boolean(sg.phase_a_completed_at),
+  );
+
+  // 同步 store 變化（當 reset / 退回時清空）
+  useEffect(() => {
+    if (!sg.phase_a_completed_at && unlocked) {
+      // 資料被清空但 state 仍 unlocked — 重置
+      setUnlocked(false);
+    }
+  }, [sg.phase_a_completed_at, unlocked]);
+
+  const phaseA = evaluatePhaseA(sg);
+  const cp = evaluateCheckpoints(sg);
+  const deltas = evaluateDeltas(sg);
+  const tablePassed = evaluateTable(sg);
+
+  const setGuess = (key: GuessKey, v: string) =>
+    updateField(`self_guess.guesses.${key}`, v);
+  const setCheckpoint = (key: CheckpointKey, v: boolean) =>
+    updateField(`self_guess.ai_checkpoints_passed.${key}`, v);
+  const setDelta = (key: DeltaKey, v: string) =>
+    updateField(`self_guess.deltas.${key}`, v);
+  const setTable = (v: string) => updateField("self_guess.pain_judgment_table", v);
+
+  function handleUnlock() {
+    if (!phaseA.allFilled) return;
+    updateField("self_guess.phase_a_completed_at", new Date().toISOString());
+    setUnlocked(true);
+  }
+
+  // exit gate
+  const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setBlockedMessage(null);
+  }, [
+    sg.guesses,
+    sg.ai_checkpoints_passed,
+    sg.deltas,
+    sg.pain_judgment_table,
+  ]);
+
+  function handleAdvance() {
+    if (!unlocked || !phaseA.allFilled) {
+      setBlockedMessage("Phase A 還沒寫完，請先猜");
+      return;
+    }
+    if (!cp.allPassed) {
+      setBlockedMessage(
+        `${4 - cp.passedCount} 個 checkpoint 沒過，可以用第二輪 prompt 補`,
+      );
+      return;
+    }
+    if (!tablePassed) {
+      setBlockedMessage("請貼上第二輪 prompt 的回覆（痛點判斷表，≥ 100 字）");
+      return;
+    }
+    if (!deltas.allFilled) {
+      setBlockedMessage("請寫出「差異」，這是這張卡的核心");
+      return;
+    }
+    setBlockedMessage(null);
+    setSubmitting(true);
+    try {
+      advanceStep(8);
+      navigate({ to: "/learn/worksheet/08" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function handleBackToCard6() {
+    const ok = window.confirm(
+      "退回卡 6 會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？",
+    );
+    if (!ok) return;
+    // 清空 self_guess
+    (["most_painful_person", "most_common_scene", "biggest_dissatisfaction", "possible_fake_pain"] as GuessKey[]).forEach(
+      (k) => updateField(`self_guess.guesses.${k}`, ""),
+    );
+    (["people_segmented", "scenes_observable", "workaround_dissatisfactions_listed", "fake_pains_flagged"] as CheckpointKey[]).forEach(
+      (k) => updateField(`self_guess.ai_checkpoints_passed.${k}`, false),
+    );
+    updateField("self_guess.pain_judgment_table", "");
+    (["biggest_diff", "ai_added", "guess_unsupported"] as DeltaKey[]).forEach((k) =>
+      updateField(`self_guess.deltas.${k}`, ""),
+    );
+    updateField("self_guess.phase_a_completed_at", null);
+    setUnlocked(false);
+    advanceStep(6);
+    navigate({ to: "/learn/worksheet/06" });
+  }
+
+  // autosave indicator
+  const [savedAgo, setSavedAgo] = useState("");
+  useEffect(() => {
+    if (!card.updated_at) return;
+    setSavedAgo(relativeTime(card.updated_at));
+    const t = setInterval(() => setSavedAgo(relativeTime(card.updated_at)), 15_000);
+    return () => clearInterval(t);
+  }, [card.updated_at]);
+
+  const guessValues = useMemo(
+    () => ({
+      most_painful_person: sg.guesses.most_painful_person,
+      most_common_scene: sg.guesses.most_common_scene,
+      biggest_dissatisfaction: sg.guesses.biggest_dissatisfaction,
+      possible_fake_pain: sg.guesses.possible_fake_pain,
+    }),
+    [sg.guesses],
+  );
+
+  const deltaValues = useMemo(
+    () => ({
+      biggest_diff: sg.deltas.biggest_diff,
+      ai_added: sg.deltas.ai_added,
+      guess_unsupported: sg.deltas.guess_unsupported,
+    }),
+    [sg.deltas],
+  );
+
+  const cpValues = useMemo(
+    () => ({
+      people_segmented: sg.ai_checkpoints_passed.people_segmented,
+      scenes_observable: sg.ai_checkpoints_passed.scenes_observable,
+      workaround_dissatisfactions_listed:
+        sg.ai_checkpoints_passed.workaround_dissatisfactions_listed,
+      fake_pains_flagged: sg.ai_checkpoints_passed.fake_pains_flagged,
+    }),
+    [sg.ai_checkpoints_passed],
+  );
+
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
+      <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
+        {/* card_intro */}
+        <header>
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary">
+              卡 7 / 9
+            </p>
+            <span
+              className="inline-flex items-center gap-1.5 rounded-md border-2 border-verified/50 bg-verified/5 px-2 py-1 text-[11px] font-bold text-verified"
+              aria-label="這張卡 AI 介入：第二輪追問 prompt"
+            >
+              <Sparkles className="h-3 w-3" aria-hidden />
+              AI 介入：✅ 第二輪追問 prompt
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+            自己先猜，再讀 AI 回覆
+          </h1>
+          <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
+            如果你直接看 AI 回覆，你會被它牽著走，失去自己的判斷力。
+          </p>
+
+          <div className="mt-5 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
+            <Brain className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
+            <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
+              <p className="font-semibold">為什麼要先猜？</p>
+              <p>
+                先寫下自己的猜測，再對照 AI 回覆。差異就是你要學的地方。AI 不是給你答案，是讓你看到自己的盲區。
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-3 text-[12.5px] text-text-secondary italic">
+            填完下面 4 欄之前，AI 回覆會被遮住。這是設計上的刻意。
+          </p>
+        </header>
+
+        {!rawAi && (
+          <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary">
+            <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
+            <span>
+              卡 6 還沒貼上 AI 回覆。Phase B 解鎖後仍可繼續，但 AI 回覆區會空白。建議先回卡 6 補完。
+            </span>
+          </div>
+        )}
+
+        <ContextSummary card={card} />
+
+        {/* Phase A */}
+        <PhaseAGuessForm
+          guesses={guessValues}
+          onChange={setGuess}
+          filled={phaseA.filled}
+          allFilled={phaseA.allFilled}
+          readonly={unlocked}
+          unlocked={unlocked}
+          onUnlock={handleUnlock}
+        />
+
+        {/* Phase B */}
+        {!unlocked ? (
+          <PhaseBLockedPreview />
+        ) : (
+          <section
+            className="rounded-lg bg-surface border border-border border-l-4 border-l-verified p-6 sm:p-8 space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-2 duration-300"
+            aria-label="Phase B AI 對照"
+          >
+            <header className="space-y-1">
+              <h2 className="text-[22px] font-bold text-text-primary">
+                Phase B：讀 AI 回覆 + 對照差異
+              </h2>
+              <p className="text-[15px] text-text-secondary leading-[1.6]">
+                不是看 AI 對不對，是看 AI 看到了什麼你沒看到 / 漏了什麼你看到了。
+              </p>
+            </header>
+
+            {/* AI response display */}
+            <div>
+              <h3 className="text-[15px] font-semibold text-text-primary mb-2">
+                AI 第一輪回覆（從卡 6 帶入）
+              </h3>
+              {rawAi ? (
+                <pre className="font-mono text-[12.5px] leading-[1.6] bg-muted-bg p-4 max-h-96 overflow-auto whitespace-pre-wrap text-text-primary rounded-md border border-border">
+                  {rawAi}
+                </pre>
+              ) : (
+                <p className="text-[13px] text-text-secondary italic">
+                  （卡 6 尚未貼上 AI 回覆）
+                </p>
+              )}
+            </div>
+
+            {/* Checkpoints */}
+            <CheckpointList values={cpValues} onChange={setCheckpoint} />
+
+            {/* Second round prompt */}
+            <SecondRoundPromptBlock />
+
+            {/* Pain judgment table input */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="pain-judgment-table"
+                className="text-[15px] font-semibold text-text-primary block"
+              >
+                貼上 AI 整理的痛點判斷表
+              </label>
+              <p className="text-[12.5px] text-text-secondary leading-[1.55]">
+                把第二輪 prompt 跑出來的判斷表整段貼進來（≥ {TABLE_MIN} 字）。
+              </p>
+              <Textarea
+                id="pain-judgment-table"
+                value={sg.pain_judgment_table}
+                onChange={(e) => setTable(e.target.value)}
+                placeholder="貼上 AI 給的痛點判斷表..."
+                className="min-h-[200px] font-mono text-[13px]"
+              />
+              <p className="text-[11.5px] text-text-muted">
+                {sg.pain_judgment_table.trim().length} 字（最少 {TABLE_MIN}）
+              </p>
+            </div>
+
+            {/* Deltas */}
+            <DeltasForm
+              values={deltaValues}
+              filled={deltas.filled}
+              onChange={setDelta}
+            />
+          </section>
+        )}
+
+        <p className="text-[12px] text-text-muted" aria-live="polite">
+          {hydrated && savedAgo
+            ? `已自動儲存到瀏覽器 · ${savedAgo}`
+            : "尚未開始輸入"}
+        </p>
+      </main>
+
+      <CardSevenExitGateFooter
+        phaseAComplete={unlocked && phaseA.allFilled}
+        checkpointsAllPassed={cp.allPassed}
+        checkpointsPassedCount={cp.passedCount}
+        tablePassed={tablePassed}
+        deltasAllFilled={deltas.allFilled}
+        blockedMessage={blockedMessage}
+        submitting={submitting}
+        onAdvance={handleAdvance}
+        onBack={handleBackToCard6}
+      />
+    </div>
+  );
+}

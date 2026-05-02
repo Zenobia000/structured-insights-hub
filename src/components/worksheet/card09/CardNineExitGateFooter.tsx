@@ -51,6 +51,55 @@ export function CardNineExitGateFooter({
   const [expanded, setExpanded] = usePersistedToggle("painmap:card9:reflection-expanded", false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const keyboardOpenRef = useRef(false);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const blockedRef = useRef<HTMLDivElement | null>(null);
+  const actionsRef = useRef<HTMLDivElement | null>(null);
+  // panel 動態 max-height(px);null 時 fallback 到 className 內的 dvh-based 值
+  const [panelMaxH, setPanelMaxH] = useState<number | null>(null);
+
+  // 即時計算 panel 可用高度:viewport - 上下其他元素 - 安全邊距
+  // 監聽:window resize、visualViewport resize(行動瀏覽器 URL bar 收放)、
+  //       ResizeObserver(blockedMessage 文字換行、按鈕在窄螢幕變兩列)
+  useLayoutEffect(() => {
+    if (!expanded) return;
+
+    const MIN_PX = 80; // 與 className min-h-[5rem] 對齊
+    const MAX_PX = 384; // 24rem 上限,大螢幕也不浪費空間
+    const SAFETY = 16; // viewport 邊緣安全邊距
+
+    function recompute() {
+      const vv = window.visualViewport;
+      const vh = vv ? vv.height : window.innerHeight;
+      const headerH = headerRef.current?.getBoundingClientRect().height ?? 0;
+      const blockedH = blockedRef.current?.getBoundingClientRect().height ?? 0;
+      const actionsH = actionsRef.current?.getBoundingClientRect().height ?? 0;
+      // 外層容器有 py-2.5 sm:py-3 + space-y-2 sm:space-y-2.5,加總 ~32px
+      const chrome = 32 + SAFETY;
+      // 讓 panel 至多吃掉 viewport 的 50%,避免完全蓋住主畫面
+      const halfVh = Math.floor(vh * 0.5);
+      const available = vh - headerH - blockedH - actionsH - chrome;
+      const next = Math.max(MIN_PX, Math.min(MAX_PX, halfVh, available));
+      setPanelMaxH(next);
+    }
+
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.visualViewport?.addEventListener("resize", recompute);
+    window.visualViewport?.addEventListener("scroll", recompute);
+
+    // 觀察 blockedMessage / actions 高度變化(換行、按鈕變多列)
+    const ro = new ResizeObserver(recompute);
+    if (headerRef.current) ro.observe(headerRef.current);
+    if (blockedRef.current) ro.observe(blockedRef.current);
+    if (actionsRef.current) ro.observe(actionsRef.current);
+
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.visualViewport?.removeEventListener("resize", recompute);
+      window.visualViewport?.removeEventListener("scroll", recompute);
+      ro.disconnect();
+    };
+  }, [expanded, blockedMessage]);
 
   useEffect(() => {
     if (expanded && keyboardOpenRef.current) {

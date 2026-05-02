@@ -1,5 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { ReflectionHint, type ReflectionHintState } from "@/components/worksheet/ReflectionHint";
+import {
+  ReflectionHint,
+  type ReflectionExample,
+  type ReflectionHintState,
+} from "@/components/worksheet/ReflectionHint";
+
+/**
+ * 「聯絡方式 / 你打算去哪找他」欄的填寫範例
+ * 涵蓋三種真實場景：認識的人 / 弱連結 / 完全陌生
+ * 全部都 ≥ 5 字（CONTACT_MIN）以保證一貼上就過驗證
+ */
+const CONTACT_EXAMPLES: ReflectionExample[] = [
+  { label: "LINE", text: "林老師(認識) / LINE: teacher_lin / 0912-345-678" },
+  { label: "IG", text: "IG @some_user / DM 約週末咖啡聊 30 分鐘" },
+  { label: "Email", text: "王經理 wang@example.com / 上週研討會交換名片" },
+  { label: "社群", text: "去家長社團 PO 文徵 3 位願意聊 20 分鐘的家長" },
+  { label: "場合", text: "下週三晚上補習班接小孩時間,直接問 2-3 位家長" },
+];
+
 
 type Props = {
   hasContact: boolean;
@@ -34,17 +52,18 @@ export function CardEightExitGateFooter({
         <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
         <ul className="flex flex-col gap-2">
           <ReflectionHint
-            question="這 3 道題，你今晚就能傳給其中一個人嗎?"
+            question="這 3 道題,你今晚就能傳給其中一個人嗎?"
             state={hasContact && questionsAllFilled ? "ok" : "pending"}
             hint={
               !hasContact && !questionsAllFilled
-                ? "還沒寫完 3 題訪談題，且至少 1 位訪談對象的「聯絡方式 / 去哪找他」欄要填 ≥ 5 字。"
+                ? "還沒寫完 3 題訪談題,且至少 1 位訪談對象的「聯絡方式 / 去哪找他」欄要填 ≥ 5 字。"
                 : !hasContact
-                  ? "回到第一步「訪談對象」卡片,至少 1 位的「聯絡方式（LINE / 電話 / 名字）」或「你打算去哪找他」欄要填 ≥ 5 字。"
+                  ? "回到第一步「訪談對象」卡片,至少 1 位的「聯絡方式」或「你打算去哪找他」欄要填 ≥ 5 字。"
                   : !questionsAllFilled
-                    ? "3 題訪談題還沒寫完（每題 ≥ 15 字）。"
+                    ? "3 題訪談題還沒寫完(每題 ≥ 15 字)。"
                     : undefined
             }
+            examples={!hasContact ? CONTACT_EXAMPLES : undefined}
           />
           <ReflectionHint
             question="你寫的題,是在問他「怎麼做的」,還是在誘導他說「想用你的解法」?"
@@ -56,9 +75,10 @@ export function CardEightExitGateFooter({
             state={contactState}
             hint={
               !hasContact
-                ? "回到第一步「訪談對象」,把至少 1 位的「聯絡方式 / 去哪找他」欄填上（≥ 5 字）。"
+                ? "回到第一步「訪談對象」,把至少 1 位的「聯絡方式 / 去哪找他」欄填上(≥ 5 字)。直接複製下方範例貼進去再改成你的真實資料。"
                 : undefined
             }
+            examples={!hasContact ? CONTACT_EXAMPLES : undefined}
           />
         </ul>
 

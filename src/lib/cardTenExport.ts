@@ -212,12 +212,35 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
 <meta charset="utf-8" />
 <title>${escapeHtml(filename)}</title>
 <style>
-  /* ---------- Page setup ---------- */
+  /* ============================================================
+     Page setup — A4 + 頁眉頁尾 + 頁碼
+     注意：@page margin-box (top-center / bottom-right …) 目前
+     主流瀏覽器（Chrome/Edge/Safari/Firefox）的支援度有限。
+     我們採「保留 @page 規則 + 同時用 fixed position 模擬頁眉頁尾」雙保險：
+       - 列印時 fixed 元素會在每一頁重複（Chrome/Safari 行為）
+       - @page 邊距留出空間給它們
+     ============================================================ */
   @page {
     size: A4;
-    margin: 20mm 18mm 22mm 18mm;
+    margin: 22mm 18mm 24mm 18mm;
+    /* 標準 margin box（部分 print engine 會吃這個） */
+    @bottom-center {
+      content: "第 " counter(page) " 頁 / 共 " counter(pages) " 頁";
+      font-family: "Helvetica Neue", "PingFang TC", sans-serif;
+      font-size: 9pt;
+      color: #94a3b8;
+    }
+    @top-right {
+      content: "PainMap · 訪談大綱";
+      font-family: "Helvetica Neue", "PingFang TC", sans-serif;
+      font-size: 8.5pt;
+      color: #94a3b8;
+    }
   }
-  @page :first { margin-top: 22mm; }
+  @page :first {
+    margin-top: 24mm;
+    @top-right { content: ""; }   /* 首頁不顯示頁眉，已有 doc-head */
+  }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #fff; }
@@ -225,16 +248,17 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
   /* ---------- Typography base ----------
      Sans 用於正文（中文最佳閱讀）；Serif 給 blockquote 引述塊增加儀式感 */
   :root {
-    --ink-900: #0f172a;   /* 主標題 */
-    --ink-800: #1e293b;   /* 次標題 */
-    --ink-700: #334155;   /* 內文加粗 */
-    --ink-600: #475569;   /* 內文 */
-    --ink-500: #64748b;   /* 次要說明 */
-    --ink-400: #94a3b8;   /* meta / footer */
-    --line:    #e2e8f0;   /* 線條 */
-    --line-2:  #cbd5e1;   /* 表格線 */
-    --tint:    #f8fafc;   /* 表頭 / 引述底 */
-    --accent:  #0f766e;   /* 強調色（teal-700, 列印友善）*/
+    --ink-900: #0f172a;
+    --ink-800: #1e293b;
+    --ink-700: #334155;
+    --ink-600: #475569;
+    --ink-500: #64748b;
+    --ink-400: #94a3b8;
+    --line:    #e2e8f0;
+    --line-2:  #cbd5e1;
+    --tint:    #f8fafc;
+    --tint-2:  #f1f5f9;
+    --accent:  #0f766e;
   }
 
   body {
@@ -246,9 +270,15 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: "kern" 1, "palt" 1;
+    /* CJK 友善：允許在中日韓字之間斷行，但英文單字保留不破詞 */
+    word-break: normal;
+    overflow-wrap: anywhere;        /* 連續長字串（URL / 英文）強制換行 */
+    line-break: strict;
+    /* 中文標點懸掛（PingFang 等支援） */
+    hanging-punctuation: allow-end last;
   }
 
-  /* ---------- Header ---------- */
+  /* ---------- Header (首頁文件頭) ---------- */
   header.doc-head {
     border-bottom: 2px solid var(--ink-900);
     padding-bottom: 12px;
@@ -287,12 +317,15 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     line-height: 1.4;
     page-break-after: avoid;
     break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
   main h1 {
     font-size: 16pt;
     margin: 1.6em 0 0.5em;
     padding-bottom: 4px;
     border-bottom: 1.5px solid var(--ink-900);
+    page-break-before: auto;
   }
   main h2 {
     font-size: 13.5pt;
@@ -312,12 +345,20 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     text-transform: none;
     letter-spacing: 0.02em;
   }
+  /* 標題後緊接的段落不要被孤立 */
+  main h1 + p, main h2 + p, main h3 + p, main h4 + p {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
 
   /* ---------- Paragraphs & inline ---------- */
   main p {
     margin: 0.55em 0;
     orphans: 3;
     widows: 3;
+    /* 中英文混排時避免英文長字串撐破版面 */
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
   main strong, main b {
     font-weight: 700;
@@ -340,6 +381,7 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     margin: 0.35em 0;
     page-break-inside: avoid;
     break-inside: avoid;
+    overflow-wrap: anywhere;
   }
   main ul > li::before {
     content: "";
@@ -357,14 +399,17 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     padding-left: 0.3em;
     page-break-inside: avoid;
     break-inside: avoid;
+    overflow-wrap: anywhere;
   }
   main ol > li::marker {
     color: var(--accent);
     font-weight: 700;
   }
   main li > ul, main li > ol { margin: 0.25em 0; }
+  /* 巢狀清單超過 3 層 → 不強制 avoid，否則會撐破整頁 */
+  main li li li { page-break-inside: auto; break-inside: auto; }
 
-  /* ---------- Blockquote (適合引述訪談語錄 / 提示) ---------- */
+  /* ---------- Blockquote ---------- */
   main blockquote {
     margin: 1em 0;
     padding: 10px 16px;
@@ -376,6 +421,7 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     line-height: 1.7;
     page-break-inside: avoid;
     break-inside: avoid;
+    overflow-wrap: anywhere;
   }
   main blockquote p { margin: 0.3em 0; }
 
@@ -388,40 +434,66 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     padding: 1px 5px;
     border-radius: 3px;
     border: 1px solid var(--line);
+    /* 行內 code 中文 / 長字串強制換行，避免溢出版心 */
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: pre-wrap;
   }
   main pre {
     background: var(--tint);
     border: 1px solid var(--line);
     padding: 10px 12px;
     border-radius: 4px;
-    overflow: auto;
-    font-size: 9.5pt;
+    font-size: 9pt;
     line-height: 1.55;
-    page-break-inside: avoid;
-    break-inside: avoid;
+    /* 列印時不能 overflow:auto（看不到捲軸內容）→ 改為強制換行 */
+    overflow: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    page-break-inside: auto;     /* 長 code 區塊允許跨頁 */
+    break-inside: auto;
   }
-  main pre code { border: 0; padding: 0; background: transparent; }
+  main pre code {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    white-space: inherit;
+  }
 
-  /* ---------- Tables ---------- */
+  /* ---------- Tables（中文表格防截斷 + 跨頁重複表頭）---------- */
   main table {
     border-collapse: collapse;
     width: 100%;
     margin: 1em 0;
     font-size: 10pt;
-    page-break-inside: auto;
+    /* fixed 佈局：每欄等寬，文字會自動換行而不會把欄位撐爆出版心 */
+    table-layout: fixed;
+    page-break-inside: auto;     /* 允許跨頁 */
+    break-inside: auto;
   }
-  main thead { display: table-header-group; }   /* 跨頁時表頭重複 */
+  main thead {
+    display: table-header-group;  /* Chrome / Safari / Firefox 跨頁時自動重複表頭 */
+  }
   main tfoot { display: table-footer-group; }
   main tr {
-    page-break-inside: avoid;
+    page-break-inside: avoid;     /* 單列不被切成兩半 */
     break-inside: avoid;
+    page-break-after: auto;
+    break-after: auto;
   }
   main th, main td {
     border: 1px solid var(--line-2);
-    padding: 7px 10px;
+    padding: 7px 9px;
     text-align: left;
     vertical-align: top;
-    line-height: 1.55;
+    line-height: 1.6;
+    /* 中文 / 英文混排都能斷行，避免撐破欄寬 */
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-break: strict;
+    /* 安全網：超出仍可被裁切，但 fixed layout + anywhere 已大幅降低機率 */
+    overflow: hidden;
   }
   main th {
     background: var(--ink-900);
@@ -437,16 +509,34 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+  /* 表格內的 code / 長字串再加保險 */
+  main td code, main td a, main td span {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-  /* ---------- Misc ---------- */
+  /* ---------- 圖片 ---------- */
+  main img {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ---------- 其他 ---------- */
   main hr {
     border: none;
     border-top: 1px solid var(--line);
     margin: 1.6em 0;
   }
-  main a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); }
+  main a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+    overflow-wrap: anywhere;
+  }
 
-  /* ---------- Footer ---------- */
+  /* ---------- 文件尾（首頁底部） ---------- */
   footer.doc-foot {
     margin-top: 32px;
     padding-top: 12px;
@@ -457,13 +547,33 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     letter-spacing: 0.02em;
   }
 
-  /* ---------- Print-specific ---------- */
+  /* ---------- Utility classes (markdown 內用 HTML 時可選用) ---------- */
+  .page-break    { page-break-before: always; break-before: page; }
+  .avoid-break   { page-break-inside: avoid; break-inside: avoid; }
+  .no-print      { display: none !important; }
+
+  /* ---------- Print-specific overrides ---------- */
   @media print {
     body { font-size: 10.5pt; }
     a { color: inherit; border-bottom: 0; }
-    /* 避免重要區塊被切：已在各元素加 break-inside: avoid */
-    /* 確保底色印得出來（Chrome 預設關閉背景圖列印） */
+    /* Chrome 預設不印背景色 → 強制 */
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    /* 表頭 / blockquote / table tint 都要印得出來 */
+    main th, main tbody tr:nth-child(even) td, main blockquote, main code, main pre {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    /* 隱藏螢幕版可能殘留的捲軸 */
+    main pre { overflow: visible !important; }
+  }
+
+  /* ---------- 螢幕預覽（fallback HTML 直接打開時也好看） ---------- */
+  @media screen {
+    body {
+      max-width: 820px;
+      margin: 40px auto;
+      padding: 0 32px;
+    }
   }
 </style>
 </head>

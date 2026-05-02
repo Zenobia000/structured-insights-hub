@@ -56,11 +56,11 @@ export function CardEightExitGateFooter({
   const reflections = [hasContact && questionsAllFilled, questionsAllFilled, taboosUnderstood, hasContact];
   const remaining = reflections.filter((p) => !p).length;
 
-  // 預設摺疊,避免反思內容遮擋主畫面;有 blockedMessage 時自動展開
-  const [expanded, setExpanded] = useState(false);
+  // 預設摺疊,避免反思內容遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
+  const [expanded, setExpanded] = usePersistedToggle("painmap:card8:reflection-expanded", false);
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
-  }, [blockedMessage]);
+  }, [blockedMessage, setExpanded]);
 
   // 找第一個未過的反思題,定義跳轉動作
   function jumpToFirstUnmet() {

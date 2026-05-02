@@ -35,3 +35,8 @@ dist-ssr
 .claude/logs/
 .claude/taskmaster-data/
 .claude/statusline-go.exe
+
+# Playwright MCP / manual test artifacts (transient, not source)
+.playwright-mcp/
+card*-*.png
+*-fullpage.png

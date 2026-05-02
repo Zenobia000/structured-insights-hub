@@ -204,6 +204,22 @@ function CardSevenPage() {
     [sg.ai_checkpoints_passed],
   );
 
+  if (!hydrated) {
+    return (
+      <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
+        <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
+          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+          <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
+          <div className="h-32 w-full bg-muted rounded animate-pulse" />
+          <div className="h-64 w-full bg-muted rounded animate-pulse" />
+          <p className="text-[12px] text-text-muted text-center">
+            正在從瀏覽器恢復草稿…
+          </p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">

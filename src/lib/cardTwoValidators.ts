@@ -62,7 +62,29 @@ const CONTACTABLE_KEYWORDS = [
 
 /** 背景具體性 — 三個類別關鍵字（命中 >= 2 類即通過） */
 const BACKGROUND_CATEGORY_KEYWORDS: Record<"age" | "occupation" | "location", string[]> = {
-  age: ["歲", "代", "年級", "後", "中年", "青年", "退休", "20", "30", "40", "50", "60"],
+  age: [
+    "歲",
+    "代",
+    "年級",
+    "後",
+    "中年",
+    "青年",
+    "退休",
+    "20",
+    "30",
+    "40",
+    "50",
+    "60",
+    "year old",
+    "years old",
+    "yo",
+    "yrs",
+    "20s",
+    "30s",
+    "40s",
+    "50s",
+    "60s",
+  ],
   occupation: [
     "老師",
     "教師",
@@ -99,6 +121,27 @@ const BACKGROUND_CATEGORY_KEYWORDS: Record<"age" | "occupation" | "location", st
     "廚師",
     "司機",
     "保全",
+    "leader",
+    "leaders",
+    "business leader",
+    "business leaders",
+    "manager",
+    "managers",
+    "founder",
+    "founders",
+    "owner",
+    "owners",
+    "entrepreneur",
+    "entrepreneurs",
+    "executive",
+    "executives",
+    "ceo",
+    "cto",
+    "operator",
+    "operators",
+    "sales",
+    "marketing",
+    "ops",
   ],
   location: [
     "台北",
@@ -134,6 +177,22 @@ const BACKGROUND_CATEGORY_KEYWORDS: Record<"age" | "occupation" | "location", st
     "中國",
     "大陸",
     "東南亞",
+    "taipei",
+    "taipei city",
+    "taiwan",
+    "new taipei",
+    "taichung",
+    "tainan",
+    "kaohsiung",
+    "hsinchu",
+    "tokyo",
+    "hong kong",
+    "japan",
+    "usa",
+    "us",
+    "america",
+    "china",
+    "sea",
   ],
 };
 
@@ -149,11 +208,12 @@ export function hasContactableKeyword(contact: string): boolean {
 }
 
 export function backgroundCategoriesHit(text: string): Array<"age" | "occupation" | "location"> {
+  const normalized = text.toLowerCase();
   const hit: Array<"age" | "occupation" | "location"> = [];
   (
     Object.keys(BACKGROUND_CATEGORY_KEYWORDS) as Array<keyof typeof BACKGROUND_CATEGORY_KEYWORDS>
   ).forEach((k) => {
-    if (BACKGROUND_CATEGORY_KEYWORDS[k].some((w) => text.includes(w))) hit.push(k);
+    if (BACKGROUND_CATEGORY_KEYWORDS[k].some((w) => normalized.includes(w.toLowerCase()))) hit.push(k);
   });
   return hit;
 }

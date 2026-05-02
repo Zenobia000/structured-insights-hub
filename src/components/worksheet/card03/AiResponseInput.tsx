@@ -24,7 +24,7 @@ export function AiResponseInput({
     >
       <header>
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 3
+          Step 2
         </p>
         <h2 id="step-3-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           把 AI 的回覆貼回來

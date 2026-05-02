@@ -52,7 +52,7 @@ export function ClarifyingQAPanel({
     >
       <header>
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 4
+          Step 3
         </p>
         <h2 id="step-4-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           回答 AI 列的「需要再問清楚」

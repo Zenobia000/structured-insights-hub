@@ -1,5 +1,5 @@
 /**
- * Step 4：逐題回答 AI 列的「需要再問清楚」的問題。
+ * Step 3：逐題回答 AI 列的「需要再問清楚」的問題。
  *
  * - 沒問題 → 自動通過
  * - 有問題 → 每題 textarea ≥ 10 字 OR 勾「預約問」才算處理完
@@ -44,7 +44,7 @@ export function ClarifyingQAPanel({
 
   return (
     <section
-      aria-labelledby="step-4-label"
+      aria-labelledby="step-3-label"
       className={cn(
         "rounded-lg border bg-surface p-5 sm:p-6 space-y-4 transition-colors",
         highlight ? "border-secondary ring-2 ring-secondary/30" : "border-border",
@@ -54,7 +54,7 @@ export function ClarifyingQAPanel({
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
           Step 3
         </p>
-        <h2 id="step-4-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <h2 id="step-3-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           回答 AI 列的「需要再問清楚」
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
@@ -68,7 +68,7 @@ export function ClarifyingQAPanel({
           <div className="text-[14px] leading-[1.55] text-text-primary">
             <p className="font-semibold">AI 沒列出需要再問清楚的問題</p>
             <p className="text-[13px] text-text-secondary mt-0.5">
-              代表你 Step 1 寫得夠具體，可以直接進入卡 4。如果 AI 其實有列問題、但你沒貼到 Step 3，請補上。
+              代表卡 1 的抱怨原句寫得夠具體，可以直接進入卡 4。如果 AI 其實有列問題、但你沒貼到 Step 2，請補上。
             </p>
           </div>
         </div>

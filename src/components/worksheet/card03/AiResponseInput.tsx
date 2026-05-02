@@ -1,5 +1,5 @@
 /**
- * Step 3：使用者貼回 AI 校對結果（ai_polished + ai_clarifying_questions）。
+ * Step 2：使用者貼回 AI 校對結果（ai_polished + ai_clarifying_questions）。
  */
 import { TextareaField } from "@/components/worksheet/card01/FormFields";
 import { TagInputField } from "@/components/worksheet/card04/TagInputField";
@@ -19,14 +19,14 @@ export function AiResponseInput({
 }: Props) {
   return (
     <section
-      aria-labelledby="step-3-label"
+      aria-labelledby="step-2-label"
       className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-5"
     >
       <header>
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
           Step 2
         </p>
-        <h2 id="step-3-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <h2 id="step-2-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           把 AI 的回覆貼回來
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">

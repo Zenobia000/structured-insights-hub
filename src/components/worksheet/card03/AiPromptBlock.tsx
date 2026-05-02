@@ -1,5 +1,5 @@
 /**
- * Step 2：複製 prompt 到外部 AI（含工具偏好記錄）。
+ * Step 1：複製 prompt 到外部 AI（含工具偏好記錄）。
  *
  * - prompt 文字逐字引用 worksheet 卡 3，禁止改寫
  * - 變數插值僅 complaint.verbatim + people.background
@@ -56,14 +56,14 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
 
   return (
     <section
-      aria-labelledby="step-2-label"
+      aria-labelledby="step-1-label"
       className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-4"
     >
       <header>
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
           Step 1
         </p>
-        <h2 id="step-2-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <h2 id="step-1-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           複製這段 prompt 到 ChatGPT / Claude / Gemini
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">

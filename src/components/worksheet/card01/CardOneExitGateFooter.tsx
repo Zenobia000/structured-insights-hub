@@ -38,6 +38,7 @@ export function CardOneExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border-hairline bg-canvas-base/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-5 space-y-3">
+        <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
         {/* Reflection hints (Socratic, not pass/fail) */}
         <ul className="flex flex-col gap-2">
           <ReflectionHint

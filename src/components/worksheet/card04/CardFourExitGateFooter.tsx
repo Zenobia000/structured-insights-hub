@@ -57,6 +57,7 @@ export function CardFourExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border-hairline bg-canvas-base/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-5 space-y-3">
+        <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
         <ul className="flex flex-col gap-2">
           <ReflectionHint
             question="他過去 30 天有沒有真的花時間或錢試圖解？如果沒有，這真的痛嗎？"

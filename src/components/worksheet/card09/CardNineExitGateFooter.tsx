@@ -1,6 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  ReflectionHint,
+  type ReflectionHintState,
+} from "@/components/worksheet/ReflectionHint";
 import { usePersistedToggle } from "@/hooks/usePersistedToggle";
 import type { Judgment } from "@/types/painCard";
 
@@ -35,16 +39,32 @@ export function CardNineExitGateFooter({
   onAdvance,
   onBack,
 }: Props) {
-  const hints = [
-    { label: "想想看你選了哪一種判斷（真 / 假 / 待訪談）", done: judgmentChosen },
+  // 蘇格拉底問句版本(與 Card 1-8 共用 ReflectionHint 格式)
+  const reflections: Array<{
+    question: string;
+    state: ReflectionHintState;
+    hint?: string;
+    done: boolean;
+  }> = [
     {
-      label: `想想看你的書面理由有沒有寫到 ${reasonMin} 字（目前 ${reasonLen}）`,
+      question: "你選了哪一種判斷?真痛、假痛、還是要先去訪談?",
+      state: judgmentChosen ? "ok" : "pending",
+      done: judgmentChosen,
+    },
+    {
+      question: "你的書面理由,能不能讓另一個人讀完就懂你為什麼這樣判?",
+      state: reasonPassed ? "ok" : reasonLen > 0 ? "thinking" : "pending",
+      hint: !reasonPassed ? `至少 ${reasonMin} 字才算寫清楚(目前 ${reasonLen} 字)。` : undefined,
       done: reasonPassed,
     },
-    { label: "想想看你之後最想做哪一件事", done: nextActionChosen },
+    {
+      question: "判完之後,你接下來最想做的那件事是什麼?",
+      state: nextActionChosen ? "ok" : "pending",
+      done: nextActionChosen,
+    },
   ];
-  const allDone = hints.every((h) => h.done);
-  const remaining = hints.filter((h) => !h.done).length;
+  const allDone = reflections.every((h) => h.done);
+  const remaining = reflections.filter((h) => !h.done).length;
   const statusPreview = judgment ? STATUS_LABEL[judgment] : null;
 
   // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
@@ -179,14 +199,14 @@ export function CardNineExitGateFooter({
             className="flex flex-1 items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface-hover focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <h3 className="text-sm font-semibold text-text-primary shrink-0">想想看</h3>
+              <h3 className="text-sm font-semibold text-text-primary shrink-0">反思問題</h3>
               {allDone ? (
                 <span className="text-[12px] text-verified inline-flex items-center gap-1">
-                  <Check className="h-3 w-3" /> 三個都想清楚了
+                  <span aria-hidden>✓</span>3 題都已過
                 </span>
               ) : (
                 <span className="text-[12px] text-text-secondary truncate">
-                  還有 <span className="font-semibold text-secondary">{remaining}</span> 件沒想清楚
+                  還有 <span className="font-semibold text-secondary">{remaining}</span> 題沒過
                   {!expanded && <span className="text-text-muted">,點開看細節</span>}
                 </span>
               )}
@@ -195,7 +215,7 @@ export function CardNineExitGateFooter({
               {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
             </span>
             <span className="sr-only">
-              {expanded ? "收合想想看(Esc)" : "展開想想看"}
+              {expanded ? "收合反思問題(Esc)" : "展開反思問題"}
             </span>
           </button>
           {!allDone && (
@@ -221,24 +241,9 @@ export function CardNineExitGateFooter({
             className="min-h-[5rem] max-h-[min(38dvh,18rem)] sm:max-h-[min(44dvh,24rem)] overflow-y-auto overscroll-contain pr-1 -mr-1 space-y-2 sm:space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
             style={panelMaxH != null ? { maxHeight: `${panelMaxH}px` } : undefined}
           >
-            <ul className="space-y-1.5">
-              {hints.map((h, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-sm text-text-secondary leading-[1.55]"
-                >
-                  <span
-                    aria-hidden
-                    className={
-                      h.done
-                        ? "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center text-[12px] leading-none text-verified"
-                        : "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center text-[12px] leading-none text-text-muted"
-                    }
-                  >
-                    {h.done ? "✓" : "○"}
-                  </span>
-                  <span className={h.done ? "text-text-primary" : ""}>{h.label}</span>
-                </li>
+            <ul className="flex flex-col gap-2">
+              {reflections.map((r, i) => (
+                <ReflectionHint key={i} question={r.question} state={r.state} hint={r.hint} />
               ))}
             </ul>
 

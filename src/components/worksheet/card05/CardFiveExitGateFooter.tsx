@@ -1,12 +1,13 @@
 /**
  * CardFiveExitGateFooter — sticky 底部
  *
- * 蘇格拉底改版：拿掉「過關 / 退回」這套對抗框架。
- * 改用「想想看」 + 中性的條目清單，把判斷交還給使用者。
+ * 蘇格拉底改版：拿掉「過關 / 退回」這套對抗框架，改用蘇格拉底問句與 ReflectionHint。
+ * 與 Card 1-4、6-9 共用同一套「反思問題」格式（ReflectionHint + h3 標題）。
  */
 import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint, type ReflectionHintState } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   sidesPass: boolean;
@@ -35,19 +36,38 @@ export function CardFiveExitGateFooter({
         ? "回去把「為什麼那邊會被犧牲」用一句話寫清楚"
         : undefined;
 
+  const sidesState: ReflectionHintState = sidesPass ? "ok" : "pending";
+  const sacrificedState: ReflectionHintState = sacrificedPass ? "ok" : "pending";
+  const reasonState: ReflectionHintState = sacrificedReasonPass
+    ? "ok"
+    : sacrificedPass
+      ? "thinking"
+      : "pending";
+
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <div>
-          <p className="text-[12px] font-semibold tracking-wide uppercase text-text-secondary mb-1.5">
-            想想看
-          </p>
-          <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-            <ConditionItem passed={sidesPass} label="A、B 兩端都寫具體了嗎" />
-            <ConditionItem passed={sacrificedPass} label="標出通常會犧牲哪邊了嗎" />
-            <ConditionItem passed={sacrificedReasonPass} label="為什麼那邊會被犧牲，寫清楚了嗎" />
-          </ul>
-        </div>
+        <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="A、B 兩端，你能不能各自用一句話讓別人聽得懂？"
+            state={sidesState}
+            hint={!sidesPass ? "兩端都需要寫到 ≥ 10 字才算具體。" : undefined}
+          />
+          <ReflectionHint
+            question="這個人通常會犧牲哪一邊？你有標出來嗎？"
+            state={sacrificedState}
+          />
+          <ReflectionHint
+            question="為什麼是那邊被犧牲？是他自己說的、還是你猜的？"
+            state={reasonState}
+            hint={
+              !sacrificedReasonPass && sacrificedPass
+                ? "用一句話把原因寫清楚，不要只是「比較不重要」這種空話。"
+                : undefined
+            }
+          />
+        </ul>
 
         {blockedMessage && (
           <div
@@ -99,17 +119,3 @@ export function CardFiveExitGateFooter({
   );
 }
 
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-[7px] inline-block h-1.5 w-1.5 rounded-full shrink-0",
-          passed ? "bg-text-primary" : "bg-text-muted/50",
-        )}
-      />
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
-  );
-}

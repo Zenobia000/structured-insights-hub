@@ -61,13 +61,13 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
     >
       <header>
         <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 2
+          Step 1
         </p>
         <h2 id="step-2-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
           複製這段 prompt 到 ChatGPT / Claude / Gemini
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
-          AI 在這張卡的角色：<span className="font-semibold text-text-primary">把你寫的抱怨整理成卡關公式句型</span>，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
+          AI 在這張卡的角色：<span className="font-semibold text-text-primary">把卡 1 的抱怨整理成卡關公式句型</span>，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
         </p>
       </header>
 

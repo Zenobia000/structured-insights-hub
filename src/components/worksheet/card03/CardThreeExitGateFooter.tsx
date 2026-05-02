@@ -1,32 +1,35 @@
 /**
  * CardThreeExitGateFooter — 卡 3 sticky 底部行動列。
+ *
+ * 過關條件（2026-05 簡化）：
+ * - aiPolishedPass：使用者已貼回 AI 整理後的卡關公式句
+ * - confirmedPass：AI 沒列釐清問題，或全部已回答 / 預約問
  */
-import { ArrowRight, AlertTriangle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  userDraftPass: boolean;
+  aiPolishedPass: boolean;
   confirmedPass: boolean;
-  containsAbstract: boolean;
   submitting?: boolean;
   blockedMessage?: string | null;
   onAdvance: () => void;
 };
 
 export function CardThreeExitGateFooter({
-  userDraftPass,
+  aiPolishedPass,
   confirmedPass,
-  containsAbstract,
   submitting,
   blockedMessage,
   onAdvance,
 }: Props) {
-  const canAdvance = userDraftPass && confirmedPass && !submitting;
-  const tooltip = !userDraftPass
-    ? "請先寫完整的卡關公式句（至少 15 字）"
+  const canAdvance = aiPolishedPass && confirmedPass && !submitting;
+  const tooltip = !aiPolishedPass
+    ? "請先貼回 AI 整理後的卡關公式（≥15 字）"
     : !confirmedPass
-      ? "請勾選「我能回答上面的問題」"
+      ? "請回答 AI 列的每個釐清問題（或勾「預約找主人翁問」）"
       : undefined;
 
   return (
@@ -34,26 +37,14 @@ export function CardThreeExitGateFooter({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
         <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
           <ConditionItem
-            passed={userDraftPass}
-            label="兩個空格都很具體（不是「卡在效率不好」這種空話）"
+            passed={aiPolishedPass}
+            label="已貼回 AI 整理後的卡關公式句"
           />
           <ConditionItem
             passed={confirmedPass}
-            label="AI 列的「需要再問清楚」你能回答（或預約找主人翁問）"
+            label="AI 列的釐清問題已全部回答（或標記預約問）"
           />
         </ul>
-
-        {containsAbstract && (
-          <div
-            role="status"
-            className="flex items-start gap-2 rounded-md border border-caution/40 bg-caution/5 px-3 py-2 text-[12.5px] leading-[1.55] text-text-primary"
-          >
-            <AlertTriangle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
-            <span>
-              你的初稿仍含抽象詞 — 仍可過關，但建議改寫成具體動作（教學模式提醒，不擋）。
-            </span>
-          </div>
-        )}
 
         {blockedMessage && (
           <div

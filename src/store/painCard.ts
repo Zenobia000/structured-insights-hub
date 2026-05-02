@@ -47,6 +47,7 @@ function emptyPainCard(): PainCard {
       user_draft: "",
       ai_polished: null,
       ai_clarifying_questions: [],
+      ai_clarifying_answers: [],
       confirmed: false,
     },
 

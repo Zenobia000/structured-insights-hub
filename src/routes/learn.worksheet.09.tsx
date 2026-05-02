@@ -18,6 +18,7 @@ import { ScoresForm } from "@/components/worksheet/card09/ScoresForm";
 import { ScoresSummary } from "@/components/worksheet/card09/ScoresSummary";
 import { JudgmentForm } from "@/components/worksheet/card09/JudgmentForm";
 import { CardNineExitGateFooter } from "@/components/worksheet/card09/CardNineExitGateFooter";
+import { InterviewTargetsPrefill } from "@/components/worksheet/card09/InterviewTargetsPrefill";
 
 const searchSchema = z.object({
   mode: z.enum(["teaching", "production"]).optional(),

@@ -4,7 +4,7 @@
  * 匯出工具：純前端、不需登入、不打 API
  * - Markdown template
  * - JSON（完整 PainCard 物件）
- * - PDF（使用 jsPDF 文字版輸出）
+ * - PDF（透過瀏覽器列印對話框 → 另存為 PDF，完整支援繁中）
  */
 
 import type { PainCard, Judgment, NextAction } from "@/types/painCard";

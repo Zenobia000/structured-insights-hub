@@ -169,7 +169,7 @@ export function CardNineExitGateFooter({
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 space-y-2 sm:space-y-2.5">
         {/* 摺疊 header */}
-        <div className="flex items-center gap-2">
+        <div ref={headerRef} className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleToggleClick}
@@ -251,12 +251,18 @@ export function CardNineExitGateFooter({
         )}
 
         {blockedMessage && (
-          <div className="rounded-md border-2 border-secondary/40 bg-secondary/5 px-3 py-2 text-sm text-text-secondary">
+          <div
+            ref={blockedRef}
+            className="rounded-md border-2 border-secondary/40 bg-secondary/5 px-3 py-2 text-sm text-text-secondary"
+          >
             <span className="font-medium text-text-primary">還缺什麼：</span> {blockedMessage}
           </div>
         )}
 
-        <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2 pt-1">
+        <div
+          ref={actionsRef}
+          className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2 pt-1"
+        >
           <Button
             variant="ghost"
             size="sm"

@@ -58,7 +58,7 @@ export function ProgressVisual() {
               {String(n).padStart(2, "0")}
             </span>
             <span className="mt-1 text-[11px] tabular-nums text-text-secondary leading-tight">
-              {STEP_TIMES[n]} 分
+              {STEP_TIMES[n]} 分鐘
             </span>
           </li>
         ))}

@@ -1,0 +1,4 @@
+# Mark generated files so GitHub collapses them in PR diffs and excludes
+# them from language statistics. They are still tracked and committed —
+# this only affects how GitHub *displays* them.
+src/routeTree.gen.ts linguist-generated=true

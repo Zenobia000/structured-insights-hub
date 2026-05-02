@@ -37,10 +37,10 @@ export function exportFilename(card: PainCard, ext: "md" | "json" | "pdf"): stri
   return `paincard-${slug}-${date}.${ext}`;
 }
 
-export function interviewGuideFilename(card: PainCard): string {
+export function interviewGuideFilename(card: PainCard, ext: "md" | "pdf" = "pdf"): string {
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
-  return `paincard-interview-guide-${slug}-${date}.md`;
+  return `paincard-interview-guide-${slug}-${date}.${ext}`;
 }
 
 export function sacrificedLabel(card: PainCard): string {

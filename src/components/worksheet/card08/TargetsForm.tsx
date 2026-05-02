@@ -130,10 +130,14 @@ export function TargetsForm({ targets, highlightIndex, onUpdate, onAdd, onRemove
                   onChange={(e) => onUpdate(i, "contact_info", e.target.value)}
                   placeholder={
                     t.contact_known
-                      ? "例：林老師 / LINE: xxx / 0912-..."
-                      : "例：去家長社團 PO 文找 3 位家長"
+                      ? "例:林老師 / LINE: xxx / 0912-..."
+                      : "例:去家長社團 PO 文找 3 位家長"
                   }
-                  className="min-h-[56px]"
+                  className={cn(
+                    "min-h-[56px] transition-all",
+                    isHl && !contactOk &&
+                      "border-secondary ring-2 ring-secondary/40 bg-secondary/5 animate-pulse",
+                  )}
                 />
               </div>
 

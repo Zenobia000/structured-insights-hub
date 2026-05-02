@@ -28,6 +28,8 @@ type Props = {
   noContactAtAll: boolean;
   onAdvance: () => void;
   onBackToCard2: () => void;
+  /** 跳到第一個缺『聯絡方式』的訪談對象,做高亮 + 捲動 + focus */
+  onJumpToMissingContact?: () => void;
 };
 
 export function CardEightExitGateFooter({
@@ -39,6 +41,7 @@ export function CardEightExitGateFooter({
   noContactAtAll,
   onAdvance,
   onBackToCard2,
+  onJumpToMissingContact,
 }: Props) {
   const contactState: ReflectionHintState = hasContact ? "ok" : "pending";
   const questionsState: ReflectionHintState = questionsAllFilled ? "ok" : "pending";
@@ -82,9 +85,19 @@ export function CardEightExitGateFooter({
           />
         </ul>
 
+        {!hasContact && onJumpToMissingContact && (
+          <button
+            type="button"
+            onClick={onJumpToMissingContact}
+            className="inline-flex items-center gap-1.5 self-start rounded-md border border-secondary/40 bg-secondary/10 px-3 py-1.5 text-[12.5px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+          >
+            ↑ 帶我去填「聯絡方式」欄
+          </button>
+        )}
+
         {blockedMessage && (
           <div className="rounded-md border-2 border-secondary/40 bg-secondary/5 px-3 py-2 text-sm text-text-secondary">
-            <span className="font-medium text-text-primary">還可以再想想：</span> {blockedMessage}
+            <span className="font-medium text-text-primary">還可以再想想:</span> {blockedMessage}
           </div>
         )}
 

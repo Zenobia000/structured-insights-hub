@@ -1,6 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  ReflectionHint,
+  type ReflectionHintState,
+} from "@/components/worksheet/ReflectionHint";
 import { usePersistedToggle } from "@/hooks/usePersistedToggle";
 import type { Judgment } from "@/types/painCard";
 

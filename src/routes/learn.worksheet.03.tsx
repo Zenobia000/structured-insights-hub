@@ -5,7 +5,7 @@ import { Edit, Sparkles } from "lucide-react";
 import { UserDraftInput } from "@/components/worksheet/card03/UserDraftInput";
 import { AiPromptBlock } from "@/components/worksheet/card03/AiPromptBlock";
 import { AiResponseInput } from "@/components/worksheet/card03/AiResponseInput";
-import { ConfirmationCheck } from "@/components/worksheet/card03/ConfirmationCheck";
+import { ClarifyingQAPanel } from "@/components/worksheet/card03/ClarifyingQAPanel";
 import { ExampleReferenceCard3 } from "@/components/worksheet/card03/ExampleReferenceCard3";
 import { CardThreeExitGateFooter } from "@/components/worksheet/card03/CardThreeExitGateFooter";
 import {
@@ -54,8 +54,8 @@ function CardThreePage() {
   const [submitting, setSubmitting] = useState(false);
 
   const prompt = useMemo(
-    () => interpolatePrompt(card.complaint.verbatim, card.people.background),
-    [card.complaint.verbatim, card.people.background],
+    () => interpolatePrompt(card.complaint.verbatim, card.people.background, card.stuck_formula.user_draft),
+    [card.complaint.verbatim, card.people.background, card.stuck_formula.user_draft],
   );
 
   const [savedAgo, setSavedAgo] = useState("");
@@ -69,24 +69,49 @@ function CardThreePage() {
   // 任意輸入變更後清除 blocked message
   useEffect(() => {
     setBlockedMessage(null);
-  }, [stuck.user_draft, stuck.confirmed]);
+  }, [stuck.user_draft, stuck.ai_clarifying_answers]);
 
   const setUserDraft = (v: string) => updateField("stuck_formula.user_draft", v);
   const setAiPolished = (v: string) =>
     updateField("stuck_formula.ai_polished", v.length > 0 ? v : null);
-  const setQuestions = (v: string[]) =>
-    updateField("stuck_formula.ai_clarifying_questions", v);
-  const setConfirmed = (v: boolean) => updateField("stuck_formula.confirmed", v);
+
+  // 變更 questions 時，同步重建 ai_clarifying_answers（保留既有答案）
+  const setQuestions = (next: string[]) => {
+    const prev = stuck.ai_clarifying_answers ?? [];
+    const byQ = new Map(prev.map((a) => [a.question, a]));
+    const rebuilt = next.map(
+      (q) => byQ.get(q) ?? { question: q, answer: "", reserved: false },
+    );
+    updateField("stuck_formula.ai_clarifying_questions", next);
+    updateField("stuck_formula.ai_clarifying_answers", rebuilt);
+  };
+
+  const setAnswerForQuestion = (question: string, answer: string) => {
+    const prev = stuck.ai_clarifying_answers ?? [];
+    const next = prev.map((a) =>
+      a.question === question ? { ...a, answer } : a,
+    );
+    updateField("stuck_formula.ai_clarifying_answers", next);
+  };
+
+  const setReservedForQuestion = (question: string, reserved: boolean) => {
+    const prev = stuck.ai_clarifying_answers ?? [];
+    const next = prev.map((a) =>
+      a.question === question ? { ...a, reserved } : a,
+    );
+    updateField("stuck_formula.ai_clarifying_answers", next);
+  };
 
   const handleAdvance = () => {
     setAttempted(true);
     if (!checks.userDraftFilled || !checks.userDraftLongEnough) {
-      setBlockedMessage("請至少寫一個完整的句型句（至少 15 字）。看下方林老師範例。");
+      setBlockedMessage("Step 1 請至少寫 15 字描述卡點，AI 才有材料可以整理。");
       return;
     }
     if (!checks.confirmed) {
+      const remaining = checks.clarifying.totalCount - checks.clarifying.resolvedCount;
       setBlockedMessage(
-        "請確認你能回答 AI 列的問題（或已預約找主人翁問）。如果都答不出來 → 退回卡 1。",
+        `還有 ${remaining} 題 AI 釐清問題未處理 — 請寫下回答（≥10 字）或勾「已預約找主人翁問」。`,
       );
       return;
     }
@@ -127,12 +152,12 @@ function CardThreePage() {
             <Edit className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">規則：</span>
-              你<span className="font-semibold">先</span>寫初版，再請 AI 校對 — 不是反過來。AI 不替你發明細節，但能幫你看出含糊處。
+              你<span className="font-semibold">用自然語言</span>描述卡點 → AI 幫你整理成句型 → 你回答 AI 的釐清問題。AI 不替你發明細節。
             </div>
           </div>
 
           <p className="mt-4 text-[14.5px] leading-[1.65] text-text-secondary">
-            句型範本：<code className="font-mono px-1.5 py-0.5 rounded bg-muted-bg text-text-primary">「我每次要 [想做的事]，都會卡在 [障礙]。」</code>
+            最終會整理成的句型：<code className="font-mono px-1.5 py-0.5 rounded bg-muted-bg text-text-primary">「我每次要 [想做的事]，都會卡在 [障礙]。」</code>
           </p>
         </header>
 
@@ -152,9 +177,14 @@ function CardThreePage() {
             onQuestionsChange={setQuestions}
           />
 
-          <ConfirmationCheck
-            confirmed={stuck.confirmed}
-            onConfirmedChange={setConfirmed}
+          <ClarifyingQAPanel
+            questions={stuck.ai_clarifying_questions}
+            answers={stuck.ai_clarifying_answers ?? []}
+            items={checks.clarifying.items}
+            resolvedCount={checks.clarifying.resolvedCount}
+            totalCount={checks.clarifying.totalCount}
+            onAnswerChange={setAnswerForQuestion}
+            onReservedChange={setReservedForQuestion}
             highlight={attempted && !checks.confirmed}
           />
 

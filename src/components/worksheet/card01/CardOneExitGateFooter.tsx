@@ -1,8 +1,7 @@
 /**
  * Card 1 ExitGate footer — sticky 底部行動列。
  *
- * 與全域 ExitGateCheck 不同：本卡需要 blocked_message 動態文案、CTA disabled tooltip、
- * 與 anti-fake check 整合。獨立元件以避免污染共用 ExitGateCheck。
+ * 本卡專屬：blocked_message 動態文案、CTA disabled tooltip、anti-fake check 整合。
  */
 import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";

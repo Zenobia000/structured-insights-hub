@@ -241,24 +241,9 @@ export function CardNineExitGateFooter({
             className="min-h-[5rem] max-h-[min(38dvh,18rem)] sm:max-h-[min(44dvh,24rem)] overflow-y-auto overscroll-contain pr-1 -mr-1 space-y-2 sm:space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
             style={panelMaxH != null ? { maxHeight: `${panelMaxH}px` } : undefined}
           >
-            <ul className="space-y-1.5">
-              {hints.map((h, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-sm text-text-secondary leading-[1.55]"
-                >
-                  <span
-                    aria-hidden
-                    className={
-                      h.done
-                        ? "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center text-[12px] leading-none text-verified"
-                        : "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center text-[12px] leading-none text-text-muted"
-                    }
-                  >
-                    {h.done ? "✓" : "○"}
-                  </span>
-                  <span className={h.done ? "text-text-primary" : ""}>{h.label}</span>
-                </li>
+            <ul className="flex flex-col gap-2">
+              {reflections.map((r, i) => (
+                <ReflectionHint key={i} question={r.question} state={r.state} hint={r.hint} />
               ))}
             </ul>
 

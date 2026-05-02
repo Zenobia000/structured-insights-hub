@@ -72,8 +72,9 @@ export function ExamplePainCardPreviewSection() {
 
   return (
     <SectionFade
+      id="example-paincard"
       ariaLabelledBy="example-title"
-      className="relative border-t border-border-hairline bg-canvas-base"
+      className="relative border-t border-border-hairline bg-canvas-base scroll-mt-20"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 md:py-32">
         <div className="max-w-2xl mb-16">

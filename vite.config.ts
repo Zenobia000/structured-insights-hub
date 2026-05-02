@@ -8,6 +8,14 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
+  // Note: tried tanstackStart.prerender for landing `/` (would let
+  // Cloudflare cache static HTML at the edge). Failed because the
+  // bundled cloudflare preset emits `worker-entry-*.js`, but the
+  // prerender plugin self-fetches via a Node-style `dist/server/server.js`
+  // entry that doesn't exist under this preset.
+  // Tracking this as a known limitation in docs/perf/2026-05-03-baseline.md.
+  // Workaround for the same goal: enable Cloudflare HTML caching for `/`
+  // at the worker layer (not a vite-time change).
   vite: {
     plugins: [
       // Bundle visualizer — produces dist/stats.html on every build.

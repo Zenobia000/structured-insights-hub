@@ -521,22 +521,33 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
 
 /**
  * 用隱藏 iframe 觸發列印；不會被 popup blocker 擋。
- * 列印對話框關閉後（focus 回到主視窗）再清掉 iframe。
+ *
+ * 檔名策略（瀏覽器「另存為 PDF」預設檔名來源不一）：
+ *   - Chrome / Edge / Firefox：用 iframe 的 contentDocument.title（HTML <title> 已正確設定）
+ *   - Safari：用主視窗 document.title
+ *   → print() 觸發前暫時改主視窗 title 成不含副檔名的檔名，
+ *     對話框關閉後（focus 回主視窗）還原原 title。
  */
-function printViaIframe(html: string, title: string): Promise<void> {
+function printViaIframe(html: string, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const iframe = document.createElement("iframe");
     iframe.setAttribute("aria-hidden", "true");
-    iframe.title = title;
+    iframe.title = filename;
     iframe.style.cssText =
       "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;";
     document.body.appendChild(iframe);
+
+    // PDF 預設檔名 = title（去掉 .pdf 副檔名，瀏覽器自動補）
+    const printTitle = filename.replace(/\.(pdf|html?)$/i, "");
+    const originalTitle = document.title;
 
     let cleaned = false;
     const cleanup = () => {
       if (cleaned) return;
       cleaned = true;
-      // 延遲移除：Safari 若在 print 對話框期間移除會中斷
+      // 還原主視窗 title
+      document.title = originalTitle;
+      // 延遲移除 iframe：Safari 若在 print 對話框期間移除會中斷列印
       setTimeout(() => {
         try { iframe.remove(); } catch { /* noop */ }
       }, 1000);
@@ -545,12 +556,18 @@ function printViaIframe(html: string, title: string): Promise<void> {
     const onLoad = () => {
       try {
         const cw = iframe.contentWindow;
-        if (!cw) throw new Error("iframe contentWindow missing");
+        const cd = iframe.contentDocument;
+        if (!cw || !cd) throw new Error("iframe contentWindow missing");
+
+        // 雙保險：iframe 內部 title + 主視窗 title 都對齊預期檔名
+        try { cd.title = printTitle; } catch { /* noop */ }
+        document.title = printTitle;
+
         setTimeout(() => {
           try {
             cw.focus();
             cw.print();
-            // 列印對話框關閉時 focus 會回到主視窗 → 當作收尾訊號
+            // 列印對話框關閉時 focus 會回到主視窗 → 收尾還原 title
             const finish = () => {
               window.removeEventListener("focus", finish);
               cleanup();

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePersistedToggle } from "@/hooks/usePersistedToggle";
 import type { Judgment } from "@/types/painCard";
 
 type Props = {
@@ -46,11 +47,11 @@ export function CardNineExitGateFooter({
   const remaining = hints.filter((h) => !h.done).length;
   const statusPreview = judgment ? STATUS_LABEL[judgment] : null;
 
-  // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開
-  const [expanded, setExpanded] = useState(false);
+  // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
+  const [expanded, setExpanded] = usePersistedToggle("painmap:card9:reflection-expanded", false);
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
-  }, [blockedMessage]);
+  }, [blockedMessage, setExpanded]);
 
   // 找第一個沒想清楚的反思題,跳到對應欄位
   function jumpToFirstUnmet() {

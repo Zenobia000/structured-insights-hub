@@ -44,6 +44,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "PainMap 題眼 · 痛點填空簿" },
+      { name: "description", content: "PainMap Studio structures pain points into actionable problems for problem solvers." },
+      { property: "og:description", content: "PainMap Studio structures pain points into actionable problems for problem solvers." },
+      { name: "twitter:description", content: "PainMap Studio structures pain points into actionable problems for problem solvers." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fd2ca7ed-977c-4db7-9a9e-827d1a78fa75/id-preview-a4a4d1e5--d0139ee1-9f0d-4539-a1a8-5a4fdd46360e.lovable.app-1777712052394.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fd2ca7ed-977c-4db7-9a9e-827d1a78fa75/id-preview-a4a4d1e5--d0139ee1-9f0d-4539-a1a8-5a4fdd46360e.lovable.app-1777712052394.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

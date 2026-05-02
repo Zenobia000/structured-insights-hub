@@ -380,16 +380,18 @@ export const usePainCardStore = create<PainCardStore>()(
       }),
       // 只持久化 card；hydrated 是 runtime flag、actions 是函式，都不該寫入 localStorage
       partialize: (state) => ({ card: state.card }),
-      version: 1,
-      // 預留 migration hook（目前只有 v1）
-      migrate: (persistedState, _version) => persistedState as PainCardStore,
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          const sf = state.card?.stuck_formula as
+      version: 2,
+      // v1 → v2: 一次性遷移
+      //   - backfill stuck_formula.ai_clarifying_answers（從 questions 推回對應 answers slot）
+      //   - 移除 stuck_formula.user_draft（若 ai_polished 為空則搬過去）
+      // 一旦 persist.version 升到 2 就不再每次 hydrate 跑這段，僅 v1 用戶第一次開頁面時跑一次
+      migrate: (persistedState, version) => {
+        const state = persistedState as PainCardStore;
+        if (version < 2 && state?.card) {
+          const sf = state.card.stuck_formula as
             | (typeof state.card.stuck_formula & { user_draft?: string })
             | undefined;
           if (sf) {
-            // Backfill: ai_clarifying_answers (added later)
             if (!Array.isArray(sf.ai_clarifying_answers)) {
               const questions = sf.ai_clarifying_questions ?? [];
               const wasConfirmed = sf.confirmed === true;
@@ -400,7 +402,6 @@ export const usePainCardStore = create<PainCardStore>()(
                 reserved: wasConfirmed,
               }));
             }
-            // Migration: 移除 user_draft；若 ai_polished 為空，把 user_draft 內容搬過去
             if (typeof sf.user_draft === "string") {
               if (!sf.ai_polished && sf.user_draft.trim().length > 0) {
                 sf.ai_polished = sf.user_draft;
@@ -408,8 +409,11 @@ export const usePainCardStore = create<PainCardStore>()(
               delete sf.user_draft;
             }
           }
-          state.hydrated = true;
         }
+        return state;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) state.hydrated = true;
       },
     },
   ),

@@ -26,9 +26,25 @@ function stateOf(step: CurrentStep, current: CurrentStep): StepState {
   return "locked";
 }
 
-function pathFor(step: CurrentStep | 10): string {
-  if (step === 10) return "/learn/worksheet/result";
-  return `/learn/worksheet/${String(step).padStart(2, "0")}`;
+// Lookup 表取代 template literal — 讓 pathFor 返回 literal union 型別，
+// TanStack Router 的 <Link to> 才能在編譯期驗證路徑（消除 `as any` 逃逸）。
+const STEP_PATHS = {
+  1: "/learn/worksheet/01",
+  2: "/learn/worksheet/02",
+  3: "/learn/worksheet/03",
+  4: "/learn/worksheet/04",
+  5: "/learn/worksheet/05",
+  6: "/learn/worksheet/06",
+  7: "/learn/worksheet/07",
+  8: "/learn/worksheet/08",
+  9: "/learn/worksheet/09",
+  10: "/learn/worksheet/result",
+} as const;
+
+type StepPath = (typeof STEP_PATHS)[keyof typeof STEP_PATHS];
+
+function pathFor(step: CurrentStep | 10): StepPath {
+  return STEP_PATHS[step];
 }
 
 export function CardProgressStepper() {
@@ -135,8 +151,7 @@ const StepDot = memo(function StepDot({ step, state }: { step: CurrentStep; stat
 
   return (
     <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      to={pathFor(step) as any}
+      to={pathFor(step)}
       aria-current={state === "current" ? "step" : undefined}
       aria-label={`卡 ${step}（${state === "completed" ? "已完成" : "進行中"}）`}
       className={cn(

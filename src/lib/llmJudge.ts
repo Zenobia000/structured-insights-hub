@@ -10,7 +10,7 @@
  * - 統一回傳 { verdict: "pass"|"warn"|"fallback", reason: string }
  * - "fallback" 表示 LLM 無結果，caller 應退到既有 hardcoded 邏輯
  */
-import { judgeWithLLM } from "@/server/llmJudge.server";
+import { judgeWithLLM } from "@/lib/llmJudge.server";
 import type { JudgeKind, LLMVerdict } from "@/lib/llmJudgeSchemas";
 
 export type JudgeOutcome =

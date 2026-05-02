@@ -1,17 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Wrench, Sparkles, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import { TextField, TextareaField } from "@/components/worksheet/card01/FormFields";
 import { AIPromptCopyBlock } from "@/components/worksheet/AIPromptCopyBlock";
 import { TagInputField } from "@/components/worksheet/card04/TagInputField";
 import { ExampleReferenceCard4 } from "@/components/worksheet/card04/ExampleReferenceCard4";
 import { CardFourExitGateFooter } from "@/components/worksheet/card04/CardFourExitGateFooter";
+import { WorksheetCardHeader } from "@/components/worksheet/WorksheetCardHeader";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import {
   evaluateCardFour,
   findForbiddenToolKeywords,
   findAbstractDissatisfactionKeywords,
 } from "@/lib/cardFourValidators";
+import { parseAiAlternatives, detectSolutionModeWords } from "@/lib/cardFourAiParsers";
 import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
@@ -94,8 +97,25 @@ ${stuck}
     checks.toolNameFilled === "pass" &&
     checks.toolNameNotForbidden === "pass" &&
     checks.whyStillStuckFilled === "pass";
+  const aiAlternativesPass = checks.aiAlternativesEnough === "pass";
   const dissatisfactionsPass = checks.dissatisfactionsEnough === "pass";
   const forbiddenTriggered = checks.toolNameNotForbidden === "warn";
+
+  // 偵測 AI 回應中的「solution mode」禁詞 — 顯示 inline warning，不擋
+  const solutionModeHits = useMemo(() => detectSolutionModeWords(aiResponse), [aiResponse]);
+
+  // 使用者貼回 AI response 後，自動解析填入 ai_alternatives（便利功能）
+  // 條件：尚未手動編輯過 tags（length === 0）且 AI 回應 ≥ 20 字
+  // 避免覆蓋使用者已整理的內容
+  useEffect(() => {
+    if (w.ai_alternatives.length > 0) return;
+    if (aiResponse.trim().length < 20) return;
+    const parsed = parseAiAlternatives(aiResponse);
+    if (parsed.length >= 2) {
+      setAlternatives(parsed.slice(0, 10));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aiResponse]);
 
   const handleAdvance = async () => {
     setAttempted(true);
@@ -138,6 +158,13 @@ ${stuck}
     }
     if (checks.whyStillStuckFilled !== "pass") {
       setBlockedMessage("用主人翁的話寫，他為什麼還是覺得卡（≥ 5 字）。");
+      setFailureCount((c) => c + 1);
+      return;
+    }
+    if (!aiAlternativesPass) {
+      setBlockedMessage(
+        "Step 2 複製 prompt 給 AI，把回的 5 個 workaround 貼回 Step 3（至少 3 個）。沒走過 AI 一輪，難判斷你寫的工具是不是真的。",
+      );
       setFailureCount((c) => c + 1);
       return;
     }
@@ -191,43 +218,30 @@ ${stuck}
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
-      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-8">
-        {/* Card intro */}
-        <header>
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary">
-              卡 4 / 9
-            </p>
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md border-2 border-verified/50 bg-verified/5 px-2 py-1 text-[11px] font-bold text-verified"
-              aria-label="這張卡 AI 介入：提案 5 個 workaround"
-            >
-              <Sparkles className="h-3 w-3" aria-hidden />
-              AI 介入：✅ 提案 5 個 workaround
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            他現在到底怎麼解這個問題？
-          </h1>
-
-          <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
-            <Wrench className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
-            <div className="text-[15px] leading-[1.6] text-text-primary">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-10">
+        <WorksheetCardHeader
+          cardNumber={4}
+          aiStatus="required"
+          title="他現在到底怎麼解這個問題？"
+          rule={
+            <>
               <span className="font-semibold">為什麼要看這個：</span>
               如果他根本沒在花時間解 → 這個痛可能還不夠痛。如果他試了好幾個方法都不滿意 →
               真痛點可能就藏在那些「不滿」裡。
-            </div>
-          </div>
-
-          <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            這張卡分 4 步走：① 你先憑訪談寫一個版本 → ② AI 補 5 個常見 workaround → ③ 你把 AI
-            提案貼回 → ④ 帶著 AI 清單再去問主人翁，把他「不滿在哪」的 3 個具體理由帶回來。
-          </p>
-        </header>
+            </>
+          }
+          intro={
+            <>
+              這張卡分 4 步走：① 你先憑訪談寫一個版本 → ② AI 補 5 個常見 workaround → ③ 你把 AI
+              提案貼回（必填，不可跳過） → ④ 帶著 AI 清單再去問主人翁，把他「不滿在哪」的 3
+              個具體理由帶回來。
+            </>
+          }
+        />
 
         {stuckMissing && (
-          <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary">
-            <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
+          <div className="flex items-start gap-2.5 rounded-md border border-status-warning/40 bg-status-warning-bg px-3.5 py-3 text-[13.5px] leading-[1.6] text-text-primary">
+            <AlertCircle className="h-4 w-4 text-status-warning shrink-0 mt-0.5" aria-hidden />
             <span>還沒填卡 3「卡關公式」，下方 prompt 會缺變數。建議先回卡 3 完成。</span>
           </div>
         )}
@@ -235,10 +249,13 @@ ${stuck}
         {/* Step 1 */}
         <section className="space-y-5">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 1：你從訪談聽到的（先寫）
+            <Eyebrow variant="numbered" index={1}>
+              Step · from interview
+            </Eyebrow>
+            <h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.01em] text-text-primary">
+              你從訪談聽到的（先寫）
             </h2>
-            <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
+            <p className="mt-2 text-[14px] text-text-secondary leading-[1.65]">
               從卡 1-3
               你聽到的，主人翁現在用什麼解這個問題？可能是：一個工具、一個人、一個習慣動作、一個
               Excel 表。
@@ -286,12 +303,15 @@ ${stuck}
         {/* Step 2 */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 2：AI 提案其他 5 個常見 workaround
+            <Eyebrow variant="numbered" index={2}>
+              Step · AI required
+            </Eyebrow>
+            <h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.01em] text-text-primary">
+              AI 提案其他 5 個常見 workaround
             </h2>
-            <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              複製下方 prompt → 貼到 ChatGPT / Claude / Perplexity / Gemini → 把 AI 列的 5 個貼回
-              Step 3。
+            <p className="mt-2 text-[14px] text-text-secondary leading-[1.65]">
+              複製下方 prompt → 貼到 ChatGPT / Claude / Perplexity / Gemini → 把 AI
+              的回應整段貼回，會自動拆成下方 Step 3 的標籤。
             </p>
           </div>
 
@@ -302,17 +322,39 @@ ${stuck}
             title="🤖 AI 幫你補充其他可能"
           />
 
-          <p className="text-[12px] text-text-muted">
-            Prompt 來源：worksheet 卡片 4 「🤖 AI 幫你補充其他可能」段落（逐字引用）
+          {solutionModeHits.length > 0 && (
+            <div
+              role="status"
+              className="flex items-start gap-2.5 rounded-md border border-status-warning/40 bg-status-warning-bg px-3.5 py-3 text-[13px] leading-[1.6] text-text-primary"
+            >
+              <AlertCircle
+                className="h-4 w-4 text-status-warning shrink-0 mt-0.5"
+                aria-hidden
+              />
+              <span>
+                AI 回應裡偵測到「{solutionModeHits.join("、")}
+                」這類「叫你做產品」的話 — 這階段只看「他現在怎麼解」，請忽略這類建議。
+              </span>
+            </div>
+          )}
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+            Prompt source · worksheet 卡片 4 「AI 幫你補充其他可能」段落（逐字引用）
           </p>
         </section>
 
         {/* Step 3 */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 3：把 AI 提案的 5 個貼回
+            <Eyebrow variant="numbered" index={3}>
+              Step · paste back
+            </Eyebrow>
+            <h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.01em] text-text-primary">
+              把 AI 提案的 5 個貼回（自動解析）
             </h2>
+            <p className="mt-2 text-[14px] text-text-secondary leading-[1.65]">
+              Step 2 貼回 AI 整段回應後，下方 tag 會自動填入。可手動編輯、新增、刪除。
+            </p>
           </div>
 
           <TagInputField
@@ -330,18 +372,21 @@ ${stuck}
         {/* Step 4 */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              Step 4：拿 AI 清單去問主人翁，填回 3 個不滿理由
+            <Eyebrow variant="numbered" index={4}>
+              Step · ground truth
+            </Eyebrow>
+            <h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.01em] text-text-primary">
+              拿 AI 清單去問主人翁，填回 3 個不滿理由
             </h2>
           </div>
 
           <div
             role="alert"
-            className="flex items-start gap-3 rounded-lg border-2 border-accent/40 bg-accent/10 p-4"
+            className="flex items-start gap-3 rounded-md border border-accent-electric/40 bg-accent-electric-subtle/40 p-4"
           >
-            <AlertCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" aria-hidden />
-            <div className="text-[14.5px] leading-[1.6] text-text-primary">
-              <span className="font-bold">這一步是真實性的關鍵。</span>把 AI 列的 5 個 workaround
+            <AlertCircle className="h-5 w-5 text-accent-electric shrink-0 mt-0.5" aria-hidden />
+            <div className="text-[14.5px] leading-[1.65] text-text-primary">
+              <span className="font-semibold">這一步是真實性的關鍵。</span>把 AI 列的 5 個 workaround
               拿去問主人翁：「這幾個你有用過嗎？哪個最像你的狀況？」然後
               <span className="font-semibold">寫下他不滿意現有方法的具體理由（≥ 3 個）</span>。
               這一步可能要花幾天等主人翁回覆 — 頁面會自動儲存。
@@ -367,8 +412,21 @@ ${stuck}
           />
         </section>
 
-        <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
+        <p
+          className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.06em] text-text-tertiary"
+          aria-live="polite"
+        >
+          {hydrated && savedAgo ? (
+            <>
+              <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+              Saved locally · {savedAgo}
+            </>
+          ) : (
+            <>
+              <span className="h-1.5 w-1.5 rounded-full bg-text-tertiary" />
+              Not started yet
+            </>
+          )}
         </p>
 
         <ExampleReferenceCard4 />
@@ -376,6 +434,7 @@ ${stuck}
 
       <CardFourExitGateFooter
         toolNamePass={toolNamePass}
+        aiAlternativesPass={aiAlternativesPass}
         dissatisfactionsPass={dissatisfactionsPass}
         submitting={submitting}
         blockedMessage={blockedMessage}

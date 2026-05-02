@@ -91,18 +91,23 @@ export function JudgmentForm({
           {JUDGMENT_OPTIONS.map((opt) => {
             const selected = judgment === opt.value;
             return (
-              <RadioGroupItem
+              <label
                 key={opt.value}
-                id={`j-${opt.value}`}
-                value={opt.value}
-                aria-label={`${opt.label}：${opt.description}`}
+                htmlFor={`j-${opt.value}`}
                 className={cn(
-                  "h-auto w-auto aspect-auto rounded-lg border p-3 cursor-pointer flex flex-col gap-1 items-start text-left transition-colors [&>span]:hidden",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
-                  "data-[state=checked]:border-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent/30 data-[state=checked]:bg-accent/5",
-                  !selected && "border-border bg-surface hover:border-accent/40",
+                  "rounded-lg border p-3 cursor-pointer flex flex-col gap-1 items-start text-left transition-colors",
+                  "focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2",
+                  selected
+                    ? "border-accent ring-2 ring-accent/30 bg-accent/5"
+                    : "border-border bg-surface hover:border-accent/40",
                 )}
               >
+                <RadioGroupItem
+                  id={`j-${opt.value}`}
+                  value={opt.value}
+                  aria-label={`${opt.label}：${opt.description}`}
+                  className="sr-only"
+                />
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-[15px] font-bold text-text-primary">
                     {opt.marker}
@@ -112,7 +117,7 @@ export function JudgmentForm({
                 <p className="text-[12.5px] text-text-secondary leading-[1.55]">
                   {opt.description}
                 </p>
-              </RadioGroupItem>
+              </label>
             );
           })}
         </RadioGroup>

@@ -68,10 +68,11 @@ export function ExportActions() {
     setGuideLoading(true);
     try {
       await exportInterviewGuide(card);
-      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
+      toast.success("已開啟列印對話框 — 選擇「另存為 PDF」即可");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "訪綱匯出失敗";
-      toast.error(msg);
+      // 兩行訊息（fallback HTML 下載提示）顯示完整
+      toast.error(msg, { duration: 8000 });
       console.error(err);
     } finally {
       setGuideLoading(false);

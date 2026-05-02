@@ -458,23 +458,107 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
     此訪綱由 PainMap Worksheet 卡 8 三階段虛擬訪談產出，請拿去找真人訪談。AI 模擬不能取代真實對話。
   </footer>
   <script>
-    window.addEventListener("load", function () {
-      setTimeout(function () {
-        window.focus();
-        window.print();
-      }, 200);
-    });
+    // 若是 fallback 開新視窗模式才自動 print；
+    // iframe 主流程由父頁面控制，避免重複觸發。
+    if (window.opener || window.name === "paincard-print-window") {
+      window.addEventListener("load", function () {
+        setTimeout(function () { window.focus(); window.print(); }, 200);
+      });
+    }
   </script>
 </body>
 </html>`;
 
-  const win = window.open("", "_blank");
-  if (!win) {
-    throw new Error("瀏覽器擋下了新視窗，請允許彈出視窗後再試");
+  // ---- 主流程：隱藏 iframe（不會被 popup blocker 擋）----
+  try {
+    await printViaIframe(html, filename);
+    return;
+  } catch (iframeErr) {
+    console.warn("[exportInterviewGuide] iframe print failed, fallback to popup", iframeErr);
   }
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
+
+  // ---- 備援 1：開新視窗 ----
+  const win = window.open("", "paincard-print-window");
+  if (win) {
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    return;
+  }
+
+  // ---- 備援 2：popup 被擋 → 下載 HTML 檔 + 拋出可讀錯誤 ----
+  downloadBlob(
+    filename.replace(/\.pdf$/, ".html"),
+    "text/html;charset=utf-8",
+    html,
+  );
+  throw new Error(
+    "瀏覽器擋下了列印視窗。已改為下載 HTML 檔給你 — 打開後按 Ctrl/Cmd + P 即可另存為 PDF。若想用一鍵列印，請到網址列右側點「允許彈出視窗」後再試一次。",
+  );
+}
+
+/**
+ * 用隱藏 iframe 觸發列印；不會被 popup blocker 擋。
+ * 列印對話框關閉後（focus 回到主視窗）再清掉 iframe。
+ */
+function printViaIframe(html: string, title: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.title = title;
+    iframe.style.cssText =
+      "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;";
+    document.body.appendChild(iframe);
+
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) return;
+      cleaned = true;
+      // 延遲移除：Safari 若在 print 對話框期間移除會中斷
+      setTimeout(() => {
+        try { iframe.remove(); } catch { /* noop */ }
+      }, 1000);
+    };
+
+    const onLoad = () => {
+      try {
+        const cw = iframe.contentWindow;
+        if (!cw) throw new Error("iframe contentWindow missing");
+        setTimeout(() => {
+          try {
+            cw.focus();
+            cw.print();
+            // 列印對話框關閉時 focus 會回到主視窗 → 當作收尾訊號
+            const finish = () => {
+              window.removeEventListener("focus", finish);
+              cleanup();
+              resolve();
+            };
+            window.addEventListener("focus", finish);
+            setTimeout(finish, 8000); // 安全網
+          } catch (printErr) {
+            cleanup();
+            reject(printErr);
+          }
+        }, 250);
+      } catch (err) {
+        cleanup();
+        reject(err);
+      }
+    };
+
+    iframe.addEventListener("load", onLoad, { once: true });
+    iframe.addEventListener(
+      "error",
+      () => {
+        cleanup();
+        reject(new Error("iframe load error"));
+      },
+      { once: true },
+    );
+
+    iframe.srcdoc = html;
+  });
 }
 
 function escapeHtml(s: string): string {

@@ -28,6 +28,8 @@ type Props = {
   noContactAtAll: boolean;
   onAdvance: () => void;
   onBackToCard2: () => void;
+  /** 跳到第一個缺『聯絡方式』的訪談對象,做高亮 + 捲動 + focus */
+  onJumpToMissingContact?: () => void;
 };
 
 export function CardEightExitGateFooter({
@@ -39,6 +41,7 @@ export function CardEightExitGateFooter({
   noContactAtAll,
   onAdvance,
   onBackToCard2,
+  onJumpToMissingContact,
 }: Props) {
   const contactState: ReflectionHintState = hasContact ? "ok" : "pending";
   const questionsState: ReflectionHintState = questionsAllFilled ? "ok" : "pending";

@@ -19,6 +19,74 @@ import type { CurrentStep, PainCard, PainCardStatus } from "@/types/painCard";
 import { SCHEMA_VERSION } from "@/types/painCard";
 
 const STORAGE_KEY = "painmap-worksheet-v1";
+const PERSIST_THROTTLE_MS = 500;
+
+/**
+ * Throttled localStorage：合併 keystroke 期間的 setItem 呼叫，
+ * 避免每按一字就同步序列化整張 card 寫 localStorage（main thread 阻塞主因）。
+ *
+ * - getItem/removeItem：透傳，不改語意（hydration 仍同步）
+ * - setItem：trailing-edge throttle，500ms 內只寫最後一次；
+ *   pagehide/beforeunload 時 flush 最終值，避免遺失
+ */
+const throttledLocalStorage: Storage = (() => {
+  // 真正的 storage instance 在 SSR-safe 守衛裡才 dereference
+  const real = typeof window !== "undefined" ? window.localStorage : null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const pending = new Map<string, string>();
+
+  const flush = () => {
+    if (!real) return;
+    for (const [key, value] of pending) {
+      try {
+        real.setItem(key, value);
+      } catch (err) {
+        // QuotaExceeded 等錯誤靜默處理，避免 throttle timer 卡死
+
+        console.error("[painCard persist] setItem failed:", err);
+      }
+    }
+    pending.clear();
+    timer = null;
+  };
+
+  if (typeof window !== "undefined") {
+    // 確保關頁/切頁前最後一次寫入
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+  }
+
+  return {
+    get length() {
+      return real?.length ?? 0;
+    },
+    clear() {
+      pending.clear();
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      real?.clear();
+    },
+    getItem(key) {
+      // 若有 pending 寫入，回傳最新值（保證 read-your-write 一致性）
+      if (pending.has(key)) return pending.get(key) ?? null;
+      return real?.getItem(key) ?? null;
+    },
+    key(index) {
+      return real?.key(index) ?? null;
+    },
+    removeItem(key) {
+      pending.delete(key);
+      real?.removeItem(key);
+    },
+    setItem(key, value) {
+      pending.set(key, value);
+      if (timer) return;
+      timer = setTimeout(flush, PERSIST_THROTTLE_MS);
+    },
+  };
+})();
 
 function emptyPainCard(): PainCard {
   const now = new Date().toISOString();
@@ -136,25 +204,26 @@ function emptyPainCard(): PainCard {
 
 /**
  * 用 dot-path 更新巢狀欄位（不可變）。
+ * 只 clone 路徑節點，不深拷貝整張物件 — keystroke hot path 必須 O(深度) 而非 O(整張卡)。
  * 例：updateField("complaint.verbatim", "我每週六晚上要寫家長訊息...")
  */
-function setByPath<T extends Record<string, unknown>>(
-  obj: T,
-  path: string,
-  value: unknown,
-): T {
+function setByPath<T extends Record<string, unknown>>(obj: T, path: string, value: unknown): T {
   const keys = path.split(".");
-  const next = structuredClone(obj);
-  let cursor: Record<string, unknown> = next as Record<string, unknown>;
+  const result: Record<string, unknown> = { ...obj };
+  let cursor = result;
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
-    if (typeof cursor[key] !== "object" || cursor[key] === null) {
-      cursor[key] = {};
-    }
+    const child = cursor[key];
+    cursor[key] =
+      typeof child === "object" && child !== null
+        ? Array.isArray(child)
+          ? [...child]
+          : { ...child }
+        : {};
     cursor = cursor[key] as Record<string, unknown>;
   }
   cursor[keys[keys.length - 1]] = value;
-  return next;
+  return result as T;
 }
 
 type PainCardStore = {
@@ -263,9 +332,7 @@ export const usePainCardStore = create<PainCardStore>()(
           if (!validStatuses.includes(status)) {
             throw new Error(`invalid status: ${String(status)}`);
           }
-          if (
-            ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(nextStep as number)
-          ) {
+          if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(nextStep as number)) {
             throw new Error(`invalid nextStep: ${String(nextStep)}`);
           }
           // 3. 驗證 status / nextStep 一致性：判定後一定要走到第 10 卡
@@ -275,9 +342,7 @@ export const usePainCardStore = create<PainCardStore>()(
               status === "archived_fake") &&
             nextStep !== 10
           ) {
-            throw new Error(
-              `verdict status "${status}" requires nextStep=10, got ${nextStep}`,
-            );
+            throw new Error(`verdict status "${status}" requires nextStep=10, got ${nextStep}`);
           }
 
           // 4. 原子寫入：一次 set 同時更新 status + current_step + updated_at
@@ -293,9 +358,8 @@ export const usePainCardStore = create<PainCardStore>()(
         } catch (err) {
           // 5. 任何失敗 → 回滾整張卡到提交前的快照
           set({ card: snapshot });
-          const message =
-            err instanceof Error ? err.message : "commitVerdict failed";
-          // eslint-disable-next-line no-console
+          const message = err instanceof Error ? err.message : "commitVerdict failed";
+
           console.error("[commitVerdict] rolled back:", message);
           return { ok: false, error: message };
         }
@@ -312,8 +376,10 @@ export const usePainCardStore = create<PainCardStore>()(
             removeItem: () => undefined,
           };
         }
-        return localStorage;
+        return throttledLocalStorage;
       }),
+      // 只持久化 card；hydrated 是 runtime flag、actions 是函式，都不該寫入 localStorage
+      partialize: (state) => ({ card: state.card }),
       version: 1,
       // 預留 migration hook（目前只有 v1）
       migrate: (persistedState, _version) => persistedState as PainCardStore,

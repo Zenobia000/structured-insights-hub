@@ -1,5 +1,4 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 
 import { CardProgressStepper } from "@/components/worksheet/CardProgressStepper";
 import { usePainCardStore } from "@/store/painCard";
@@ -20,17 +19,18 @@ function WorksheetLayout() {
   );
 }
 
-function Header() {
-  const updatedAt = usePainCardStore((s) => s.card.updated_at);
-  const [savedTime, setSavedTime] = useState<string>("");
+function formatSavedTime(iso: string | undefined | null): string {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString("zh-TW", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
-  useEffect(() => {
-    if (!updatedAt) return;
-    const d = new Date(updatedAt);
-    setSavedTime(
-      d.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" }),
-    );
-  }, [updatedAt]);
+function Header() {
+  // 直接 select 格式化後的字串：keystroke 期間 updated_at 變了，但格式化結果（HH:MM）多半不變，
+  // Zustand 用 Object.is 比較 primitive → Header 只在「分鐘變動」時 re-render。
+  const savedTime = usePainCardStore((s) => formatSavedTime(s.card.updated_at));
 
   return (
     <header className="border-b border-border bg-surface">
@@ -43,9 +43,7 @@ function Header() {
             痛點填空簿
           </span>
         </Link>
-        {savedTime && (
-          <span className="text-xs text-text-muted">已儲存於 {savedTime}</span>
-        )}
+        {savedTime && <span className="text-xs text-text-muted">已儲存於 {savedTime}</span>}
       </div>
     </header>
   );

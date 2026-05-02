@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import type { CurrentStep, PainCard } from "@/types/painCard";
+import type { CurrentStep, PainCard, PainCardStatus } from "@/types/painCard";
 import { SCHEMA_VERSION } from "@/types/painCard";
 
 const STORAGE_KEY = "painmap-worksheet-v1";
@@ -174,6 +174,15 @@ type PainCardStore = {
   reset: () => void;
   /** 取得當前 PainCard 完整快照（用於匯出） */
   exportSnapshot: () => PainCard;
+  /**
+   * 原子化提交：同時寫入 status + current_step（卡 9 過關用）。
+   * 內部對整個 card 做快照，任一步驟失敗就回滾，不留下 status 已改但 step 未進的不一致狀態。
+   * 回傳 { ok: true } 或 { ok: false, error }。
+   */
+  commitVerdict: (input: {
+    status: PainCardStatus;
+    nextStep: CurrentStep;
+  }) => { ok: true } | { ok: false; error: string };
 };
 
 export const usePainCardStore = create<PainCardStore>()(
@@ -238,6 +247,59 @@ export const usePainCardStore = create<PainCardStore>()(
       },
 
       exportSnapshot: () => get().card,
+
+      commitVerdict: ({ status, nextStep }) => {
+        // 1. 先做整張卡的快照（深拷貝），用於失敗時回滾
+        const snapshot = structuredClone(get().card);
+        try {
+          // 2. 驗證輸入合法性（防呆，避免寫入無效列舉）
+          const validStatuses: PainCardStatus[] = [
+            "draft",
+            "in_progress",
+            "structured",
+            "pending_interview",
+            "archived_fake",
+          ];
+          if (!validStatuses.includes(status)) {
+            throw new Error(`invalid status: ${String(status)}`);
+          }
+          if (
+            ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(nextStep as number)
+          ) {
+            throw new Error(`invalid nextStep: ${String(nextStep)}`);
+          }
+          // 3. 驗證 status / nextStep 一致性：判定後一定要走到第 10 卡
+          if (
+            (status === "structured" ||
+              status === "pending_interview" ||
+              status === "archived_fake") &&
+            nextStep !== 10
+          ) {
+            throw new Error(
+              `verdict status "${status}" requires nextStep=10, got ${nextStep}`,
+            );
+          }
+
+          // 4. 原子寫入：一次 set 同時更新 status + current_step + updated_at
+          set((state) => ({
+            card: {
+              ...state.card,
+              status,
+              current_step: nextStep,
+              updated_at: new Date().toISOString(),
+            },
+          }));
+          return { ok: true };
+        } catch (err) {
+          // 5. 任何失敗 → 回滾整張卡到提交前的快照
+          set({ card: snapshot });
+          const message =
+            err instanceof Error ? err.message : "commitVerdict failed";
+          // eslint-disable-next-line no-console
+          console.error("[commitVerdict] rolled back:", message);
+          return { ok: false, error: message };
+        }
+      },
     }),
     {
       name: STORAGE_KEY,

@@ -56,7 +56,7 @@ function CardNinePage() {
   const card = usePainCardStore((s) => s.card);
   const hydrated = usePainCardStore((s) => s.hydrated);
   const updateField = usePainCardStore((s) => s.updateField);
-  const advanceStep = usePainCardStore((s) => s.advanceStep);
+  const commitVerdict = usePainCardStore((s) => s.commitVerdict);
 
   const mode = useDisplayModeStore((s) => s.mode);
   const setMode = useDisplayModeStore((s) => s.setMode);
@@ -159,8 +159,15 @@ function CardNinePage() {
     setSubmitting(true);
     try {
       const newStatus = judgmentToStatus(v.judgment);
-      updateField("status", newStatus);
-      advanceStep(10);
+      // 原子提交：status + current_step 同步更新；任一步失敗會回滾，避免
+      // 出現「status 已是 structured 但 current_step 仍停在 9」這種不一致。
+      const result = commitVerdict({ status: newStatus, nextStep: 10 });
+      if (!result.ok) {
+        setBlockedMessage(
+          `提交失敗，已自動回復為提交前狀態：${result.error}。請再試一次或重新整理。`,
+        );
+        return;
+      }
       navigate({ to: "/learn/worksheet/result" });
     } finally {
       setSubmitting(false);

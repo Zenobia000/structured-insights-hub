@@ -187,10 +187,12 @@ export function CardEightExitGateFooter({
         {/* 反思內容 — 摺疊區,加上 max-h + overflow-auto 避免吃掉主畫面 */}
         {expanded && (
           <div
+            ref={panelRef}
             id="card8-reflection-panel"
             role="region"
             aria-labelledby="card8-reflection-toggle"
-            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
+            tabIndex={-1}
+            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
           >
             <ul className="flex flex-col gap-2">
               <ReflectionHint

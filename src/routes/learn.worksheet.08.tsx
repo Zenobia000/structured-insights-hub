@@ -25,7 +25,8 @@ export const Route = createFileRoute("/learn/worksheet/08")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "規劃 2 位訪談對象、3 題非推銷題，並理解訪談禁忌。AI 不能取代真人訪談。",
+        content:
+          "想清楚要找誰聊 2 位、要問哪 3 題，再讀過訪談禁忌。AI 看不到沉默和猶豫 — 那些只有真人對話會出現。",
       },
     ],
   }),
@@ -129,15 +130,15 @@ function CardEightPage() {
 
   function handleAdvance() {
     if (!targetsEval.anyContact) {
-      setBlockedMessage(`至少要有 1 位你能聯絡到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`);
+      setBlockedMessage(`至少要有 1 位你聯絡得到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`);
       return;
     }
     if (!questionsEval.allFilled) {
-      setBlockedMessage("3 題都要寫完（每題 ≥ 15 字）");
+      setBlockedMessage("3 題都需要寫完（每題 ≥ 15 字）");
       return;
     }
     if (!tablePassed) {
-      setBlockedMessage("請看完訪談規則並勾選「我看完了」");
+      setBlockedMessage("讀完訪談規則之後，勾選「我看完了」");
       return;
     }
     setBlockedMessage(null);
@@ -199,20 +200,20 @@ function CardEightPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            真人訪談規劃
+            想清楚你要找誰，去聊一場
           </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            AI 找到的證據是「文字痕跡」，不是「現場真實」。沉默、尷尬、害怕、猶豫、身體語言，AI
-            看不到。
+            AI 看到的是文字痕跡，不是現場真實。沉默、尷尬、害怕、猶豫、身體語言這些 —
+            只有面對面才會浮出來。
           </p>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
             <Mic className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">為什麼還要訪談？</p>
+              <p className="font-semibold">為什麼跑了 AI 還要再訪談？</p>
               <p>
-                真人訪談仍然是必要的。AI
-                只是讓你更快找到該訪談誰。判斷一個痛點是真是假，最後永遠來自真人對話。
+                真人訪談永遠必要。AI 是來幫你更快找到「該找誰聊」 —
+                但判斷一個痛點是真是假，最後一定要從真人嘴裡聽到。
               </p>
             </div>
           </div>
@@ -280,7 +281,7 @@ function CardEightPage() {
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
       </main>
 

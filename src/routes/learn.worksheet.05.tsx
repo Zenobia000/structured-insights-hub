@@ -17,7 +17,8 @@ export const Route = createFileRoute("/learn/worksheet/05")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "用主人翁自己的話寫出他同時想要的 A、B 兩件事，以及通常會犧牲哪邊、為什麼。",
+        content:
+          "用主人翁自己的話，寫出他同時想要的 A、B 兩件事 — 以及他通常會放掉哪一邊、為什麼放得下。",
       },
     ],
   }),
@@ -62,16 +63,16 @@ function CardFivePage() {
     setAttempted(true);
     if (checks.sideAFilled !== "pass" || checks.sideBFilled !== "pass") {
       setBlockedMessage(
-        "兩端要具體（不是「想要好」「想要快」這種抽象詞）。每端至少 10 字，回去想清楚再來。",
+        "兩端都要寫具體（不是「想要好」「想要快」這種抽象詞）。每端至少 10 字 — 想想他真正想要的是什麼。",
       );
       return;
     }
     if (!sacrificedPass) {
-      setBlockedMessage("回去想想他通常會犧牲哪邊。");
+      setBlockedMessage("再想想他通常會放掉哪一邊。");
       return;
     }
     if (!sacrificedReasonPass) {
-      setBlockedMessage("為什麼那邊會被犧牲？用一句話寫真實情況（至少 10 字）。");
+      setBlockedMessage("為什麼那一邊會被放掉？用一句話描述他實際遇到的情況（至少 10 字）。");
       return;
     }
 
@@ -94,14 +95,14 @@ function CardFivePage() {
             卡 5 / 9
           </p>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            找出「兩件事不能同時要」
+            兩件他都想要，可是只能選一個
           </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <GitMerge className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
-              <span className="font-semibold">為什麼這張卡關鍵：</span>
-              很多痛點背後其實是「他想要兩件事，但只能選一個」。看清這個矛盾，後面才知道訪談要怎麼問、產品要怎麼切。
+              <span className="font-semibold">為什麼要看這個：</span>
+              很多痛點底下藏的是「他想要兩件事，但只能選一個」。看清這個矛盾，後面才知道訪談該怎麼問、解法該往哪邊切。
             </div>
           </div>
 
@@ -236,7 +237,7 @@ function CardFivePage() {
         </section>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
 
         <ExampleReferenceCard5 />

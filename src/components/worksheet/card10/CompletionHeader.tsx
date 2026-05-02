@@ -40,21 +40,21 @@ export function CompletionHeader() {
           🪪
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-bold text-text-primary">你的痛點身份證</h1>
+          <h1 className="text-3xl font-bold text-text-primary">你寫完了 — 這是你的痛點身份證</h1>
           <p className="mt-2 text-text-secondary text-base sm:text-lg">
-            9 卡的精華組合在這裡。看一遍，匯出一份，去做你的下一步。
+            9 張卡走過的痕跡，全部收在這一頁。看一遍，挑一個格式匯出帶走，再去做你想做的下一步。
           </p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted pt-4 border-t border-border">
-        <span>建立日期：{card.created_at.slice(0, 10)}</span>
-        <span>最後更新：{card.updated_at.slice(0, 16).replace("T", " ")}</span>
+        <span>開始於：{card.created_at.slice(0, 10)}</span>
+        <span>最後寫於：{card.updated_at.slice(0, 16).replace("T", " ")}</span>
         {statusBadge}
       </div>
 
       <p className="mt-4 italic text-sm text-text-secondary">
-        這份身份證裡沒有「錢」。階段一只訓練判斷力。
+        這份身份證裡沒有「錢」也沒有「分數」 — 階段一只練一件事：判斷力。
       </p>
       {j && <p className="sr-only">當前判斷：{JUDGMENT_LABEL[j]}</p>}
     </header>

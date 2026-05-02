@@ -22,7 +22,8 @@ export const Route = createFileRoute("/learn/worksheet/01")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "把你聽到的那句抱怨原話寫下來。不美化、不解釋、不分析。AI 在這張卡完全不能介入。",
+        content:
+          "把那句抱怨原原本本寫下來，不美化、不解釋、不分析 — AI 不能進來，因為有些事只有真人會說出口。",
       },
     ],
   }),
@@ -61,8 +62,8 @@ function CardOnePage() {
       const tooShort = complaint.verbatim.trim().length < 10;
       setBlockedMessage(
         tooShort
-          ? "原句太短了。聽到的抱怨通常不只一句話 — 把完整的那段話寫下來。"
-          : "請填寫所有 5 個欄位。如果你不確定怎麼填,看下方林老師範例。",
+          ? "再去找他聊一次吧。一句話通常聽不完整個故事 — 把那一整段話寫下來。"
+          : "5 個欄位都需要填。不確定怎麼下筆，下方有林老師的範例可以對照。",
       );
       return;
     }
@@ -70,14 +71,14 @@ function CardOnePage() {
     if (checks.noAnalysisWords !== "pass") {
       const found = detectAnalysisWords(complaint.verbatim).join("、");
       setBlockedMessage(
-        `這像是你的解釋,不是原句（偵測到:「${found}」)。請改寫成你聽到的具體句子,例如:「他在飯局上說『我每週都……』」`,
+        `這聽起來像你的解釋，不是他原本說的話（偵測到：「${found}」)。改寫成你具體聽到的句子，例如：「他在飯局上說『我每週都……』」`,
       );
       return;
     }
     // 步驟 c：R2.2
     if (checks.realPerson !== "pass") {
       setBlockedMessage(
-        "「現代人」「上班族」「大家」這類稱呼不是你能聯絡到的人。請填具體姓名（可化名,但要是真人）。如果你想不到一個名字,這還不是你的題目 — 去找一個真人聊聊再回來。",
+        "「現代人」「上班族」「大家」不是某個你能聯絡到的人。填一個具體姓名（化名也可以，但要是真人）。如果你連一個名字都想不到 — 這還不是你的題目，先去找個真人聊聊再回來。",
       );
       return;
     }
@@ -131,20 +132,21 @@ function CardOnePage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            把抱怨寫下來
+            把那句話原原本本寫下來
           </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Info className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">規則：</span>
-              寫你聽到的原句,不要美化、不要解釋、不要分析。
+              一字不改寫下你聽到的原話 — 不美化、不解釋、不分析。一字不改，是對說那句話的人的尊重。
             </div>
           </div>
 
           <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            你應該有聽過某人說：「欸,要是有人做一個 ___ 就好了！」這張卡的任務不是分析這句話,是
-            <span className="font-semibold text-text-primary">忠實複述</span>它。
+            你應該有聽過某人說：「欸，要是有人做一個 ___ 就好了！」這張卡只請你做一件事：
+            <span className="font-semibold text-text-primary">忠實複述</span>。分析的事，留給後面 8
+            張卡。
           </p>
         </header>
 
@@ -224,7 +226,7 @@ function CardOnePage() {
 
             {/* Autosave indicator */}
             <p className="text-[12px] text-text-muted" aria-live="polite">
-              {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+              {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
             </p>
 
             {/* Example reference (collapsed by default) */}
@@ -262,7 +264,7 @@ function CardOnePage() {
 
       {/* sr-only live status for whether ready */}
       <span className="sr-only" aria-live="polite">
-        {canAdvance ? "繼續到卡 2" : "還可以再想想"}
+        {canAdvance ? "可以走到卡 2 了" : "再多想一下"}
       </span>
     </div>
   );

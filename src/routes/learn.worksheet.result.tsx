@@ -29,7 +29,8 @@ export const Route = createFileRoute("/learn/worksheet/result")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "9 卡精華組合成的痛點身份證，可匯出為 Markdown / JSON / PDF。資料只在你本機。",
+        content:
+          "你親手寫完的痛點身份證 — 9 張卡的精華都在這裡，可以匯出 Markdown / JSON / PDF 帶走。資料只在你的本機。",
       },
     ],
   }),
@@ -59,7 +60,7 @@ function ResultPage() {
   if (!hydrated) {
     return (
       <main className="max-w-3xl mx-auto px-4 py-12 text-center text-text-muted">
-        正在讀取你本機的痛點身份證…
+        正在從你的瀏覽器把痛點身份證找出來…
       </main>
     );
   }
@@ -73,7 +74,7 @@ function ResultPage() {
           to={(check.redirect || "/learn/worksheet") as "/learn/worksheet"}
           className="inline-block text-secondary underline"
         >
-          回到對應卡片
+          回去那張卡接著寫
         </Link>
       </main>
     );
@@ -95,7 +96,7 @@ function ResultPage() {
           <ArrowLeft className="h-3 w-3" /> 卡 9
         </Link>
         <span className="text-text-muted">
-          資料只在你的本機 · {card.updated_at.slice(11, 16)} 最後更新
+          只存在你的瀏覽器 · {card.updated_at.slice(11, 16)} 最後寫過
         </span>
       </div>
 

@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  ReflectionHint,
-  type ReflectionHintState,
-} from "@/components/worksheet/ReflectionHint";
+import { ReflectionHint, type ReflectionHintState } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   phaseAComplete: boolean;

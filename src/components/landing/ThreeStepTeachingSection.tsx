@@ -17,26 +17,26 @@ type Step = {
 const STEPS: Step[] = [
   {
     index: "01",
-    title: "聽抱怨",
+    title: "先安靜地聽",
     cards: "卡 1-2",
-    body: "把聽到的原句寫下來、找出 3 個有名字的真人。AI 在這兩張卡完全不能介入。",
-    output: "抱怨原句 + 3 個真名 + 聯絡方式",
+    body: "把聽到的那句抱怨一字不改寫下來，找出 3 個說得出名字的真人。這兩張卡 AI 不能進來 — 因為有些事，只有真人會說出口。",
+    output: "抱怨原句 · 3 個有名字的人 · 聯絡方式",
     Icon: Ear,
   },
   {
     index: "02",
-    title: "用 AI 找證據",
+    title: "再請 AI 一起對證據",
     cards: "卡 3-7",
-    body: "把抱怨改寫成卡關公式、找出現有解法、選矛盾、跑 AI 證據蒐集，自己先猜再對照 AI。",
-    output: "卡關公式 + 5 個 workaround + 痛點判斷表",
+    body: "把那句抱怨翻譯成卡關公式，看看他現在怎麼解、卡在哪個矛盾。AI 來找線索，但你先自己猜一輪 — 這樣你才知道，自己跟證據之間差了多少。",
+    output: "卡關公式 · 5 種 workaround · 痛點判斷表",
     Icon: Search,
   },
   {
     index: "03",
-    title: "真假判斷",
+    title: "最後，你自己寫下判斷",
     cards: "卡 8-9",
-    body: "規劃真人訪談、書面回答「真痛點 / 假痛點 / 待訪談」並寫下下一步。",
-    output: "書面判斷 + 訪談題目 3 題 + 下一步行動",
+    body: "把證據攤開來，規劃要找誰真人聊聊。最後一張卡，留給你一個人安靜地寫：這是真痛點、假痛點、還是要再訪談？接下來你打算做什麼？",
+    output: "書面判斷 · 3 題訪談題目 · 下一步行動",
     Icon: Scale,
   },
 ];
@@ -54,10 +54,10 @@ export function ThreeStepTeachingSection() {
             id="three-step-title"
             className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary"
           >
-            三段教學，從一句抱怨到書面判斷
+            從一句抱怨，到一張你說得清楚的判斷
           </h2>
           <p className="mt-3 text-[15px] leading-[1.6] text-text-secondary">
-            這不是「找答案」的工具，是判斷力訓練器。
+            我們不會給你答案。我們陪你練習，怎麼自己想清楚。
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function ThreeStepTeachingSection() {
               <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">{body}</p>
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-[11px] font-semibold text-text-muted tracking-wider uppercase mb-1">
-                  產出
+                  你會帶走
                 </p>
                 <p className="text-[13px] leading-[1.5] text-text-primary">{output}</p>
               </div>

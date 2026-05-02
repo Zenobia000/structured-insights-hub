@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  ReflectionHint,
-  type ReflectionHintState,
-} from "@/components/worksheet/ReflectionHint";
+import { ReflectionHint, type ReflectionHintState } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   hasContact: boolean;
@@ -51,14 +48,8 @@ export function CardEightExitGateFooter({
             question="你寫的題，是在問他「怎麼做的」，還是在誘導他說「想用你的解法」？"
             state={questionsState}
           />
-          <ReflectionHint
-            question="訪談時哪些事不要做，你有清楚嗎？"
-            state={taboosState}
-          />
-          <ReflectionHint
-            question="你心裡還沒真的找到能訪談的人嗎？"
-            state={contactState}
-          />
+          <ReflectionHint question="訪談時哪些事不要做，你有清楚嗎？" state={taboosState} />
+          <ReflectionHint question="你心裡還沒真的找到能訪談的人嗎？" state={contactState} />
         </ul>
 
         {blockedMessage && (

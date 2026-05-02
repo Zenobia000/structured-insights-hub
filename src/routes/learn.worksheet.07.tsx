@@ -31,7 +31,7 @@ export const Route = createFileRoute("/learn/worksheet/07")({
       {
         name: "description",
         content:
-          "兩段式練習：先寫下你對痛點主人翁的 4 欄猜測，再對照 AI 回覆找出差異。AI 是補強，不是替代。",
+          "兩段式練習：你先寫下對痛點主人翁的 4 欄猜測，再讀 AI 回覆，看看差在哪。AI 是來補強的，不是替你想的。",
       },
     ],
   }),
@@ -97,19 +97,21 @@ function CardSevenPage() {
 
   function handleAdvance() {
     if (!unlocked || !phaseA.allFilled) {
-      setBlockedMessage("Phase A 還沒寫完，請先猜");
+      setBlockedMessage("Phase A 還沒寫完 — 先自己猜過一輪，再進 Phase B 對照");
       return;
     }
     if (!cp.allPassed) {
-      setBlockedMessage(`${4 - cp.passedCount} 個 checkpoint 沒過，可以用第二輪 prompt 補`);
+      setBlockedMessage(
+        `還有 ${4 - cp.passedCount} 個 checkpoint 沒過，可以用第二輪 prompt 補一下`,
+      );
       return;
     }
     if (!tablePassed) {
-      setBlockedMessage("請貼上第二輪 prompt 的回覆（痛點判斷表，≥ 100 字）");
+      setBlockedMessage("把第二輪 prompt 的回覆（痛點判斷表）貼上來吧（≥ 100 字）");
       return;
     }
     if (!deltas.allFilled) {
-      setBlockedMessage("請寫出「差異」，這是這張卡的核心");
+      setBlockedMessage("把「你跟 AI 的差異」寫下來 — 這是這張卡最重要的東西");
       return;
     }
     setBlockedMessage(null);
@@ -124,7 +126,7 @@ function CardSevenPage() {
 
   function handleBackToCard6() {
     const ok = window.confirm(
-      "回去把卡 6 想清楚再來會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？",
+      "回卡 6 重來會清掉卡 7 寫的內容（猜測、checkpoint、判斷表、差異）。要回去嗎？",
     );
     if (!ok) return;
     // 清空 self_guess
@@ -195,7 +197,9 @@ function CardSevenPage() {
           <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
           <div className="h-32 w-full bg-muted rounded animate-pulse" />
           <div className="h-64 w-full bg-muted rounded animate-pulse" />
-          <p className="text-[12px] text-text-muted text-center">正在從瀏覽器恢復草稿…</p>
+          <p className="text-[12px] text-text-muted text-center">
+            正在從你的瀏覽器把上次的內容找回來…
+          </p>
         </main>
       </div>
     );
@@ -219,25 +223,26 @@ function CardSevenPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            自己先猜，再讀 AI 回覆
+            你先自己猜，再讀 AI 怎麼說
           </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            如果你直接看 AI 回覆，你會被它牽著走，失去自己的判斷力。
+            如果你一開始就看 AI 回覆，會不知不覺被它牽著走 — 你的判斷力就交出去了。
           </p>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
             <Brain className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">為什麼要先猜？</p>
+              <p className="font-semibold">為什麼要先自己猜？</p>
               <p>
-                先寫下自己的猜測，再對照 AI 回覆。差異就是你要學的地方。AI
-                不是給你答案，是讓你看到自己的盲區。
+                先寫下你的猜測，再對照 AI 回覆。差異的地方，就是你要學的地方。AI
+                不是給你答案，是讓你看見自己的盲區。
               </p>
             </div>
           </div>
 
           <p className="mt-3 text-[12.5px] text-text-secondary italic">
-            填完下面 4 欄之前，AI 回覆會被遮住。這是設計上的刻意。
+            在你填完下面 4 欄之前，AI 回覆會先被遮住 — 這不是限制，是給你的空間，讓你的判斷不被 AI
+            蓋過去。
           </p>
         </header>
 
@@ -257,9 +262,9 @@ function CardSevenPage() {
           >
             <RotateCcw className="h-4 w-4 text-verified shrink-0 mt-0.5" aria-hidden />
             <div className="flex-1">
-              <p className="font-semibold">已從瀏覽器恢復你的草稿</p>
+              <p className="font-semibold">幫你從瀏覽器把上次寫的找回來了</p>
               <p className="text-text-secondary mt-0.5">
-                Phase A 猜測、checkpoint 勾選、痛點判斷表與 3 個差異都還在。繼續填即可。
+                Phase A 的猜測、checkpoint 勾選、痛點判斷表與 3 個差異都還在。接著寫就好。
               </p>
             </div>
             <button
@@ -352,7 +357,7 @@ function CardSevenPage() {
         )}
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
       </main>
 

@@ -6,20 +6,20 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title: "PainMap Worksheet — 9 張卡片學會判斷一句抱怨是真痛點還是假痛點",
+        title: "PainMap Worksheet — 把一句抱怨聽進去，再判斷它是不是真痛點",
       },
       {
         name: "description",
         content:
-          "教學模式痛點填空簿。第一次 90 分鐘，熟練後 30 分鐘。不需要懂創新理論、AI 模型、創業框架；資料只存在你的瀏覽器，不上傳雲端。",
+          "9 張卡片陪你走過一次真痛點判斷。從一句抱怨開始，找出說這句話的人，再用 AI 找證據對照。30 分鐘後，你會帶走一張自己寫完的痛點身份證。資料只在你的瀏覽器，不上傳、不註冊。",
       },
       {
         property: "og:title",
-        content: "PainMap Worksheet · 真痛點判斷力訓練器",
+        content: "PainMap Worksheet · 9 張卡走完一次真痛點判斷",
       },
       {
         property: "og:description",
-        content: "9 張卡片，從一句抱怨到書面判斷的痛點身份證。教學優先、結構化、零遊戲化。",
+        content: "從一句抱怨開始，走完 9 張卡片，寫下一張屬於你自己的痛點身份證。",
       },
     ],
   }),

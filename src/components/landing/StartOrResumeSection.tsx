@@ -88,7 +88,7 @@ export function StartOrResumeSection() {
     <SectionFade ariaLabelledBy="start-resume-title" className="bg-page border-b border-border">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <h2 id="start-resume-title" className="sr-only">
-          開始填寫或繼續未完成
+          從頭開始，或接著上次寫
         </h2>
 
         <div
@@ -99,19 +99,20 @@ export function StartOrResumeSection() {
         >
           {/* Start card */}
           <article className="rounded-xl border-2 border-accent/40 bg-accent-light/40 p-6 sm:p-7 flex flex-col">
-            <h3 className="text-[18px] font-semibold text-text-primary">30 秒開始新的 PainCard</h3>
+            <h3 className="text-[18px] font-semibold text-text-primary">從頭開始，新寫一張</h3>
             <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">
-              建立一張空白的痛點身份證，從卡 1 開始填。
+              從卡 1 開始，9 張卡走完，你會帶走一張屬於自己的痛點身份證。
             </p>
             <p className="mt-3 text-xs text-text-muted leading-[1.5]">
-              你需要：一個你最近反覆遇到的麻煩 + 30 分鐘不被打擾的時間。
+              開始之前，準備一件最近反覆讓你卡住的事 — 你自己的、或聽別人說的都行 — 加上 30
+              分鐘不被打擾的時間。
             </p>
             <button
               type="button"
               onClick={handleStart}
               className="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-accent text-accent-foreground px-5 py-3 font-semibold hover:bg-accent/90 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
             >
-              建立新 PainCard
+              開始第一張卡
               <ArrowRight className="h-4 w-4" />
             </button>
           </article>
@@ -119,12 +120,12 @@ export function StartOrResumeSection() {
           {/* Resume card — 只在有未完成時顯示 */}
           {resume.showResume && (
             <article className="rounded-xl border border-secondary/40 bg-surface p-6 sm:p-7 flex flex-col">
-              <h3 className="text-[18px] font-semibold text-text-primary">我有未完成的 PainCard</h3>
+              <h3 className="text-[18px] font-semibold text-text-primary">你有一張寫到一半的卡</h3>
               <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">
-                上次填到「卡 {resume.currentStep}：{resume.cardName}」，繼續嗎？
+                上次寫到「卡 {resume.currentStep}：{resume.cardName}」 — 我們從那裡接著走？
               </p>
               <p className="mt-3 text-xs text-text-muted leading-[1.5]">
-                建立於 {formatDateTime(resume.createdAt)} · 最後修改{" "}
+                開始於 {formatDateTime(resume.createdAt)} · 最後寫於{" "}
                 {formatDateTime(resume.updatedAt)}
               </p>
               <div className="mt-5 flex flex-col sm:flex-row gap-2">
@@ -133,7 +134,7 @@ export function StartOrResumeSection() {
                   onClick={handleResume}
                   className="flex-1 inline-flex items-center justify-center gap-2 rounded-md bg-secondary text-secondary-foreground px-5 py-3 font-semibold hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
                 >
-                  繼續上次的進度
+                  從這裡接著寫
                   <ArrowRight className="h-4 w-4" />
                 </button>
 
@@ -144,20 +145,20 @@ export function StartOrResumeSection() {
                       className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary hover:text-text-primary hover:border-text-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
-                      捨棄重新開始
+                      捨棄，重來
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>確定要捨棄這份 PainCard？</AlertDialogTitle>
+                      <AlertDialogTitle>真的要捨棄這張卡嗎？</AlertDialogTitle>
                       <AlertDialogDescription>
-                        這個動作會清除瀏覽器內目前儲存的進度，無法復原。建議先匯出 Markdown / JSON
-                        後再捨棄。
+                        這會清掉你寫到一半的內容，沒辦法復原。如果想留個備份，先匯出 Markdown 或
+                        JSON 再捨棄。
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>取消</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDiscard}>確定捨棄</AlertDialogAction>
+                      <AlertDialogCancel>先不要</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDiscard}>我確定，捨棄</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

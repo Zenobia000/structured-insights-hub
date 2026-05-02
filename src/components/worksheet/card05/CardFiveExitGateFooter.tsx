@@ -45,10 +45,7 @@ export function CardFiveExitGateFooter({
           <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
             <ConditionItem passed={sidesPass} label="A、B 兩端都寫具體了嗎" />
             <ConditionItem passed={sacrificedPass} label="標出通常會犧牲哪邊了嗎" />
-            <ConditionItem
-              passed={sacrificedReasonPass}
-              label="為什麼那邊會被犧牲，寫清楚了嗎"
-            />
+            <ConditionItem passed={sacrificedReasonPass} label="為什麼那邊會被犧牲，寫清楚了嗎" />
           </ul>
         </div>
 

@@ -19,8 +19,7 @@ export function ExampleReferenceCard5() {
         className="w-full flex items-center justify-between px-4 py-3 text-left"
       >
         <span className="inline-flex items-center gap-2 text-[14px] font-semibold text-text-primary">
-          <BookOpen className="h-4 w-4 text-secondary" aria-hidden />
-          看 worksheet 林老師範例
+          <BookOpen className="h-4 w-4 text-secondary" aria-hidden />看 worksheet 林老師範例
         </span>
         <ChevronDown
           className={cn("h-4 w-4 text-text-secondary transition-transform", open && "rotate-180")}

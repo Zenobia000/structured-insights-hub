@@ -28,8 +28,7 @@ export function evaluateCardFive(input: PainCard["contradiction"]): CardFiveEval
   return {
     sideAFilled: lengthCheck(input.side_a),
     sideBFilled: lengthCheck(input.side_b),
-    sacrificedSelected:
-      input.sacrificed === "a" || input.sacrificed === "b" ? "pass" : "pending",
+    sacrificedSelected: input.sacrificed === "a" || input.sacrificed === "b" ? "pass" : "pending",
     sacrificedReasonFilled: lengthCheck(input.sacrificed_reason),
   };
 }

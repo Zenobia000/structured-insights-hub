@@ -8,16 +8,16 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">這條路不通</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          你要找的頁面不在這裡 — 可能拼錯了，或這頁已經被收起來了。
         </p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            回首頁
           </Link>
         </div>
       </div>
@@ -34,13 +34,13 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "把混亂的痛點訊號整理成結構化的問題格式 — 9 張卡片帶你從「我覺得有問題」走到「我知道問題是什麼」。",
+          "把一團模糊的抱怨整理成你說得清楚的問題 — 9 張卡片，陪你從「我覺得有問題」走到「我知道問題在哪」。",
       },
       { name: "author", content: "PainMap" },
       { property: "og:title", content: "PainMap 題眼 · 痛點填空簿" },
       {
         property: "og:description",
-        content: "結構化痛點引擎，幫助有能力的人發現並驗證值得解決的問題。",
+        content: "9 張卡片，陪你親手寫出一張屬於自己的痛點身份證。",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -25,19 +25,19 @@ export function HeroSection() {
           {/* Left: copy */}
           <div className="lg:col-span-7">
             <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary mb-4">
-              PainMap Worksheet · 教學模式
+              PainMap Worksheet · 9 張卡，陪你走一次
             </p>
             <h1
               id="hero-headline"
               className="text-3xl sm:text-4xl lg:text-[36px] font-bold leading-[1.2] tracking-tight text-text-primary"
             >
-              9 張卡片填空，學會判斷一句抱怨
+              聽到一句抱怨，
               <br className="hidden sm:block" />
-              是真痛點還是假痛點。
+              你怎麼知道那是不是真的？
             </h1>
             <p className="mt-6 text-base sm:text-[17px] leading-[1.7] text-text-secondary max-w-2xl">
-              第一次 90 分鐘，熟練後 30 分鐘。你不需要懂創新理論、AI
-              模型、創業框架；你只需要會抄、會問、會打電話。
+              這份填空簿陪你做的事很簡單：把那句話原原本本寫下來，找出說這句話的人，再用 AI
+              找證據對照你自己的猜測。第一次 90 分鐘，熟了 30 分鐘 — 你只需要會抄、會問、會打電話。
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -46,7 +46,7 @@ export function HeroSection() {
                 onClick={handleStart}
                 className="inline-flex items-center justify-center gap-2 rounded-md bg-accent text-accent-foreground px-6 py-3.5 font-semibold text-base shadow-sm hover:bg-accent/90 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
               >
-                30 秒開始第一張卡
+                從第一張卡開始
                 <ArrowRight className="h-4 w-4" />
               </button>
               <Link
@@ -54,7 +54,7 @@ export function HeroSection() {
                 hash="three-step-teaching"
                 className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-surface px-6 py-3.5 font-medium text-text-primary hover:border-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
               >
-                看看 9 張卡片長什麼樣
+                先看看 9 張卡長什麼樣
               </Link>
             </div>
           </div>
@@ -62,9 +62,9 @@ export function HeroSection() {
           {/* Right: 9-dot ProgressVisual */}
           <div className="lg:col-span-5">
             <div className="rounded-xl border border-border bg-surface p-5 sm:p-6 shadow-[0_1px_3px_rgba(30,58,95,0.06)]">
-              <p className="text-xs font-semibold text-text-secondary mb-1">你會走過的 9 個步驟</p>
+              <p className="text-xs font-semibold text-text-secondary mb-1">你會走過的 9 步路</p>
               <p className="text-[11px] text-text-muted mb-5">
-                每張卡都有明確產出，可隨時暫停儲存。
+                每張卡有屬於它自己的產出，走累了隨時停下來，下次回來繼續。
               </p>
               <ProgressVisual />
             </div>

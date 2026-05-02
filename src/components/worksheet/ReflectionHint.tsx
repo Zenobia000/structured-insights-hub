@@ -57,9 +57,7 @@ export function ReflectionHint({ question, state, hint }: ReflectionHintProps) {
       </span>
       <div className="min-w-0 space-y-0.5">
         <p className={cn("text-[13px] leading-[1.55]", STATE_TEXT[state])}>{question}</p>
-        {hint && (
-          <p className="text-[12px] leading-[1.5] text-text-muted">{hint}</p>
-        )}
+        {hint && <p className="text-[12px] leading-[1.5] text-text-muted">{hint}</p>}
       </div>
     </li>
   );

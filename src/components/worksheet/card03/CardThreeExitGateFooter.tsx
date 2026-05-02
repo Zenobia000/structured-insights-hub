@@ -101,4 +101,3 @@ export function CardThreeExitGateFooter({
     </div>
   );
 }
-

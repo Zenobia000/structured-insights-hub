@@ -55,14 +55,18 @@ export function isCardCompleteForResult(card: PainCard): {
     return {
       ok: false,
       redirect: `/learn/worksheet/${String(card.current_step).padStart(2, "0")}`,
-      reason: `資料不完整，請先完成卡 ${card.current_step}`,
+      reason: `卡 ${card.current_step} 還沒寫完，先回去把它寫完再來`,
     };
   }
   if (!card.verdict.judgment) {
-    return { ok: false, redirect: "/learn/worksheet/09", reason: "請先完成真假判斷" };
+    return { ok: false, redirect: "/learn/worksheet/09", reason: "卡 9 的真假判斷還沒寫" };
   }
   if ((card.verdict.reason_100w || "").length < 100) {
-    return { ok: false, redirect: "/learn/worksheet/09", reason: "判斷理由需 100 字以上" };
+    return {
+      ok: false,
+      redirect: "/learn/worksheet/09",
+      reason: "判斷理由再多寫一點（至少 100 字）",
+    };
   }
   return { ok: true, redirect: null, reason: "" };
 }

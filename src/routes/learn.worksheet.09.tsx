@@ -5,11 +5,7 @@ import { Sparkles, ShieldOff, Award, MessageCircleQuestion } from "lucide-react"
 
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
-import {
-  REASON_MIN,
-  defaultNextAction,
-  judgmentToStatus,
-} from "@/lib/cardNineValidators";
+import { REASON_MIN, defaultNextAction, judgmentToStatus } from "@/lib/cardNineValidators";
 import type { Judgment, NextAction } from "@/types/painCard";
 import { JudgmentForm } from "@/components/worksheet/card09/JudgmentForm";
 import { CardNineExitGateFooter } from "@/components/worksheet/card09/CardNineExitGateFooter";
@@ -20,11 +16,11 @@ const searchSchema = z.object({
 });
 
 const SOCRATIC_PROMPTS: string[] = [
-  "你能不能說出 3 個有名字的人，他們各自怎麼遇到這個問題？",
-  "你看到這事每週發生幾次？是你猜的，還是有人具體告訴你？",
-  "他為這個問題付出了什麼（時間、錢、心力、關係）？最多的那個是什麼？",
-  "他現在的解法，最讓他不爽的一個點是什麼？用他的話寫。",
-  "你最有把握的證據是什麼？最薄弱的環節是什麼？",
+  "你叫得出 3 個人的名字嗎？他們各自怎麼遇到這個問題？",
+  "這件事每週發生幾次 — 是你猜的，還是有人親口告訴你？",
+  "他為這個問題付出了什麼（時間、錢、心力、關係）？最多的那一樣是什麼？",
+  "他現在的解法，最讓他受不了的一個點是什麼？用他的話寫。",
+  "你最有把握的證據是什麼？最不踏實的環節又是什麼？",
 ];
 
 export const Route = createFileRoute("/learn/worksheet/09")({
@@ -36,7 +32,7 @@ export const Route = createFileRoute("/learn/worksheet/09")({
       {
         name: "description",
         content:
-          "走到這裡，你要做的只有一件事：書面回答「這是真痛點還是假痛點？為什麼？」AI 不參與判斷。",
+          "走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」AI 不參與判斷 — 這一題，留給你自己。",
       },
     ],
   }),
@@ -81,15 +77,15 @@ function CardNinePage() {
 
   function handleAdvance() {
     if (!judgmentChosen) {
-      setBlockedMessage("想想看你選了哪一種判斷（真 / 假 / 待訪談）");
+      setBlockedMessage("先選一種判斷吧（真 / 假 / 待訪談）");
       return;
     }
     if (!reasonPassed) {
-      setBlockedMessage(`再多寫 ${REASON_MIN - reasonLen} 字。具體說你看到 / 沒看到什麼`);
+      setBlockedMessage(`再多寫 ${REASON_MIN - reasonLen} 字。具體說你看到了什麼、沒看到什麼`);
       return;
     }
     if (!nextActionChosen) {
-      setBlockedMessage("想想看你之後最想做哪一件事");
+      setBlockedMessage("再想想 — 寫完這張之後，你最想做的下一件事是什麼？");
       return;
     }
     setBlockedMessage(null);
@@ -101,7 +97,7 @@ function CardNinePage() {
       const result = commitVerdict({ status: newStatus, nextStep: 10 });
       if (!result.ok) {
         setBlockedMessage(
-          `提交失敗，已自動回復為提交前狀態：${result.error}。請再試一次或重新整理。`,
+          `沒能提交出去，內容已經幫你保留住了：${result.error}。再試一次，或重新整理頁面看看。`,
         );
         return;
       }
@@ -136,10 +132,10 @@ function CardNinePage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            真假痛點的書面判斷
+            最後這一題，留給你自己
           </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            走到這裡，你要做的只有一件事：書面回答「這是真痛點還是假痛點？為什麼？」
+            走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」
           </p>
 
           <div
@@ -148,10 +144,10 @@ function CardNinePage() {
           >
             <ShieldOff className="h-5 w-5 text-destructive shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">這張卡片 AI 完全不參與</p>
+              <p className="font-semibold">這張卡 AI 完全不參與</p>
               <p>
-                真假判斷是這套訓練的唯一交付物。AI 可以幫你蒐集證據（卡 6）、整理表（卡
-                7）、模擬訪談（卡 8），但「真的嗎」「值得嗎」這兩題永遠是你來判。
+                真假判斷是這套訓練最後也最重要的事。AI 可以幫你蒐集證據（卡 6）、整理表（卡
+                7）、模擬訪談（卡 8） — 但「這真的嗎、值得嗎」這兩題，永遠由你來判。
               </p>
             </div>
           </div>
@@ -159,23 +155,25 @@ function CardNinePage() {
           <div className="mt-3 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
             <Award className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
-              <p className="font-semibold">這份填空簿的唯一交付物</p>
-              <p>你不需要做產品、不需要架網站、不需要收錢。你只需要交出這個書面判斷。</p>
+              <p className="font-semibold">這份填空簿要你帶走的，就只有這個</p>
+              <p>你不需要做產品、不需要架網站、不需要收錢 — 只需要交出這份你親手寫的判斷。</p>
             </div>
           </div>
         </header>
 
         {/* Socratic prompts — 純文字提示，不存欄位 */}
         <section
-          aria-label="動筆前先想想這 5 件事"
+          aria-label="動筆前先在心裡走一遍這 5 件事"
           className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-3"
         >
           <div className="flex items-center gap-2">
             <MessageCircleQuestion className="h-5 w-5 text-secondary shrink-0" aria-hidden />
-            <h2 className="text-[18px] font-bold text-text-primary">動筆前先想想這 5 件事</h2>
+            <h2 className="text-[18px] font-bold text-text-primary">
+              動筆前，先在心裡走一遍這 5 件事
+            </h2>
           </div>
           <p className="text-[13.5px] text-text-secondary leading-[1.6]">
-            這幾題不用回答，先在腦袋裡走一遍。想清楚了，下面的書面判斷就會比較好下筆。
+            這幾題你不用回答，只需要靜靜想一遍。想清楚了，下面那段判斷就會自然從筆下流出來。
           </p>
           <ol className="space-y-2 list-decimal pl-5 text-[14.5px] text-text-primary leading-[1.7]">
             {SOCRATIC_PROMPTS.map((q, i) => (
@@ -206,7 +204,7 @@ function CardNinePage() {
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
       </main>
 

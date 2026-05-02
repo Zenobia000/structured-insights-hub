@@ -23,7 +23,7 @@ export const Route = createFileRoute("/learn/worksheet/04")({
       {
         name: "description",
         content:
-          "找出主人翁現在用什麼方法解這個痛點。AI 提案 5 個常見 workaround，但不滿理由必須來自真人。",
+          "看看主人翁現在用什麼方法在解這個痛點。AI 可以提案 5 個常見 workaround，但「不滿在哪」這件事必須從真人嘴裡聽到。",
       },
     ],
   }),
@@ -101,24 +101,26 @@ ${stuck}
 
     if (forbiddenTriggered) {
       setBlockedMessage(
-        `「${forbiddenHits.join("、")}」代表這個人可能還沒在花時間解這個問題。請考慮回去把卡 1 想清楚再來。`,
+        `「${forbiddenHits.join("、")}」代表他可能還沒花時間解這個問題 — 也許這還不夠痛。回卡 1 再想清楚一點再來。`,
       );
       setFailureCount((c) => c + 1);
       return;
     }
     if (checks.toolNameFilled !== "pass") {
-      setBlockedMessage("請填具體工具/方法名（≥ 3 字，例：『Notion 模板』『Excel + 翻群組』）。");
+      setBlockedMessage(
+        "填一個具體的工具或方法名（≥ 3 字，例：『Notion 模板』『Excel + 翻群組』）。",
+      );
       setFailureCount((c) => c + 1);
       return;
     }
     if (checks.whyStillStuckFilled !== "pass") {
-      setBlockedMessage("請用主人翁的話說明為什麼還是覺得卡（≥ 5 字）。");
+      setBlockedMessage("用主人翁的話寫，他為什麼還是覺得卡（≥ 5 字）。");
       setFailureCount((c) => c + 1);
       return;
     }
     if (!dissatisfactionsPass) {
       setBlockedMessage(
-        "需要至少 3 個具體不滿理由。如果只能列 1-2 個 → 拿 AI 清單回去問主人翁，看他有沒有試過其他方法。",
+        "至少需要 3 個具體的不滿理由。只能列出 1-2 個的話 — 帶著 AI 清單回去問主人翁，看他有沒有試過其他方法。",
       );
       setFailureCount((c) => c + 1);
       return;
@@ -159,21 +161,21 @@ ${stuck}
             </span>
           </div>
           <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            找出他「現在怎麼解」
+            他現在到底怎麼解這個問題？
           </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Wrench className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
-              <span className="font-semibold">為什麼這張卡關鍵：</span>
-              如果他現在沒有用任何方法在解 → 痛點可能不夠痛。如果他用了好幾個方法都不滿意 →
-              真痛點可能在這裡。
+              <span className="font-semibold">為什麼要看這個：</span>
+              如果他根本沒在花時間解 → 這個痛可能還不夠痛。如果他試了好幾個方法都不滿意 →
+              真痛點可能就藏在那些「不滿」裡。
             </div>
           </div>
 
           <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            這張卡會做 4 步：① 你先憑訪談寫 → ② AI 提案 5 個常見 workaround → ③ 你貼回 AI 提案 → ④
-            拿 AI 清單去問主人翁，填回 3 個不滿理由
+            這張卡分 4 步走：① 你先憑訪談寫一個版本 → ② AI 補 5 個常見 workaround → ③ 你把 AI
+            提案貼回 → ④ 帶著 AI 清單再去問主人翁，把他「不滿在哪」的 3 個具體理由帶回來。
           </p>
         </header>
 
@@ -320,7 +322,7 @@ ${stuck}
         </section>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>
 
         <ExampleReferenceCard4 />

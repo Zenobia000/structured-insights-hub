@@ -81,16 +81,26 @@ export const Route = createRootRoute({
         type: "image/svg+xml",
         href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2300d4ff'/%3E%3Ctext x='50%25' y='52%25' text-anchor='middle' dominant-baseline='middle' font-size='40' font-weight='bold' fill='%23000'%3E%E2%97%86%3C/text%3E%3C/svg%3E",
       },
+      // Preconnect Google Fonts only (Noto Sans TC). Geist self-hosted
+      // → no jsdelivr connection needed.
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
+      // Preload self-hosted Geist variable fonts. Same origin = no extra
+      // TLS handshake; preload tells browser to start fetch immediately
+      // (parallel to JS) without waiting for CSS parse to discover them.
       {
-        rel: "stylesheet",
-        href: "https://cdn.jsdelivr.net/npm/geist@1.5.1/dist/fonts/geist-sans/style.css",
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/geist-sans-variable.woff2",
+        crossOrigin: "anonymous",
       },
       {
-        rel: "stylesheet",
-        href: "https://cdn.jsdelivr.net/npm/geist@1.5.1/dist/fonts/geist-mono/style.css",
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/geist-mono-variable.woff2",
+        crossOrigin: "anonymous",
       },
       {
         rel: "stylesheet",

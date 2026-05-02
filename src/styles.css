@@ -2,6 +2,34 @@
 @source "../src";
 @import "tw-animate-css";
 
+/*
+ * Self-hosted Geist (sans + mono) — replaces 2 blocking jsdelivr
+ * stylesheet links and 1 preconnect (saves a TLS handshake to a 3rd-party
+ * origin). Variable .woff2 files live in /public/fonts/ and are
+ * preloaded from __root.tsx.
+ *
+ * font-display: swap → invisible text during font block period; switch
+ * to web font when ready (no FOIT, allows minor FOUT). Combined with
+ * the preload + same-origin serving, swap is barely perceptible.
+ *
+ * Noto Sans TC (Chinese) intentionally stays on Google Fonts — full
+ * woff2 is multi-MB and not worth self-hosting.
+ */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist-sans-variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono-variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /*

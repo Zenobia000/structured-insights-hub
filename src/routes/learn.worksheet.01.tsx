@@ -262,7 +262,7 @@ function CardOnePage() {
 
       {/* sr-only live status for whether ready */}
       <span className="sr-only" aria-live="polite">
-        {canAdvance ? "已可進入卡 2" : "尚未達成過關條件"}
+        {canAdvance ? "繼續到卡 2" : "還可以再想想"}
       </span>
     </div>
   );

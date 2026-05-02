@@ -60,7 +60,7 @@ export function ClarifyingQAPanel({
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
           這些問題就是 AI
-          看出你描述還含糊的地方。把答案寫下來——這就是把抱怨變成可驗證痛點的關鍵。如果某題你答不出來，勾選「已預約找主人翁問」也可以過關。
+          看出你描述還含糊的地方。把答案寫下來——這就是把抱怨變成可驗證痛點的關鍵。如果某題你答不出來，勾選「已預約找主人翁問」也可以繼續。
         </p>
       </header>
 
@@ -119,7 +119,7 @@ export function ClarifyingQAPanel({
           to="/learn/worksheet/01"
           className="text-secondary underline-offset-2 hover:underline font-medium"
         >
-          退回卡 1 再聊一次 →
+          回去把卡 1 想清楚再來 →
         </Link>{" "}
         （卡 3 已填內容會保留）
       </p>

@@ -1,15 +1,14 @@
 /**
  * PainIdCard — 痛點身份證視覺核心（仿 worksheet ASCII 框架）
  *
- * 9 個欄位垂直堆疊；mode === 'production' 時隱藏 Pain Quality 區塊。
+ * 9 個欄位垂直堆疊；不再有 Pain Quality / 教學模式相關 UI。
  */
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { usePainCardStore } from "@/store/painCard";
-import { useDisplayModeStore } from "@/store/displayMode";
-import { JUDGMENT_LABEL, NEXT_ACTION_LABEL, trizLabel, sacrificedLabel } from "@/lib/cardTenExport";
+import { JUDGMENT_LABEL, NEXT_ACTION_LABEL, sacrificedLabel } from "@/lib/cardTenExport";
 import { cn } from "@/lib/utils";
 
 const DECOR = "═══════════════════════════════════";
@@ -31,7 +30,6 @@ function Empty() {
 
 export function PainIdCard() {
   const card = usePainCardStore((s) => s.card);
-  const mode = useDisplayModeStore((s) => s.mode);
   const [tableExpanded, setTableExpanded] = useState(false);
 
   const firstPerson = card.people.list[0];
@@ -126,10 +124,6 @@ export function PainIdCard() {
 
         <FieldBlock label="兩件事不能同時要">
           <p>
-            <span className="text-text-muted">類型：</span>
-            {trizLabel(card)}
-          </p>
-          <p>
             <span className="text-text-muted">A 端：</span>
             {card.contradiction.side_a || <Empty />}
           </p>
@@ -140,6 +134,10 @@ export function PainIdCard() {
           <p>
             <span className="text-text-muted">通常犧牲：</span>
             {sacrificedLabel(card)}
+          </p>
+          <p>
+            <span className="text-text-muted">犧牲理由：</span>
+            {card.contradiction.sacrificed_reason || <Empty />}
           </p>
         </FieldBlock>
 
@@ -231,12 +229,6 @@ export function PainIdCard() {
           </div>
         </FieldBlock>
 
-        {mode === "teaching" && (
-          <FieldBlock label="Pain Quality（5 維度反思）">
-            <PainQualityBlock card={card} />
-          </FieldBlock>
-        )}
-
         <FieldBlock label="下一步">
           {card.verdict.next_action ? (
             <p className="font-medium">{NEXT_ACTION_LABEL[card.verdict.next_action]}</p>
@@ -257,36 +249,5 @@ export function PainIdCard() {
         </p>
       </div>
     </article>
-  );
-}
-
-function PainQualityBlock({
-  card,
-}: {
-  card: ReturnType<typeof usePainCardStore.getState>["card"];
-}) {
-  const s = card.verdict.scores;
-  const items: Array<[string, number | null]> = [
-    ["人群具體度", s.people_specificity],
-    ["發生頻率", s.frequency],
-    ["痛苦強度", s.intensity],
-    ["現有解法不滿", s.workaround_dissatisfaction],
-    ["證據可信度", s.evidence_credibility],
-  ];
-  return (
-    <>
-      <p className="text-text-primary font-semibold">
-        總分：{card.verdict.total_score ?? "—"} / 25
-      </p>
-      <ul className="space-y-1 text-sm text-text-secondary">
-        {items.map(([label, score]) => (
-          <li key={label} className="flex justify-between max-w-xs">
-            <span>{label}</span>
-            <span className="font-mono">{score ?? "—"} / 5</span>
-          </li>
-        ))}
-      </ul>
-      <p className="text-xs italic text-text-muted pt-1">分數只是工具，不是答案。</p>
-    </>
   );
 }

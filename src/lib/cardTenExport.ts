@@ -2,15 +2,12 @@
  * Card 10 — 痛點身份證匯出工具
  *
  * 匯出工具：純前端、不需登入、不打 API
- * - Markdown template（教學模式才包含 Pain Quality 區塊）
- * - JSON（完整 PainCard 物件 / 分享連結時可過濾分數）
+ * - Markdown template
+ * - JSON（完整 PainCard 物件）
  * - PDF（使用 jsPDF 文字版輸出）
  */
 
 import type { PainCard, Judgment, NextAction } from "@/types/painCard";
-import { TRIZ_OPTIONS } from "@/lib/trizOptions";
-
-export type DisplayMode = "teaching" | "production";
 
 export const JUDGMENT_LABEL: Record<Judgment, string> = {
   true_pain: "真痛點",
@@ -20,7 +17,7 @@ export const JUDGMENT_LABEL: Record<Judgment, string> = {
 
 export const NEXT_ACTION_LABEL: Record<NextAction, string> = {
   interview: "訪談卡 8 的對象",
-  more_evidence: "退回卡 6 找更多證據",
+  more_evidence: "再蒐集更多證據",
   change_topic: "換題目，從卡 1 重新填",
 };
 
@@ -38,12 +35,6 @@ export function exportFilename(card: PainCard, ext: "md" | "json" | "pdf"): stri
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
   return `paincard-${slug}-${date}.${ext}`;
-}
-
-export function trizLabel(card: PainCard): string {
-  if (!card.contradiction.triz_id) return "（未選）";
-  const opt = TRIZ_OPTIONS.find((o) => o.id === card.contradiction.triz_id);
-  return opt ? `${opt.label}（${opt.en}）` : card.contradiction.triz_label || "";
 }
 
 export function sacrificedLabel(card: PainCard): string {
@@ -79,7 +70,7 @@ export function isCardCompleteForResult(card: PainCard): {
 /**
  * Markdown template — 嚴格遵照 worksheet 順序
  */
-export function buildMarkdown(card: PainCard, mode: DisplayMode): string {
+export function buildMarkdown(card: PainCard): string {
   const firstPerson = card.people.list[0];
   const stuck = card.stuck_formula.ai_polished || "（未填）";
   const dis = card.workaround.user_dissatisfactions;
@@ -113,10 +104,10 @@ export function buildMarkdown(card: PainCard, mode: DisplayMode): string {
   lines.push(``);
 
   lines.push(`## 兩件事不能同時要`);
-  lines.push(`- 類型：${trizLabel(card)}`);
   lines.push(`- A 端：${card.contradiction.side_a || "（未填）"}`);
   lines.push(`- B 端：${card.contradiction.side_b || "（未填）"}`);
-  lines.push(`- 通常犧牲：${sacrificedLabel(card)}`, ``);
+  lines.push(`- 通常犧牲：${sacrificedLabel(card)}`);
+  lines.push(`- 犧牲理由：${card.contradiction.sacrificed_reason || "（未填）"}`, ``);
 
   lines.push(`## AI 找到的關鍵證據`, ``);
   lines.push(card.self_guess.pain_judgment_table || "（未填）", ``);
@@ -146,42 +137,15 @@ export function buildMarkdown(card: PainCard, mode: DisplayMode): string {
   lines.push(`- 最有把握：${card.verdict.most_confident_evidence || "（未填）"}`);
   lines.push(`- 最沒把握：${card.verdict.least_confident || "（未填）"}`, ``);
 
-  if (mode === "teaching") {
-    const s = card.verdict.scores;
-    lines.push(`## Pain Quality（5 維度反思，僅教學模式）`);
-    lines.push(`- 人群具體度：${s.people_specificity ?? "—"}/5`);
-    lines.push(`- 發生頻率：${s.frequency ?? "—"}/5`);
-    lines.push(`- 痛苦強度：${s.intensity ?? "—"}/5`);
-    lines.push(`- 現有解法不滿：${s.workaround_dissatisfaction ?? "—"}/5`);
-    lines.push(`- 證據可信度：${s.evidence_credibility ?? "—"}/5`);
-    lines.push(`- 總分：${card.verdict.total_score ?? "—"}/25`, ``);
-    lines.push(`> 分數只是工具，不是答案。`, ``);
-  }
-
   lines.push(`## 下一步`, ``, nextActionText, ``);
   return lines.join("\n");
 }
 
 /**
- * 對外分享連結：依 R4.1 規則過濾 verdict.scores + total_score
+ * 對外分享連結：直接序列化整張卡
  */
-export function buildShareableJson(card: PainCard, includeScores: boolean): string {
-  if (includeScores) return JSON.stringify(card, null, 2);
-  const filtered: PainCard = {
-    ...card,
-    verdict: {
-      ...card.verdict,
-      scores: {
-        people_specificity: null,
-        frequency: null,
-        intensity: null,
-        workaround_dissatisfaction: null,
-        evidence_credibility: null,
-      },
-      total_score: null,
-    },
-  };
-  return JSON.stringify(filtered, null, 2);
+export function buildShareableJson(card: PainCard): string {
+  return JSON.stringify(card, null, 2);
 }
 
 export function downloadBlob(filename: string, mime: string, content: string | Blob) {
@@ -200,10 +164,10 @@ export function downloadBlob(filename: string, mime: string, content: string | B
  * PDF 匯出 — 使用 jsPDF 文字版（A4，繁中字體 fallback）
  * 為避免大量字型載入，採用 jsPDF 內建字型 + UTF-8 文字繪製
  */
-export async function exportPdf(card: PainCard, mode: DisplayMode): Promise<void> {
+export async function exportPdf(card: PainCard): Promise<void> {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const md = buildMarkdown(card, mode);
+  const md = buildMarkdown(card);
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();

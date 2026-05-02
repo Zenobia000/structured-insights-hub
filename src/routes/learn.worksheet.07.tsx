@@ -123,7 +123,9 @@ function CardSevenPage() {
   }
 
   function handleBackToCard6() {
-    const ok = window.confirm("退回卡 6 會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？");
+    const ok = window.confirm(
+      "回去把卡 6 想清楚再來會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？",
+    );
     if (!ok) return;
     // 清空 self_guess
     (

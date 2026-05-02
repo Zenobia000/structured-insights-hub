@@ -6,6 +6,7 @@
 import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   /** 5 個欄位是否全部填滿（含 verbatim minLength 10） */
@@ -42,10 +43,21 @@ export function CardOneExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        {/* Exit conditions checklist */}
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem passed={noAnalysisWords && allFilled} label="寫的是原句,不是你的解釋" />
-          <ConditionItem passed={realPerson} label="至少有 1 個有名字的真人" />
+        {/* Reflection hints (Socratic, not pass/fail) */}
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="這句話是他說的、還是你幫他歸納的？"
+            state={noAnalysisWords && allFilled ? "ok" : !allFilled ? "pending" : "thinking"}
+            hint={
+              !noAnalysisWords && allFilled
+                ? "我們在你的輸入裡看到『可能』『應該』這類分析語，回去看看是不是你自己的解釋。"
+                : undefined
+            }
+          />
+          <ReflectionHint
+            question="這個人有名字嗎？還是只是一個代稱？"
+            state={realPerson ? "ok" : !allFilled ? "pending" : "thinking"}
+          />
         </ul>
 
         {/* Blocked message */}
@@ -81,7 +93,7 @@ export function CardOneExitGateFooter({
                   : "bg-muted text-text-muted cursor-not-allowed",
               )}
             >
-              {submitting ? "儲存中…" : "儲存並進入卡 2"}
+              {submitting ? "儲存中…" : "繼續到卡 2"}
               <ArrowRight className="h-4 w-4" />
             </button>
             {tooltip && !canAdvance && (
@@ -96,24 +108,5 @@ export function CardOneExitGateFooter({
         </div>
       </div>
     </div>
-  );
-}
-
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
-        )}
-      >
-        ✓
-      </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
   );
 }

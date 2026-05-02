@@ -101,7 +101,7 @@ ${stuck}
 
     if (forbiddenTriggered) {
       setBlockedMessage(
-        `「${forbiddenHits.join("、")}」代表這個人可能還沒在花時間解這個問題。請考慮退回卡 1。`,
+        `「${forbiddenHits.join("、")}」代表這個人可能還沒在花時間解這個問題。請考慮回去把卡 1 想清楚再來。`,
       );
       setFailureCount((c) => c + 1);
       return;
@@ -207,7 +207,7 @@ ${stuck}
             required
             warning={
               forbiddenTriggered
-                ? `偵測到「${forbiddenHits.join("、")}」— 這代表這個人沒在花時間解 → 退回卡 1`
+                ? `偵測到「${forbiddenHits.join("、")}」— 這代表這個人沒在花時間解 → 回去把卡 1 想清楚再來`
                 : undefined
             }
             error={

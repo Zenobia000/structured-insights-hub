@@ -1,11 +1,12 @@
 /**
  * CardFourExitGateFooter — 卡 4 sticky 底部
  *
- * 失敗 ≥ 3 次 或 R2.4 觸發 → 顯示 retreat_action_card「退回卡 1」
+ * 失敗 ≥ 3 次 或 R2.4 觸發 → 顯示 retreat_action_card「回去把卡 1 想清楚再來」
  */
 import { ArrowRight, AlertTriangle, RotateCcw } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   toolNamePass: boolean;
@@ -43,12 +44,26 @@ export function CardFourExitGateFooter({
   return (
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem
-            passed={toolNamePass && !forbiddenTriggered}
-            label="主人翁現在用的方法有具體名字"
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="他過去 30 天有沒有真的花時間或錢試圖解？如果沒有，這真的痛嗎？"
+            state={
+              toolNamePass && !forbiddenTriggered
+                ? "ok"
+                : forbiddenTriggered
+                  ? "thinking"
+                  : "pending"
+            }
+            hint={
+              forbiddenTriggered
+                ? "你寫的方法名暗示他可能還沒花時間解 — 也許這個人沒這麼痛。"
+                : undefined
+            }
           />
-          <ConditionItem passed={dissatisfactionsPass} label="3 個他不滿意現有方法的具體理由" />
+          <ReflectionHint
+            question="他不滿意現有方法的理由，是他自己說的嗎？還是你猜的？"
+            state={dissatisfactionsPass ? "ok" : "pending"}
+          />
         </ul>
 
         {blockedMessage && !showRetreat && (
@@ -70,15 +85,15 @@ export function CardFourExitGateFooter({
                   這個人可能還沒真正在意這個問題
                 </h3>
                 <p className="mt-1.5 text-[13.5px] leading-[1.6] text-text-secondary">
-                  過不了 → 退回卡片 1，這個人可能還沒真正在意這個問題（沒在花錢花時間解）。 卡 2-4
-                  的資料會保留供參考。
+                  回去把卡 1 想清楚再來，這個人可能還沒真正在意這個問題（沒在花錢花時間解）。卡
+                  2-4 的資料會保留供參考。
                 </p>
                 <button
                   type="button"
                   onClick={onRetreat}
                   className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3.5 py-1.5 text-[13px] font-semibold text-text-primary hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  退回卡 1，找另一個更痛的人
+                  回去把卡 1 想清楚再來，找另一個更痛的人
                 </button>
               </div>
             </div>
@@ -107,7 +122,7 @@ export function CardFourExitGateFooter({
                   : "bg-muted text-text-muted cursor-not-allowed",
               )}
             >
-              {submitting ? "儲存中…" : "儲存並進入卡 5"}
+              {submitting ? "儲存中…" : "繼續到卡 5"}
               <ArrowRight className="h-4 w-4" />
             </button>
             {tooltip && !canAdvance && (
@@ -125,21 +140,3 @@ export function CardFourExitGateFooter({
   );
 }
 
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-0.5 inline-flex items-center justify-center h-4 w-4 rounded-sm border text-[10px] font-bold",
-          passed
-            ? "bg-verified text-verified-foreground border-verified"
-            : "bg-surface border-border text-transparent",
-        )}
-      >
-        ✓
-      </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
-  );
-}

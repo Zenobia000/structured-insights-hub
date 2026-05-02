@@ -1,7 +1,7 @@
 /**
  * Card 8 validators — interview plan
  *
- * - 推銷題偵測：警告但不擋過關（人類自由意志優先；audit-log 留在 LocalStorage）
+ * - 推銷題偵測：警告但不擋下使用者（人類自由意志優先；audit-log 留在 LocalStorage）
  * - rules_table 文案 100% 引自 worksheet 卡 8
  */
 

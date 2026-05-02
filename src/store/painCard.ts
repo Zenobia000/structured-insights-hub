@@ -1,10 +1,9 @@
 /**
- * PainCard zustand store — LocalStorage 持久化層
+ * PainCard zustand store — LocalStorage 持久化層 (v2.0 蘇格拉底重構)
  *
- * MVP 階段：
- * - 全部資料在 LocalStorage（key: painmap-worksheet-v1）
+ * - 全部資料在 LocalStorage（key: painmap-worksheet-v2）
+ * - POC 模式：v1 資料不相容，直接 reset；persist version=3 + 新 key 雙保險
  * - 無雲端同步、無帳號系統
- * - Schema migration 預留 hook，目前只有 v1.0
  *
  * 此 store 只負責「資料存取」，不負責：
  * - Exit gate 驗證邏輯（由各頁面實作）
@@ -18,7 +17,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { CurrentStep, PainCard, PainCardStatus } from "@/types/painCard";
 import { SCHEMA_VERSION } from "@/types/painCard";
 
-const STORAGE_KEY = "painmap-worksheet-v1";
+const STORAGE_KEY = "painmap-worksheet-v2";
 const PERSIST_THROTTLE_MS = 500;
 
 /**
@@ -126,11 +125,10 @@ function emptyPainCard(): PainCard {
     },
 
     contradiction: {
-      triz_id: null,
-      triz_label: null,
       side_a: "",
       side_b: "",
       sacrificed: null,
+      sacrificed_reason: "",
     },
 
     ai_evidence: {
@@ -179,14 +177,6 @@ function emptyPainCard(): PainCard {
     },
 
     verdict: {
-      scores: {
-        people_specificity: null,
-        frequency: null,
-        intensity: null,
-        workaround_dissatisfaction: null,
-        evidence_credibility: null,
-      },
-      total_score: null,
       judgment: null,
       reason_100w: "",
       most_confident_evidence: "",
@@ -380,38 +370,9 @@ export const usePainCardStore = create<PainCardStore>()(
       }),
       // 只持久化 card；hydrated 是 runtime flag、actions 是函式，都不該寫入 localStorage
       partialize: (state) => ({ card: state.card }),
-      version: 2,
-      // v1 → v2: 一次性遷移
-      //   - backfill stuck_formula.ai_clarifying_answers（從 questions 推回對應 answers slot）
-      //   - 移除 stuck_formula.user_draft（若 ai_polished 為空則搬過去）
-      // 一旦 persist.version 升到 2 就不再每次 hydrate 跑這段，僅 v1 用戶第一次開頁面時跑一次
-      migrate: (persistedState, version) => {
-        const state = persistedState as PainCardStore;
-        if (version < 2 && state?.card) {
-          const sf = state.card.stuck_formula as
-            | (typeof state.card.stuck_formula & { user_draft?: string })
-            | undefined;
-          if (sf) {
-            if (!Array.isArray(sf.ai_clarifying_answers)) {
-              const questions = sf.ai_clarifying_questions ?? [];
-              const wasConfirmed = sf.confirmed === true;
-              sf.ai_clarifying_answers = questions.map((q) => ({
-                question: q,
-                answer: "",
-                // 舊使用者已勾選 confirmed → 全部當作「已預約找主人翁問」（最寬鬆，不擋繼續）
-                reserved: wasConfirmed,
-              }));
-            }
-            if (typeof sf.user_draft === "string") {
-              if (!sf.ai_polished && sf.user_draft.trim().length > 0) {
-                sf.ai_polished = sf.user_draft;
-              }
-              delete sf.user_draft;
-            }
-          }
-        }
-        return state;
-      },
+      version: 3,
+      // POC 模式：v1/v2 資料直接拋棄。新 key (painmap-worksheet-v2) 已切割舊資料；
+      // 若 zustand 偵測到舊 version 也直接重置而不嘗試遷移。
       onRehydrateStorage: () => (state) => {
         if (state) state.hydrated = true;
       },

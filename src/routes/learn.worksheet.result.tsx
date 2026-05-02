@@ -7,8 +7,6 @@
  *   2. verdict.judgment 非 null
  *   3. verdict.reason_100w.length >= 100
  * 任一不滿足 → 自動 redirect 到對應卡片頁
- *
- * 教學/生產模式（display_mode）控制 Pain Quality 5 維度是否顯示
  */
 import { useEffect } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -22,7 +20,6 @@ import { NextStepCta } from "@/components/worksheet/card10/NextStepCta";
 import { StageHandoffPanel } from "@/components/worksheet/card10/StageHandoffPanel";
 import { FooterActions } from "@/components/worksheet/card10/FooterActions";
 import { usePainCardStore } from "@/store/painCard";
-import { useDisplayModeStore, type DisplayMode } from "@/store/displayMode";
 import { isCardCompleteForResult } from "@/lib/cardTenExport";
 
 export const Route = createFileRoute("/learn/worksheet/result")({
@@ -43,18 +40,7 @@ function ResultPage() {
   const navigate = useNavigate();
   const card = usePainCardStore((s) => s.card);
   const hydrated = usePainCardStore((s) => s.hydrated);
-  const setMode = useDisplayModeStore((s) => s.setMode);
   const updateField = usePainCardStore((s) => s.updateField);
-
-  // URL ?mode=teaching|production 雙保險（hash 與 search 任一）
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    const m = url.searchParams.get("mode");
-    if (m === "teaching" || m === "production") {
-      setMode(m as DisplayMode);
-    }
-  }, [setMode]);
 
   // 進入此頁的前置條件檢查
   useEffect(() => {

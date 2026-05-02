@@ -8,7 +8,7 @@
  *   Step 2: 貼回 AI 整理的句子 (ai_polished) 與釐清問題 (ai_clarifying_questions)
  *   Step 3: 逐題回答釐清問題（每題 ≥10 字，或勾「預約找主人翁問」）
  *
- * 過關條件：
+ * 反思問題：
  * - prereq: 卡 1 verbatim + 卡 2 background 已填
  * - ai_polished 至少 AI_POLISHED_MIN 字
  * - 若 AI 列了 ai_clarifying_questions → 全部 resolved（answered ≥10 字 OR reserved）

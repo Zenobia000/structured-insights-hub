@@ -1,6 +1,8 @@
-import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  ReflectionHint,
+  type ReflectionHintState,
+} from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   hasContact: boolean;
@@ -23,46 +25,45 @@ export function CardEightExitGateFooter({
   onAdvance,
   onBackToCard2,
 }: Props) {
-  const checks = [
-    { label: "至少 1 位有名字 / 聯絡管道的訪談對象", passed: hasContact },
-    { label: "3 題訪談題已寫完（推銷題只警告，不擋）", passed: questionsAllFilled },
-    { label: "知道訪談時不要做什麼", passed: taboosUnderstood },
-  ];
-  const allPassed = checks.every((c) => c.passed);
+  const contactState: ReflectionHintState = hasContact ? "ok" : "pending";
+  const questionsState: ReflectionHintState = questionsAllFilled ? "ok" : "pending";
+  const taboosState: ReflectionHintState = taboosUnderstood ? "ok" : "pending";
+
+  const allPassed = hasContact && questionsAllFilled && taboosUnderstood;
 
   return (
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-text-primary">過關檢查</h3>
-          {allPassed && (
-            <span className="text-xs font-medium text-verified inline-flex items-center gap-1">
-              <Check className="h-3 w-3" /> 全部通過
-            </span>
-          )}
-        </div>
-        <ul className="space-y-1.5">
-          {checks.map((c, i) => (
-            <li
-              key={i}
-              className={cn(
-                "flex items-start gap-2 text-sm",
-                c.passed ? "text-text-primary" : "text-text-secondary",
-              )}
-            >
-              {c.passed ? (
-                <Check className="h-4 w-4 mt-0.5 text-verified shrink-0" aria-hidden />
-              ) : (
-                <X className="h-4 w-4 mt-0.5 text-text-muted shrink-0" aria-hidden />
-              )}
-              <span>{c.label}</span>
-            </li>
-          ))}
+        <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
+        <ul className="flex flex-col gap-2">
+          <ReflectionHint
+            question="這 3 道題，你今晚就能傳給其中一個人嗎？"
+            state={hasContact && questionsAllFilled ? "ok" : "pending"}
+            hint={
+              !hasContact
+                ? "至少 1 位有名字 / 聯絡管道的訪談對象。"
+                : !questionsAllFilled
+                  ? "3 題訪談題還沒寫完（推銷題只警告，不擋）。"
+                  : undefined
+            }
+          />
+          <ReflectionHint
+            question="你寫的題，是在問他「怎麼做的」，還是在誘導他說「想用你的解法」？"
+            state={questionsState}
+          />
+          <ReflectionHint
+            question="訪談時哪些事不要做，你有清楚嗎？"
+            state={taboosState}
+          />
+          <ReflectionHint
+            question="你心裡還沒真的找到能訪談的人嗎？"
+            state={contactState}
+          />
         </ul>
 
         {blockedMessage && (
           <div className="rounded-md border-2 border-secondary/40 bg-secondary/5 px-3 py-2 text-sm text-text-secondary">
-            <span className="font-medium text-text-primary">還缺什麼：</span> {blockedMessage}
+            <span className="font-medium text-text-primary">還可以再想想：</span> {blockedMessage}
           </div>
         )}
 
@@ -76,14 +77,14 @@ export function CardEightExitGateFooter({
                 : "text-text-secondary hover:text-text-primary"
             }
           >
-            ← 退回卡 2{noContactAtAll ? "（你還沒接觸這群人）" : ""}
+            ← 回去把卡 2 想清楚再來{noContactAtAll ? "（你還沒接觸這群人）" : ""}
           </Button>
           <Button
             onClick={onAdvance}
             disabled={!allPassed || submitting}
             className="bg-accent text-accent-foreground hover:bg-accent/90 disabled:bg-muted disabled:text-text-muted"
           >
-            {submitting ? "前往中…" : "進入卡 9：真假判斷 →"}
+            {submitting ? "前往中…" : "繼續到卡 9：真假判斷 →"}
           </Button>
         </div>
       </div>

@@ -242,7 +242,7 @@ function CardEightPage() {
               <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
               <span>
                 目前所有訪談對象都還沒有具體聯絡管道。如果你連 1 位都聯絡不到，建議
-                <strong className="font-semibold"> 退回卡 2</strong> 補充你已認識的人。
+                <strong className="font-semibold"> 回去把卡 2 想清楚再來</strong> 補充你已認識的人。
               </span>
             </div>
           )}

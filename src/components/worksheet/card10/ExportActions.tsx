@@ -7,13 +7,11 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { usePainCardStore } from "@/store/painCard";
-import { useDisplayModeStore } from "@/store/displayMode";
 import { buildMarkdown, downloadBlob, exportFilename, exportPdf } from "@/lib/cardTenExport";
 
 export function ExportActions() {
   const card = usePainCardStore((s) => s.card);
   const updateField = usePainCardStore((s) => s.updateField);
-  const mode = useDisplayModeStore((s) => s.mode);
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const recordExport = (fmt: "markdown" | "json" | "pdf") => {
@@ -23,7 +21,7 @@ export function ExportActions() {
 
   const handleMarkdown = () => {
     const filename = exportFilename(card, "md");
-    downloadBlob(filename, "text/markdown", buildMarkdown(card, mode));
+    downloadBlob(filename, "text/markdown", buildMarkdown(card));
     recordExport("markdown");
     toast.success(`已下載 ${filename}`);
   };
@@ -38,7 +36,7 @@ export function ExportActions() {
   const handlePdf = async () => {
     setPdfLoading(true);
     try {
-      await exportPdf(card, mode);
+      await exportPdf(card);
       recordExport("pdf");
       toast.success(`已下載 ${exportFilename(card, "pdf")}`);
     } catch (err) {

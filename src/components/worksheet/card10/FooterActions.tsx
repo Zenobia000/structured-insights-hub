@@ -19,9 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
 import { usePainCardStore } from "@/store/painCard";
-import { useDisplayModeStore } from "@/store/displayMode";
 import {
   buildMarkdown,
   buildShareableJson,
@@ -32,10 +30,8 @@ import {
 export function FooterActions() {
   const card = usePainCardStore((s) => s.card);
   const reset = usePainCardStore((s) => s.reset);
-  const mode = useDisplayModeStore((s) => s.mode);
   const [shareOpen, setShareOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [includeScores, setIncludeScores] = useState(false);
 
   const handleNew = () => {
     if (confirm("建立新的身份證？目前這張會被覆蓋（建議先匯出 .md 備份）。")) {
@@ -45,7 +41,7 @@ export function FooterActions() {
   };
 
   const handleExportBeforeDelete = () => {
-    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card, mode));
+    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card));
     toast.success("已下載備份，現在可安全刪除");
   };
 
@@ -57,7 +53,7 @@ export function FooterActions() {
   };
 
   const handleShareCopyLink = () => {
-    const json = buildShareableJson(card, includeScores);
+    const json = buildShareableJson(card);
     navigator.clipboard
       .writeText(json)
       .then(() => toast.success("已複製分享內容到剪貼簿"))
@@ -65,7 +61,7 @@ export function FooterActions() {
   };
 
   const handleShareDownloadMd = () => {
-    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card, mode));
+    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card));
   };
 
   return (
@@ -111,20 +107,6 @@ export function FooterActions() {
             <p className="text-text-secondary">
               選擇分享方式（資料一樣只在你本機，分享 = 你主動傳給對方）：
             </p>
-
-            <div className="rounded-md border border-border bg-accent-light p-3 space-y-2">
-              <p className="text-text-primary font-medium">⚠️ 分享預設不包含 5 維度評分</p>
-              <p className="text-xs text-text-secondary">
-                生產模式輸出規則 R4.2 — 評分是教學工具，不該被用來比較。
-              </p>
-              <label className="flex items-center gap-2 mt-2">
-                <Checkbox
-                  checked={includeScores}
-                  onCheckedChange={(v) => setIncludeScores(Boolean(v))}
-                />
-                <span>我了解風險，仍要包含分數</span>
-              </label>
-            </div>
 
             <div className="space-y-2">
               <Button onClick={handleShareCopyLink} className="w-full" variant="outline">

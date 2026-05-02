@@ -290,7 +290,7 @@ function CardTwoPage() {
       />
 
       <span className="sr-only" aria-live="polite">
-        {canAdvance ? "已可進入卡 3" : "尚未達成過關條件"}
+        {canAdvance ? "繼續到卡 3" : "還可以再想想"}
       </span>
     </div>
   );

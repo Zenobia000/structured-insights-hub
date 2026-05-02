@@ -63,8 +63,11 @@ function stepFromPath(pathname: string, fallback: CurrentStep): CurrentStep {
 }
 
 export function CardProgressStepper() {
-  const current = usePainCardStore((s) => s.card.current_step);
-  const resultState: StepState = current === 10 ? "completed" : "locked";
+  const maxReached = usePainCardStore((s) => s.card.current_step);
+  const { pathname } = useLocation();
+  const current = stepFromPath(pathname, maxReached);
+  const resultState: StepState =
+    current === 10 ? "current" : maxReached === 10 ? "completed" : "locked";
 
   return (
     <nav
@@ -87,7 +90,7 @@ export function CardProgressStepper() {
       {/* Desktop / Tablet: 水平 stepper */}
       <ol className="hidden md:flex items-start justify-between gap-1 px-8 py-5 max-w-6xl mx-auto">
         {STEPS.map((step, i) => {
-          const state = stateOf(step, current);
+          const state = stateOf(step, current, maxReached);
           const isLast = i === STEPS.length - 1;
           return (
             <li key={step} className="flex-1 flex items-start min-w-0">

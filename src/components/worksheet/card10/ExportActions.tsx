@@ -21,7 +21,6 @@ import {
   exportFilename,
   exportInterviewGuide,
   exportPdf,
-  interviewGuideFilename,
 } from "@/lib/cardTenExport";
 
 export function ExportActions() {
@@ -64,14 +63,18 @@ export function ExportActions() {
     }
   };
 
-  const handleInterviewGuide = () => {
+  const [guideLoading, setGuideLoading] = useState(false);
+  const handleInterviewGuide = async () => {
+    setGuideLoading(true);
     try {
-      exportInterviewGuide(card);
-      toast.success(`已下載 ${interviewGuideFilename(card)}`);
+      await exportInterviewGuide(card);
+      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "訪綱匯出失敗";
       toast.error(msg);
       console.error(err);
+    } finally {
+      setGuideLoading(false);
     }
   };
 
@@ -140,10 +143,15 @@ export function ExportActions() {
             <button
               type="button"
               onClick={handleInterviewGuide}
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md bg-status-success px-4 text-[13px] font-medium text-text-inverse transition-colors hover:bg-status-success/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-success/40"
+              disabled={guideLoading}
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md bg-status-success px-4 text-[13px] font-medium text-text-inverse transition-colors hover:bg-status-success/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-success/40 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Download className="h-3.5 w-3.5" />
-              下載訪綱 .md
+              {guideLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              下載訪綱 PDF
             </button>
           </div>
         </aside>

@@ -30,10 +30,10 @@ export function InterviewGuidePreview({ content, card }: Props) {
     }
   }
 
-  function handleExport() {
+  async function handleExport() {
     try {
-      exportInterviewGuide(card);
-      toast.success("已下載訪綱 .md");
+      await exportInterviewGuide(card);
+      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
     } catch (err) {
       toast.error("匯出失敗，請改用複製");
       console.error(err);
@@ -64,7 +64,7 @@ export function InterviewGuidePreview({ content, card }: Props) {
             onClick={handleExport}
             className="h-8 bg-status-success text-text-inverse hover:bg-status-success/90"
           >
-            <Download className="h-3.5 w-3.5 mr-1" /> 下載 .md
+            <Download className="h-3.5 w-3.5 mr-1" /> 下載 PDF
           </Button>
         </div>
       </header>

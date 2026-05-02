@@ -101,6 +101,21 @@ export function CardEightExitGateFooter({
     return () => window.removeEventListener("keydown", onKey);
   }, [expanded, setExpanded]);
 
+  // 主畫面內的 inline hint 點擊 → 展開,並可選擇跳到第一個未過項目
+  useEffect(() => {
+    const onExpand = (e: Event) => {
+      setExpanded(true);
+      const detail = (e as CustomEvent<{ targetIndex?: number }>).detail;
+      // 任何 chip 被點擊都嘗試跳到第一個未過項目(語意上最直觀)
+      if (typeof detail?.targetIndex === "number") {
+        setTimeout(() => jumpToFirstUnmet(), 200);
+      }
+    };
+    window.addEventListener("painmap:card8:expand-reflection", onExpand);
+    return () => window.removeEventListener("painmap:card8:expand-reflection", onExpand);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasContact, questionsAllFilled, taboosUnderstood]);
+
   return (
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2.5">

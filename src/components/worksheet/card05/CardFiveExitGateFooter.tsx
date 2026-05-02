@@ -119,17 +119,3 @@ export function CardFiveExitGateFooter({
   );
 }
 
-function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-1.5">
-      <span
-        aria-hidden
-        className={cn(
-          "mt-[7px] inline-block h-1.5 w-1.5 rounded-full shrink-0",
-          passed ? "bg-text-primary" : "bg-text-muted/50",
-        )}
-      />
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
-    </li>
-  );
-}

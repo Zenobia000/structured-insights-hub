@@ -147,6 +147,8 @@ export function CardEightExitGateFooter({
         {expanded && (
           <div
             id="card8-reflection-panel"
+            role="region"
+            aria-labelledby="card8-reflection-toggle"
             className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
           >
             <ul className="flex flex-col gap-2">

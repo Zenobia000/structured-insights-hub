@@ -1,12 +1,13 @@
 /**
  * CardFiveExitGateFooter — sticky 底部
  *
- * 蘇格拉底改版：拿掉「過關 / 退回」這套對抗框架。
- * 改用「想想看」 + 中性的條目清單，把判斷交還給使用者。
+ * 蘇格拉底改版：拿掉「過關 / 退回」這套對抗框架，改用蘇格拉底問句與 ReflectionHint。
+ * 與 Card 1-4、6-9 共用同一套「反思問題」格式（ReflectionHint + h3 標題）。
  */
 import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { ReflectionHint, type ReflectionHintState } from "@/components/worksheet/ReflectionHint";
 
 type Props = {
   sidesPass: boolean;

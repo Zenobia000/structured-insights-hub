@@ -82,6 +82,9 @@ export function JudgmentForm({
         <legend className="text-[16px] font-semibold text-text-primary">
           這是真痛點還是假痛點？
         </legend>
+        <p className="sr-only">
+          可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。
+        </p>
         <RadioGroup
           value={judgment ?? ""}
           onValueChange={(v) => onJudgmentChange(v as Judgment)}
@@ -90,18 +93,19 @@ export function JudgmentForm({
           {JUDGMENT_OPTIONS.map((opt) => {
             const selected = judgment === opt.value;
             return (
-              <label
+              <RadioGroupItem
                 key={opt.value}
-                htmlFor={`j-${opt.value}`}
+                id={`j-${opt.value}`}
+                value={opt.value}
+                aria-label={`${opt.label}：${opt.description}`}
                 className={cn(
-                  "rounded-lg border p-3 cursor-pointer flex flex-col gap-1 transition-colors",
-                  selected
-                    ? "border-accent ring-2 ring-accent/30 bg-accent/5"
-                    : "border-border bg-surface hover:border-accent/40",
+                  "h-auto w-auto aspect-auto rounded-lg border p-3 cursor-pointer flex flex-col gap-1 items-start text-left transition-colors [&>span]:hidden",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+                  "data-[state=checked]:border-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent/30 data-[state=checked]:bg-accent/5",
+                  !selected && "border-border bg-surface hover:border-accent/40",
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem id={`j-${opt.value}`} value={opt.value} />
                   <span className="font-mono text-[15px] font-bold text-text-primary">
                     {opt.marker}
                   </span>
@@ -112,7 +116,7 @@ export function JudgmentForm({
                 <p className="text-[12.5px] text-text-secondary leading-[1.55]">
                   {opt.description}
                 </p>
-              </label>
+              </RadioGroupItem>
             );
           })}
         </RadioGroup>
@@ -213,6 +217,9 @@ export function JudgmentForm({
         <legend className="text-[16px] font-semibold text-text-primary">
           下一步我會
         </legend>
+        <p className="sr-only">
+          可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。
+        </p>
         <RadioGroup
           value={nextAction ?? ""}
           onValueChange={(v) => onNextActionChange(v as NextAction)}
@@ -221,30 +228,25 @@ export function JudgmentForm({
           {NEXT_ACTION_OPTIONS.map((opt) => {
             const selected = nextAction === opt.value;
             return (
-              <label
+              <RadioGroupItem
                 key={opt.value}
-                htmlFor={`na-${opt.value}`}
+                id={`na-${opt.value}`}
+                value={opt.value}
+                aria-label={`${opt.label}：${opt.hint}`}
                 className={cn(
-                  "flex items-start gap-3 rounded-md border p-3 cursor-pointer transition-colors",
-                  selected
-                    ? "border-secondary ring-2 ring-secondary/30 bg-secondary/5"
-                    : "border-border bg-surface hover:border-secondary/40",
+                  "h-auto w-auto aspect-auto block rounded-md border p-3 cursor-pointer text-left transition-colors [&>span]:hidden",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2",
+                  "data-[state=checked]:border-secondary data-[state=checked]:ring-2 data-[state=checked]:ring-secondary/30 data-[state=checked]:bg-secondary/5",
+                  !selected && "border-border bg-surface hover:border-secondary/40",
                 )}
               >
-                <RadioGroupItem
-                  id={`na-${opt.value}`}
-                  value={opt.value}
-                  className="mt-0.5"
-                />
-                <span>
-                  <span className="block text-[14.5px] font-semibold text-text-primary">
-                    {opt.label}
-                  </span>
-                  <span className="block text-[12.5px] text-text-secondary leading-[1.55]">
-                    {opt.hint}
-                  </span>
+                <span className="block text-[14.5px] font-semibold text-text-primary">
+                  {opt.label}
                 </span>
-              </label>
+                <span className="block text-[12.5px] text-text-secondary leading-[1.55]">
+                  {opt.hint}
+                </span>
+              </RadioGroupItem>
             );
           })}
         </RadioGroup>

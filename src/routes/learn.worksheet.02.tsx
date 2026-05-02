@@ -58,7 +58,7 @@ function CardTwoPage() {
 
   const background = card.people.background;
 
-  // 即時檢核
+  // 即時檢核（hardcoded — 仍是 fallback 真相源）
   const checks = useMemo(() => evaluateCardTwo({ background, list: people }), [background, people]);
 
   // 自我承諾 checkbox（不持久化到 PainCard schema — 僅 page-local）
@@ -70,6 +70,54 @@ function CardTwoPage() {
   const [submitting, setSubmitting] = useState(false);
   const [failureCount, setFailureCount] = useState(0);
 
+  // ── LLM 主導的背景具體性判定 ──
+  const [bgVerdict, setBgVerdict] = useState<"pass" | "warn" | null>(null);
+  const [bgReason, setBgReason] = useState<string | null>(null);
+  const [bgAnalyzing, setBgAnalyzing] = useState(false);
+  const [bgFallback, setBgFallback] = useState(false);
+
+  // debounce 800ms 後叫 LLM
+  useEffect(() => {
+    const trimmed = background.trim();
+    if (trimmed.length < 10) {
+      setBgVerdict(null);
+      setBgReason(null);
+      setBgAnalyzing(false);
+      setBgFallback(false);
+      return;
+    }
+    let cancelled = false;
+    setBgAnalyzing(true);
+    const timer = setTimeout(async () => {
+      try {
+        const outcome = await judge(
+          "card2.background_specific",
+          trimmed,
+          undefined,
+          card.llm_cache,
+        );
+        if (cancelled) return;
+        if (outcome.source === "fallback") {
+          setBgFallback(true);
+          setBgVerdict(null);
+          setBgReason(null);
+        } else {
+          setBgFallback(false);
+          setBgVerdict(outcome.verdict);
+          setBgReason(outcome.reason);
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card2.background_specific", entry);
+        }
+      } finally {
+        if (!cancelled) setBgAnalyzing(false);
+      }
+    }, 800);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [background, card.llm_cache, updateField]);
+
   // autosave indicator
   const savedAgo = useSavedAgo(card.updated_at);
 
@@ -80,20 +128,28 @@ function CardTwoPage() {
 
   const setBackground = (v: string) => updateField("people.background", v);
 
+  // 背景具體性「對外」狀態：LLM 有結果 → 用 LLM；否則退回 hardcoded
+  const backgroundStatus: typeof checks.specificBackground = (() => {
+    if (background.trim().length === 0) return "pending";
+    if (bgAnalyzing && bgVerdict === null) return "pending";
+    if (bgVerdict === "pass") return "pass";
+    if (bgVerdict === "warn") return "warning";
+    return checks.specificBackground;
+  })();
+  const backgroundPass = backgroundStatus === "pass";
+
   const handleAdvance = async () => {
     setAttempted(true);
 
-    // a：欄位填滿
     if (checks.allRequiredFilled !== "pass") {
       setBlockedMessage(
         background.trim().length < 10
-          ? "背景描述還太簡略。試試寫下年齡、職業、地點這些具體的標記（至少 2 項）。"
+          ? "背景描述還太簡略。試試寫下年齡、職業、地點這些具體的標記(至少 2 項)。"
           : "每個欄位都先填上吧。需要 3 位真人 + 各自的聯絡方式 + 你跟他的關係。",
       );
       setFailureCount((c) => c + 1);
       return;
     }
-    // b：R2.2 代稱
     if (checks.realNames !== "pass") {
       const offenders = people
         .filter((p) => isForbiddenPersonName(p.name))
@@ -107,7 +163,6 @@ function CardTwoPage() {
       setFailureCount((c) => c + 1);
       return;
     }
-    // c：contactable
     if (checks.contactableExists !== "pass") {
       setBlockedMessage(
         "至少要有 1 位你今天能傳訊息的人（聯絡方式寫 LINE / 電話 / Email / Messenger 都可以）。",
@@ -115,37 +170,47 @@ function CardTwoPage() {
       setFailureCount((c) => c + 1);
       return;
     }
-    // d：background 具體性 — hardcoded warn 時，請 LLM 二次確認
-    //    LLM 救得起來（pass）就放行；LLM 確認 warn 或失敗則維持擋
-    if (checks.specificBackground !== "pass") {
+    // 背景具體性：等 LLM
+    if (bgAnalyzing && bgVerdict === null) {
       setSubmitting(true);
       try {
         const outcome = await judge(
           "card2.background_specific",
-          background,
+          background.trim(),
           undefined,
           card.llm_cache,
         );
-        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
-          // LLM 救了 — 寫 cache 後繼續往下走
+        if (outcome.source === "fallback") {
+          setBgFallback(true);
+          if (checks.specificBackground !== "pass") {
+            setBlockedMessage("背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。");
+            setFailureCount((c) => c + 1);
+            return;
+          }
+        } else {
+          setBgVerdict(outcome.verdict);
+          setBgReason(outcome.reason);
           const entry = toCacheEntry(outcome);
           if (entry) updateField("llm_cache.card2.background_specific", entry);
-        } else if (outcome.source !== "fallback") {
-          // LLM 確認 warn — 顯示 LLM 給的具體理由
-          setBlockedMessage(`再想想看：${outcome.reason}`);
-          setFailureCount((c) => c + 1);
-          return;
-        } else {
-          // LLM 失敗 — 退回 hardcoded 訊息
-          setBlockedMessage("背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。");
-          setFailureCount((c) => c + 1);
-          return;
+          if (outcome.verdict !== "pass") {
+            setBlockedMessage(`再想想看：${outcome.reason}`);
+            setFailureCount((c) => c + 1);
+            return;
+          }
         }
       } finally {
         setSubmitting(false);
+        setBgAnalyzing(false);
       }
+    } else if (!backgroundPass) {
+      setBlockedMessage(
+        bgVerdict === "warn" && bgReason
+          ? `再想想看：${bgReason}`
+          : "背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。",
+      );
+      setFailureCount((c) => c + 1);
+      return;
     }
-    // e：commitment
     if (!commitment) {
       setBlockedMessage(
         "最後勾選右側「我確認今天能聯絡到至少 1 位」— 那是你對自己的承諾，不是給我們的。",
@@ -169,22 +234,26 @@ function CardTwoPage() {
     navigate({ to: "/learn/worksheet" });
   };
 
-  // background inline warning
+  // background inline warning — LLM reason 優先
   const backgroundWarning = (() => {
     if (!background) return null;
-    const cats = backgroundCategoriesHit(background);
-    if (background.length >= 10 && cats.length >= 2) return null;
-    return "「年輕人」「上班族」太寬。請至少寫 2 個具體屬性（例：30-50 歲、補習班數學老師、台灣）。";
+    if (bgAnalyzing && bgVerdict === null) return "AI 正在判讀…";
+    if (bgVerdict === "warn") return bgReason ?? "再寫具體一點。";
+    if (bgVerdict === "pass") return null;
+    if (bgFallback || bgVerdict === null) {
+      const cats = backgroundCategoriesHit(background);
+      if (background.length >= 10 && cats.length >= 2) return null;
+      return "「年輕人」「上班族」太寬。請至少寫 2 個具體屬性（例：30-50 歲、補習班數學老師、台灣）。";
+    }
+    return null;
   })();
 
   const contactablePass = checks.contactableExists === "pass";
   const realNamesPass = checks.realNames === "pass";
-  const backgroundPass = checks.specificBackground === "pass";
   const allFilledPass = checks.allRequiredFilled === "pass";
   const canAdvance =
     allFilledPass && realNamesPass && contactablePass && backgroundPass && commitment;
 
-  // 任意輸入變更後清除 blocked message（讓使用者知道警告已重置）
   useEffect(() => {
     setBlockedMessage(null);
   }, [background, JSON.stringify(people), commitment]);
@@ -267,6 +336,9 @@ function CardTwoPage() {
                 checks={checks}
                 commitment={commitment}
                 onCommitmentChange={setCommitment}
+                backgroundStatus={backgroundStatus}
+                backgroundHint={bgVerdict === "warn" ? bgReason ?? undefined : undefined}
+                backgroundAnalyzing={bgAnalyzing && bgVerdict === null}
               />
             </div>
           </section>
@@ -276,6 +348,9 @@ function CardTwoPage() {
               checks={checks}
               commitment={commitment}
               onCommitmentChange={setCommitment}
+              backgroundStatus={backgroundStatus}
+              backgroundHint={bgVerdict === "warn" ? bgReason ?? undefined : undefined}
+              backgroundAnalyzing={bgAnalyzing && bgVerdict === null}
             />
             <p className="mt-3 text-[11px] leading-[1.5] text-text-muted">
               偵測到的可聯絡關鍵字：

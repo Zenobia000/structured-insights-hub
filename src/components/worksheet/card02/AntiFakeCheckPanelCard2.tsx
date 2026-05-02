@@ -22,11 +22,25 @@ export function AntiFakeCheckPanelCard2({
   checks,
   commitment,
   onCommitmentChange,
+  backgroundStatus,
+  backgroundHint,
+  backgroundAnalyzing,
 }: {
   checks: CardTwoChecks;
   commitment: boolean;
   onCommitmentChange: (v: boolean) => void;
+  /** 背景具體性的「對外狀態」— 由 page 端決定（LLM > hardcoded fallback） */
+  backgroundStatus?: CheckStatus;
+  /** 背景具體性顯示的提示文字（LLM reason 或 hardcoded fallback） */
+  backgroundHint?: string;
+  /** LLM 正在分析中 */
+  backgroundAnalyzing?: boolean;
 }) {
+  const bgStatus: CheckStatus = backgroundStatus ?? checks.specificBackground;
+  const bgHint =
+    backgroundHint ??
+    "「年輕人」「上班族」太寬。請至少寫 2 個具體屬性（例：30-50 歲、補習班數學老師、台灣）。";
+
   const items: Item[] = [
     {
       label: "3 個都是真名（不是「老師 A / 同學 B」）",
@@ -39,9 +53,11 @@ export function AntiFakeCheckPanelCard2({
       status: checks.contactableExists,
     },
     {
-      label: "背景描述夠具體（年齡 / 職業 / 地點任 2 項）",
-      hint: "「年輕人」「上班族」太寬。請至少寫 2 個具體屬性（例：30-50 歲、補習班數學老師、台灣）。",
-      status: checks.specificBackground,
+      label: backgroundAnalyzing
+        ? "背景描述夠具體（AI 分析中…）"
+        : "背景描述夠具體（涵蓋 ≥ 2 個具體屬性）",
+      hint: bgHint,
+      status: bgStatus,
     },
   ];
 

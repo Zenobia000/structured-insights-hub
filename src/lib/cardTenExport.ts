@@ -21,26 +21,48 @@ export const NEXT_ACTION_LABEL: Record<NextAction, string> = {
   change_topic: "換題目，從卡 1 重新填",
 };
 
+/**
+ * 產生檔名安全的 slug
+ * - 保留 ASCII 字母、數字、底線
+ * - 保留 CJK 統一漢字（含擴展 A/B/常用補充）與全形假名
+ * - 其餘空白與符號 → "-"
+ * - 移除作業系統檔名保留字 / 控制碼
+ * - 限長 30 字（中英混算字元）
+ */
 export function slugify(text: string): string {
-  return (
-    (text || "")
-      .toLowerCase()
-      .replace(/[^\w\u4e00-\u9fff]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 30) || "untitled"
-  );
+  const normalized = (text || "")
+    .normalize("NFC")
+    .toLowerCase()
+    // 把所有「非允許字元」換成 -
+    // 允許：a-z 0-9 _ + 中日韓統一漢字（基本區 + 擴展 A）+ 注音 + 假名
+    .replace(/[^\w\u3400-\u4dbf\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\u3100-\u312f]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 30);
+  return normalized || "untitled";
+}
+
+/**
+ * 移除作業系統檔名保留字元，避免 Windows / macOS / Linux 任一拒收
+ * 保留中文，僅清理 \ / : * ? " < > | 與控制碼
+ */
+function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[\\/:*?"<>|\x00-\x1f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120) || "untitled";
 }
 
 export function exportFilename(card: PainCard, ext: "md" | "json" | "pdf"): string {
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
-  return `paincard-${slug}-${date}.${ext}`;
+  return sanitizeFilename(`paincard-${slug}-${date}.${ext}`);
 }
 
 export function interviewGuideFilename(card: PainCard, ext: "md" | "pdf" = "pdf"): string {
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
-  return `paincard-interview-guide-${slug}-${date}.${ext}`;
+  return sanitizeFilename(`paincard-interview-guide-${slug}-${date}.${ext}`);
 }
 
 export function sacrificedLabel(card: PainCard): string {

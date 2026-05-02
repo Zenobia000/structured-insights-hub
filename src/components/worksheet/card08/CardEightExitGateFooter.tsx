@@ -88,11 +88,14 @@ export function CardEightExitGateFooter({
     }
   }
 
-  // Esc 收合;只在 expanded 時生效,且不影響其他 input 的 Esc
+  // Esc 收合;只在 expanded 時生效,並把焦點還給 header toggle
   useEffect(() => {
     if (!expanded) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setExpanded(false);
+      if (e.key === "Escape") {
+        setExpanded(false);
+        document.getElementById("card8-reflection-toggle")?.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

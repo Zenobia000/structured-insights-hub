@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,6 +58,29 @@ export function CardEightExitGateFooter({
 
   // 預設摺疊,避免反思內容遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
   const [expanded, setExpanded] = usePersistedToggle("painmap:card8:reflection-expanded", false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  // 標記:這次展開是否來自鍵盤(Enter/Space),若是 → 自動把焦點移進 panel
+  const keyboardOpenRef = useRef(false);
+
+  // 鍵盤觸發展開時,把焦點移到 panel(role=region, tabIndex=-1)
+  // 讓螢幕閱讀器朗讀新內容,Tab 也能順著進入內部 chips/連結
+  useEffect(() => {
+    if (expanded && keyboardOpenRef.current) {
+      keyboardOpenRef.current = false;
+      // 等 panel mount + scrollIntoView 完成
+      requestAnimationFrame(() => {
+        panelRef.current?.focus({ preventScroll: true });
+      });
+    }
+  }, [expanded]);
+
+  function handleToggleClick(e: React.MouseEvent | React.KeyboardEvent) {
+    // detail === 0 表示鍵盤觸發(Enter/Space) → 標記讓焦點進 panel
+    const isKeyboard =
+      "detail" in e && (e as React.MouseEvent).detail === 0;
+    if (isKeyboard && !expanded) keyboardOpenRef.current = true;
+    setExpanded((v) => !v);
+  }
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
   }, [blockedMessage, setExpanded]);
@@ -123,7 +146,7 @@ export function CardEightExitGateFooter({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setExpanded((v) => !v)}
+            onClick={handleToggleClick}
             aria-expanded={expanded}
             aria-controls="card8-reflection-panel"
             id="card8-reflection-toggle"
@@ -164,10 +187,12 @@ export function CardEightExitGateFooter({
         {/* 反思內容 — 摺疊區,加上 max-h + overflow-auto 避免吃掉主畫面 */}
         {expanded && (
           <div
+            ref={panelRef}
             id="card8-reflection-panel"
             role="region"
             aria-labelledby="card8-reflection-toggle"
-            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
+            tabIndex={-1}
+            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
           >
             <ul className="flex flex-col gap-2">
               <ReflectionHint

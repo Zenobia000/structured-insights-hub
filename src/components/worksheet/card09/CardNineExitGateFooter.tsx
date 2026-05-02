@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePersistedToggle } from "@/hooks/usePersistedToggle";
@@ -49,6 +49,24 @@ export function CardNineExitGateFooter({
 
   // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化
   const [expanded, setExpanded] = usePersistedToggle("painmap:card9:reflection-expanded", false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const keyboardOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (expanded && keyboardOpenRef.current) {
+      keyboardOpenRef.current = false;
+      requestAnimationFrame(() => {
+        panelRef.current?.focus({ preventScroll: true });
+      });
+    }
+  }, [expanded]);
+
+  function handleToggleClick(e: React.MouseEvent | React.KeyboardEvent) {
+    const isKeyboard =
+      "detail" in e && (e as React.MouseEvent).detail === 0;
+    if (isKeyboard && !expanded) keyboardOpenRef.current = true;
+    setExpanded((v) => !v);
+  }
   useEffect(() => {
     if (blockedMessage) setExpanded(true);
   }, [blockedMessage, setExpanded]);
@@ -105,7 +123,7 @@ export function CardNineExitGateFooter({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setExpanded((v) => !v)}
+            onClick={handleToggleClick}
             aria-expanded={expanded}
             aria-controls="card9-reflection-panel"
             id="card9-reflection-toggle"
@@ -146,10 +164,12 @@ export function CardNineExitGateFooter({
         {/* 反思內容 — 摺疊區,加上 max-h + overflow-auto 避免吃掉主畫面 */}
         {expanded && (
           <div
+            ref={panelRef}
             id="card9-reflection-panel"
             role="region"
             aria-labelledby="card9-reflection-toggle"
-            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
+            tabIndex={-1}
+            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
           >
             <ul className="space-y-1.5">
               {hints.map((h, i) => (

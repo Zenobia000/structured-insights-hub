@@ -9,6 +9,7 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { StageRelationshipSection } from "@/components/landing/StageRelationshipSection";
 import { StartOrResumeSection } from "@/components/landing/StartOrResumeSection";
 import { ThreeStepTeachingSection } from "@/components/landing/ThreeStepTeachingSection";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function LandingPage() {
   return (
@@ -16,12 +17,14 @@ export function LandingPage() {
       {/* Ambient page glow — anchored to top-left & bottom-right */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-0 opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 800px 600px at 0% 0%, rgba(91,141,239,0.10), transparent 60%), radial-gradient(ellipse 600px 800px at 100% 100%, rgba(139,92,246,0.06), transparent 60%)",
-        }}
+        className="pointer-events-none fixed inset-0 z-0 opacity-60 bg-spotlight-dual"
       />
+
+      {/* Floating theme toggle (top-right) */}
+      <div className="fixed top-5 right-5 z-50">
+        <ThemeToggle />
+      </div>
+
       <div className="relative z-10">
         <HeroSection />
         <ThreeStepTeachingSection />

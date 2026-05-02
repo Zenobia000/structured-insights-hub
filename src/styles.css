@@ -171,11 +171,11 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.08);
 
-  /* ───── Glow (Grok dark-mode elevation) ───── */
-  --shadow-glow-focus: 0 0 0 2px var(--accent-electric-glow);
-  --shadow-glow-sm: 0 0 16px var(--accent-electric-glow);
-  --shadow-glow-md: 0 0 32px rgba(91, 141, 239, 0.25);
-  --shadow-glow-lg: 0 0 80px rgba(91, 141, 239, 0.18);
+  /* ───── Glow (uses --accent-glow-* tokens, light/dark adaptive) ───── */
+  --shadow-glow-focus: 0 0 0 2px var(--accent-glow-strong);
+  --shadow-glow-sm: 0 0 16px var(--accent-glow-strong);
+  --shadow-glow-md: 0 0 32px var(--accent-glow-mid);
+  --shadow-glow-lg: 0 0 80px var(--accent-glow-soft);
 
   /* ───── Animation ───── */
   --ease-standard: cubic-bezier(0.2, 0, 0.13, 1);
@@ -247,6 +247,18 @@
   --viz-6: #F87171;
   --viz-7: #E879F9;
   --viz-8: #94A3B8;
+
+  /* ───── Texture tokens (utility-aware, light/dark adaptive) ─────
+   * dot-grid color, spotlight inner glow, glow halo
+   * Adjusted in .light via override
+   */
+  --dot-color-dim: #161616;
+  --dot-color-default: #1F1F1F;
+  --spotlight-color: rgba(91, 141, 239, 0.12);
+  --spotlight-color-violet: rgba(139, 92, 246, 0.12);
+  --accent-glow-strong: rgba(91, 141, 239, 0.35);
+  --accent-glow-mid: rgba(91, 141, 239, 0.25);
+  --accent-glow-soft: rgba(91, 141, 239, 0.18);
 }
 
 /* ───────────────────────────────────────────────
@@ -290,6 +302,15 @@
   --status-warning-bg: #FEF3C7;
   --status-danger: #DC2626;
   --status-danger-bg: #FEE2E2;
+
+  /* Texture overrides for light mode (lighter dots, subtler glow) */
+  --dot-color-dim: #EAEAEA;
+  --dot-color-default: #D4D4D8;
+  --spotlight-color: rgba(37, 99, 235, 0.06);
+  --spotlight-color-violet: rgba(139, 92, 246, 0.05);
+  --accent-glow-strong: rgba(37, 99, 235, 0.20);
+  --accent-glow-mid: rgba(37, 99, 235, 0.12);
+  --accent-glow-soft: rgba(37, 99, 235, 0.08);
 }
 
 /* ───────────────────────────────────────────────
@@ -327,6 +348,14 @@
   --status-warning-bg: #2A1F0A;
   --status-danger: #F87171;
   --status-danger-bg: #2A0F0F;
+
+  --dot-color-dim: #161616;
+  --dot-color-default: #1F1F1F;
+  --spotlight-color: rgba(91, 141, 239, 0.12);
+  --spotlight-color-violet: rgba(139, 92, 246, 0.12);
+  --accent-glow-strong: rgba(91, 141, 239, 0.35);
+  --accent-glow-mid: rgba(91, 141, 239, 0.25);
+  --accent-glow-soft: rgba(91, 141, 239, 0.18);
 }
 
 /* ───────────────────────────────────────────────
@@ -341,6 +370,15 @@
     font-family: var(--font-sans);
     background-color: var(--canvas-base);
     color-scheme: dark;
+  }
+  html.light { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+
+  /* Smooth theme transitions on root tokens */
+  html, body {
+    transition:
+      background-color 240ms var(--ease-standard),
+      color 240ms var(--ease-standard);
   }
 
   body {
@@ -433,31 +471,31 @@
     border-color: var(--border-subtle);
   }
 
-  /* Dot grid backgrounds */
+  /* Dot grid backgrounds (uses --dot-color-* tokens) */
   .bg-dot-dim {
-    background-image: radial-gradient(circle at 1px 1px, #161616 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, var(--dot-color-dim) 1px, transparent 0);
     background-size: 24px 24px;
   }
   .bg-dot-default {
-    background-image: radial-gradient(circle at 1px 1px, #1F1F1F 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, var(--dot-color-default) 1px, transparent 0);
     background-size: 24px 24px;
   }
   .bg-dot-dense {
-    background-image: radial-gradient(circle at 1px 1px, #1F1F1F 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, var(--dot-color-default) 1px, transparent 0);
     background-size: 16px 16px;
   }
 
-  /* Spotlight (radial gradient) */
+  /* Spotlight (radial gradient, uses --spotlight-color tokens) */
   .bg-spotlight-top {
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91, 141, 239, 0.12), transparent 70%);
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--spotlight-color), transparent 70%);
   }
   .bg-spotlight-center {
-    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(91, 141, 239, 0.10), transparent 70%);
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, var(--spotlight-color), transparent 70%);
   }
   .bg-spotlight-dual {
     background:
-      radial-gradient(ellipse 50% 50% at 0% 0%, rgba(91, 141, 239, 0.15), transparent 60%),
-      radial-gradient(ellipse 50% 50% at 100% 100%, rgba(139, 92, 246, 0.12), transparent 60%);
+      radial-gradient(ellipse 50% 50% at 0% 0%, var(--spotlight-color), transparent 60%),
+      radial-gradient(ellipse 50% 50% at 100% 100%, var(--spotlight-color-violet), transparent 60%);
   }
 
   /* Noise overlay (subtle texture) */
@@ -471,18 +509,18 @@
     mix-blend-mode: overlay;
   }
 
-  /* Glow utilities */
+  /* Glow utilities (uses --accent-glow-* tokens) */
   .glow-focus {
-    box-shadow: 0 0 0 2px var(--accent-electric-glow);
+    box-shadow: 0 0 0 2px var(--accent-glow-strong);
   }
   .glow-accent-sm {
-    box-shadow: 0 0 16px var(--accent-electric-glow);
+    box-shadow: 0 0 16px var(--accent-glow-strong);
   }
   .glow-accent-md {
-    box-shadow: 0 0 32px rgba(91, 141, 239, 0.25);
+    box-shadow: 0 0 32px var(--accent-glow-mid);
   }
   .glow-accent-lg {
-    box-shadow: 0 0 80px rgba(91, 141, 239, 0.18);
+    box-shadow: 0 0 80px var(--accent-glow-soft);
   }
 
   /* Section padding utilities */

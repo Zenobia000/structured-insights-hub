@@ -101,10 +101,31 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundComponent,
 });
 
+/**
+ * Inline FOUC-prevention script.
+ *
+ * Runs synchronously before any React hydration so the correct theme class
+ * (light / dark) is on <html> by the time the first paint happens. This
+ * avoids the dark→light flash for users who chose 'light' on a prior visit.
+ *
+ * Storage key & resolution must match src/hooks/useTheme.ts.
+ */
+const themeBootstrap = `(function(){try{
+var k='painmap.theme';
+var stored=localStorage.getItem(k);
+var pref=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+var theme=(stored==='light'||stored==='dark')?stored:pref;
+var html=document.documentElement;
+html.classList.remove('light','dark');
+html.classList.add(theme);
+html.style.colorScheme=theme;
+}catch(e){document.documentElement.classList.add('dark');}})();`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-Hant" className="dark">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <HeadContent />
       </head>
       <body className="bg-canvas-base text-text-primary antialiased">

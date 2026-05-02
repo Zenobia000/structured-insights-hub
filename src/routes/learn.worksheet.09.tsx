@@ -203,6 +203,16 @@ function CardNinePage() {
           nextAction={v.next_action}
         />
 
+        <ReflectionInlineHint
+          title="想想看"
+          expandEventName="painmap:card9:expand-reflection"
+          items={[
+            { label: "我選了哪一種判斷（真 / 假 / 待訪談）", done: judgmentChosen },
+            { label: `書面理由 ≥ ${REASON_MIN} 字（目前 ${reasonLen}）`, done: reasonPassed },
+            { label: "我之後最想做哪一件事", done: nextActionChosen },
+          ]}
+        />
+
         <p className="text-[12px] text-text-muted" aria-live="polite">
           {hydrated && savedAgo ? `已悄悄存進你的瀏覽器 · ${savedAgo}` : "還沒開始寫"}
         </p>

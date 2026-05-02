@@ -52,7 +52,7 @@ function CardFourPage() {
   const checks = useMemo(() => evaluateCardFour(w), [w]);
 
   const stuckPolished =
-    card.stuck_formula.ai_polished?.trim() || card.stuck_formula.user_draft.trim();
+    card.stuck_formula.ai_polished?.trim() ?? "";
 
   const promptText = useMemo(() => {
     const stuck = stuckPolished || "（請先到卡 3 填寫卡關公式）";

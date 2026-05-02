@@ -64,10 +64,13 @@ export type PainCard = {
   };
 
   // === Card 3: 卡關公式 ===
+  // 設計（2026-05）：流程改為「複製 prompt → AI 整理 → 使用者貼回 + 回答釐清問題」
+  // 不再要求使用者自己先寫一份初稿（避免跟卡 1 verbatim 重複）。
+  // ai_polished 即「最終的卡關公式句」，下游卡片以此為唯一來源。
   stuck_formula: {
-    /** 使用者用自然語言描述卡點（不再強制句型，AI 會幫忙整理） */
-    user_draft: string;
+    /** AI 整理後的卡關公式句（也可由使用者直接編輯）。下游卡片以此為來源。 */
     ai_polished: string | null;
+    /** AI 列出「需要再問清楚」的問題清單 */
     ai_clarifying_questions: string[];
     /**
      * 對 AI 列的每個釐清問題的回答。
@@ -80,9 +83,8 @@ export type PainCard = {
       reserved: boolean;
     }>;
     /**
-     * 舊欄位 — 保留向後相容。
-     * 新邏輯下：當 ai_clarifying_questions 為空時自動為 true；
-     * 否則由 ai_clarifying_answers 衍生 (每題都有 ≥10 字答案 OR reserved)。
+     * 舊欄位 — 沒有問題時自動為 true；有問題時由 ai_clarifying_answers 衍生。
+     * 保留以供下游程式碼相容（如 PainIdCard 顯示）。
      */
     confirmed: boolean;
   };

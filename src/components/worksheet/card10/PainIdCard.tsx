@@ -48,7 +48,7 @@ export function PainIdCard() {
   const [tableExpanded, setTableExpanded] = useState(false);
 
   const firstPerson = card.people.list[0];
-  const stuck = card.stuck_formula.ai_polished || card.stuck_formula.user_draft;
+  const stuck = card.stuck_formula.ai_polished;
   const dis = card.workaround.user_dissatisfactions.slice(0, 3);
   const targets = card.interview_plan.targets;
   const qs = card.interview_plan.questions.slice(0, 3);

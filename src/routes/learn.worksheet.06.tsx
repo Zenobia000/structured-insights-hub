@@ -51,7 +51,7 @@ function CardSixPage() {
   const ev = card.ai_evidence;
 
   const stuck =
-    card.stuck_formula.ai_polished?.trim() || card.stuck_formula.user_draft.trim();
+    card.stuck_formula.ai_polished?.trim() ?? "";
   const peopleBg = card.people.background.trim();
   const tool = card.workaround.tool_name.trim();
   const dis = card.workaround.user_dissatisfactions

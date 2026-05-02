@@ -9,7 +9,7 @@ export function ContextSummary({ card }: Props) {
   const verbatim = card.complaint.verbatim.trim();
   const bg = card.people.background.trim();
   const stuck =
-    card.stuck_formula.ai_polished?.trim() || card.stuck_formula.user_draft.trim();
+    card.stuck_formula.ai_polished?.trim() ?? "";
   const tool = card.workaround.tool_name.trim();
   const why = card.workaround.why_still_stuck.trim();
 

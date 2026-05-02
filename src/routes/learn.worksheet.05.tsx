@@ -51,7 +51,7 @@ function CardFivePage() {
 
   // Prompt 變數插值
   const stuck =
-    card.stuck_formula.ai_polished?.trim() || card.stuck_formula.user_draft.trim();
+    card.stuck_formula.ai_polished?.trim() ?? "";
   const workaroundStr = useMemo(() => {
     const w = card.workaround;
     const dis = w.user_dissatisfactions.filter(Boolean).join("、") || "（尚未填寫）";

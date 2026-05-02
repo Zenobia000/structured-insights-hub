@@ -12,8 +12,7 @@
  * - prereq: 卡 1 verbatim + 卡 2 background 已填
  * - ai_polished 至少 AI_POLISHED_MIN 字
  * - 若 AI 列了 ai_clarifying_questions → 全部 resolved（answered ≥10 字 OR reserved）
- *
- * 註：stuck_formula.user_draft 保留在 schema 內向後相容，但不再是輸入欄位、不參與驗證。
+ * 註：舊版的 stuck_formula.user_draft 已從 schema 移除，由 onRehydrateStorage migration 搬到 ai_polished。
  */
 
 import type { PainCard } from "@/types/painCard";

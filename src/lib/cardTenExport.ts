@@ -81,7 +81,7 @@ export function isCardCompleteForResult(card: PainCard): {
  */
 export function buildMarkdown(card: PainCard, mode: DisplayMode): string {
   const firstPerson = card.people.list[0];
-  const stuck = card.stuck_formula.ai_polished || card.stuck_formula.user_draft || "（未填）";
+  const stuck = card.stuck_formula.ai_polished || "（未填）";
   const dis = card.workaround.user_dissatisfactions;
   const targets = card.interview_plan.targets;
   const qs = card.interview_plan.questions;

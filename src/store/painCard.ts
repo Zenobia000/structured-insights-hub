@@ -44,7 +44,6 @@ function emptyPainCard(): PainCard {
     },
 
     stuck_formula: {
-      user_draft: "",
       ai_polished: null,
       ai_clarifying_questions: [],
       ai_clarifying_answers: [],
@@ -320,16 +319,28 @@ export const usePainCardStore = create<PainCardStore>()(
       migrate: (persistedState, _version) => persistedState as PainCardStore,
       onRehydrateStorage: () => (state) => {
         if (state) {
-          // Backfill: stuck_formula.ai_clarifying_answers (added later)
-          if (state.card?.stuck_formula && !Array.isArray(state.card.stuck_formula.ai_clarifying_answers)) {
-            const questions = state.card.stuck_formula.ai_clarifying_questions ?? [];
-            const wasConfirmed = state.card.stuck_formula.confirmed === true;
-            state.card.stuck_formula.ai_clarifying_answers = questions.map((q) => ({
-              question: q,
-              answer: "",
-              // 舊使用者已勾選 confirmed → 全部當作「已預約找主人翁問」（最寬鬆，不擋繼續）
-              reserved: wasConfirmed,
-            }));
+          const sf = state.card?.stuck_formula as
+            | (typeof state.card.stuck_formula & { user_draft?: string })
+            | undefined;
+          if (sf) {
+            // Backfill: ai_clarifying_answers (added later)
+            if (!Array.isArray(sf.ai_clarifying_answers)) {
+              const questions = sf.ai_clarifying_questions ?? [];
+              const wasConfirmed = sf.confirmed === true;
+              sf.ai_clarifying_answers = questions.map((q) => ({
+                question: q,
+                answer: "",
+                // 舊使用者已勾選 confirmed → 全部當作「已預約找主人翁問」（最寬鬆，不擋繼續）
+                reserved: wasConfirmed,
+              }));
+            }
+            // Migration: 移除 user_draft；若 ai_polished 為空，把 user_draft 內容搬過去
+            if (typeof sf.user_draft === "string") {
+              if (!sf.ai_polished && sf.user_draft.trim().length > 0) {
+                sf.ai_polished = sf.user_draft;
+              }
+              delete sf.user_draft;
+            }
           }
           state.hydrated = true;
         }

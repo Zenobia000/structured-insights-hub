@@ -178,9 +178,7 @@ function CardEightPage() {
     return () => clearInterval(t);
   }, [card.updated_at]);
 
-  const stuckFormula =
-    card.stuck_formula.ai_polished?.trim() ||
-    card.stuck_formula.user_draft.trim();
+  const stuckFormula = card.stuck_formula.ai_polished?.trim() ?? "";
   const q8Raw = card.ai_evidence.eight_answers.q8_interview_targets;
 
   // 補滿 targets / questions 在初次 render 之前

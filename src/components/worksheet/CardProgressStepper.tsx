@@ -7,7 +7,7 @@
  * 不顯示：完成度百分比、剩餘預估時間、與其他使用者的比較。
  */
 
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { memo } from "react";
 
@@ -20,9 +20,15 @@ const STEPS: CurrentStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 type StepState = "completed" | "current" | "locked";
 
-function stateOf(step: CurrentStep, current: CurrentStep): StepState {
-  if (step < current) return "completed";
+/**
+ * step 顯示狀態:
+ * - current: 使用者目前正在這一卡(看 URL,而不是 store)
+ * - completed: 已經到過(<= maxReached)且不是當前頁
+ * - locked: 還沒解鎖(> maxReached)
+ */
+function stateOf(step: CurrentStep, current: CurrentStep, maxReached: CurrentStep): StepState {
   if (step === current) return "current";
+  if (step <= maxReached) return "completed";
   return "locked";
 }
 
@@ -43,6 +49,17 @@ type StepPath = (typeof STEP_PATHS)[keyof typeof STEP_PATHS];
 
 function pathFor(step: CurrentStep | 10): StepPath {
   return STEP_PATHS[step];
+}
+
+/** 從 URL pathname 解析出目前在第幾卡;不在 worksheet 卡片內就回 store 的 current_step */
+function stepFromPath(pathname: string, fallback: CurrentStep): CurrentStep {
+  const m = pathname.match(/\/learn\/worksheet\/(\d{2})/);
+  if (m) {
+    const n = Number(m[1]);
+    if (n >= 1 && n <= 9) return n as CurrentStep;
+  }
+  if (pathname.includes("/learn/worksheet/result")) return 10;
+  return fallback;
 }
 
 export function CardProgressStepper() {

@@ -51,6 +51,14 @@ export function HeroSection() {
             </h1>
 
             <p
+              className="mt-6 max-w-2xl text-lg sm:text-xl leading-[1.5] font-medium text-text-primary animate-grok-fade-up"
+              style={{ animationDelay: "200ms" }}
+            >
+              PainMap 把你聽到的那句抱怨，<span className="text-accent-electric">結構化</span>成一張可驗證的痛點格式 —
+              誰在卡關、卡在哪裡、有什麼證據、是真痛點還是假痛點。
+            </p>
+
+            <p
               className="mt-8 max-w-xl text-base sm:text-lg leading-[1.7] text-text-secondary animate-grok-fade-up"
               style={{ animationDelay: "280ms" }}
             >

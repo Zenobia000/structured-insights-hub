@@ -71,6 +71,19 @@ export function CardNineExitGateFooter({
     }
   }
 
+  // Esc 收合,並把焦點還給 header toggle
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setExpanded(false);
+        document.getElementById("card9-reflection-toggle")?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded, setExpanded]);
+
   return (
     <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2.5">
@@ -81,7 +94,8 @@ export function CardNineExitGateFooter({
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
             aria-controls="card9-reflection-panel"
-            className="flex flex-1 items-center justify-between gap-3 rounded-md px-1 py-1 text-left transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+            id="card9-reflection-toggle"
+            className="flex flex-1 items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface-hover focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             <div className="flex items-center gap-2 min-w-0">
               <h3 className="text-sm font-semibold text-text-primary shrink-0">想想看</h3>
@@ -96,18 +110,21 @@ export function CardNineExitGateFooter({
                 </span>
               )}
             </div>
-            <span className="shrink-0 text-text-muted">
+            <span className="shrink-0 text-text-muted" aria-hidden>
               {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </span>
+            <span className="sr-only">
+              {expanded ? "收合想想看(Esc)" : "展開想想看"}
             </span>
           </button>
           {!allDone && (
             <button
               type="button"
               onClick={jumpToFirstUnmet}
-              className="shrink-0 inline-flex items-center gap-1 rounded-md border border-secondary/40 bg-secondary/10 px-2.5 py-1 text-[12px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
-              title="跳到第一個沒想清楚的反思題"
+              className="shrink-0 inline-flex items-center gap-1 rounded-md border border-secondary/40 bg-secondary/10 px-2.5 py-1.5 text-[12px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              aria-label="跳到第一個沒想清楚的反思題對應欄位"
             >
-              ↑ 帶我去填
+              <span aria-hidden>↑</span> 帶我去填
             </button>
           )}
         </div>

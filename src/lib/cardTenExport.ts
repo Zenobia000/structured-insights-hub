@@ -21,26 +21,48 @@ export const NEXT_ACTION_LABEL: Record<NextAction, string> = {
   change_topic: "換題目，從卡 1 重新填",
 };
 
+/**
+ * 產生檔名安全的 slug
+ * - 保留 ASCII 字母、數字、底線
+ * - 保留 CJK 統一漢字（含擴展 A/B/常用補充）與全形假名
+ * - 其餘空白與符號 → "-"
+ * - 移除作業系統檔名保留字 / 控制碼
+ * - 限長 30 字（中英混算字元）
+ */
 export function slugify(text: string): string {
-  return (
-    (text || "")
-      .toLowerCase()
-      .replace(/[^\w\u4e00-\u9fff]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 30) || "untitled"
-  );
+  const normalized = (text || "")
+    .normalize("NFC")
+    .toLowerCase()
+    // 把所有「非允許字元」換成 -
+    // 允許：a-z 0-9 _ + 中日韓統一漢字（基本區 + 擴展 A）+ 注音 + 假名
+    .replace(/[^\w\u3400-\u4dbf\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\u3100-\u312f]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 30);
+  return normalized || "untitled";
+}
+
+/**
+ * 移除作業系統檔名保留字元，避免 Windows / macOS / Linux 任一拒收
+ * 保留中文，僅清理 \ / : * ? " < > | 與控制碼
+ */
+function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[\\/:*?"<>|\x00-\x1f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120) || "untitled";
 }
 
 export function exportFilename(card: PainCard, ext: "md" | "json" | "pdf"): string {
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
-  return `paincard-${slug}-${date}.${ext}`;
+  return sanitizeFilename(`paincard-${slug}-${date}.${ext}`);
 }
 
 export function interviewGuideFilename(card: PainCard, ext: "md" | "pdf" = "pdf"): string {
   const slug = slugify(card.complaint.verbatim.slice(0, 20));
   const date = new Date().toISOString().slice(0, 10);
-  return `paincard-interview-guide-${slug}-${date}.${ext}`;
+  return sanitizeFilename(`paincard-interview-guide-${slug}-${date}.${ext}`);
 }
 
 export function sacrificedLabel(card: PainCard): string {
@@ -499,22 +521,33 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
 
 /**
  * 用隱藏 iframe 觸發列印；不會被 popup blocker 擋。
- * 列印對話框關閉後（focus 回到主視窗）再清掉 iframe。
+ *
+ * 檔名策略（瀏覽器「另存為 PDF」預設檔名來源不一）：
+ *   - Chrome / Edge / Firefox：用 iframe 的 contentDocument.title（HTML <title> 已正確設定）
+ *   - Safari：用主視窗 document.title
+ *   → print() 觸發前暫時改主視窗 title 成不含副檔名的檔名，
+ *     對話框關閉後（focus 回主視窗）還原原 title。
  */
-function printViaIframe(html: string, title: string): Promise<void> {
+function printViaIframe(html: string, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const iframe = document.createElement("iframe");
     iframe.setAttribute("aria-hidden", "true");
-    iframe.title = title;
+    iframe.title = filename;
     iframe.style.cssText =
       "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;";
     document.body.appendChild(iframe);
+
+    // PDF 預設檔名 = title（去掉 .pdf 副檔名，瀏覽器自動補）
+    const printTitle = filename.replace(/\.(pdf|html?)$/i, "");
+    const originalTitle = document.title;
 
     let cleaned = false;
     const cleanup = () => {
       if (cleaned) return;
       cleaned = true;
-      // 延遲移除：Safari 若在 print 對話框期間移除會中斷
+      // 還原主視窗 title
+      document.title = originalTitle;
+      // 延遲移除 iframe：Safari 若在 print 對話框期間移除會中斷列印
       setTimeout(() => {
         try { iframe.remove(); } catch { /* noop */ }
       }, 1000);
@@ -523,12 +556,18 @@ function printViaIframe(html: string, title: string): Promise<void> {
     const onLoad = () => {
       try {
         const cw = iframe.contentWindow;
-        if (!cw) throw new Error("iframe contentWindow missing");
+        const cd = iframe.contentDocument;
+        if (!cw || !cd) throw new Error("iframe contentWindow missing");
+
+        // 雙保險：iframe 內部 title + 主視窗 title 都對齊預期檔名
+        try { cd.title = printTitle; } catch { /* noop */ }
+        document.title = printTitle;
+
         setTimeout(() => {
           try {
             cw.focus();
             cw.print();
-            // 列印對話框關閉時 focus 會回到主視窗 → 當作收尾訊號
+            // 列印對話框關閉時 focus 會回到主視窗 → 收尾還原 title
             const finish = () => {
               window.removeEventListener("focus", finish);
               cleanup();

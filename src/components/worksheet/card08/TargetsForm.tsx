@@ -1,8 +1,16 @@
-import { Check, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Sparkles, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   CONTACT_MIN,
@@ -11,6 +19,7 @@ import {
   TARGETS_MAX,
   TARGETS_MIN,
 } from "@/lib/cardEightValidators";
+import { TARGET_TEMPLATES, type TargetTemplate } from "./TargetTemplates";
 
 export type TargetItem = {
   persona: string;
@@ -24,10 +33,18 @@ type Props = {
   highlightIndex: number | null;
   onUpdate: (index: number, field: keyof TargetItem, value: string | boolean) => void;
   onAdd: () => void;
+  onAddFromTemplate?: (template: TargetTemplate) => void;
   onRemove: (index: number) => void;
 };
 
-export function TargetsForm({ targets, highlightIndex, onUpdate, onAdd, onRemove }: Props) {
+export function TargetsForm({
+  targets,
+  highlightIndex,
+  onUpdate,
+  onAdd,
+  onAddFromTemplate,
+  onRemove,
+}: Props) {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-2">

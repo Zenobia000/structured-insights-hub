@@ -3,24 +3,12 @@
  *
  * 嚴格規定：
  * - 不顯示百分比、不顯示分數、不是進度條
- * - 每點下方標註「卡 N · X-Y 分鐘」
+ * - 純路徑視覺：圓點 + 序號（時間總承諾交給 Hero 文案 90 / 30 分鐘）
  * - 圓點呼吸動畫（純視覺，無 score 含意）
  * - aria 給螢幕閱讀器列出每一步名稱
  */
 import { cn } from "@/lib/utils";
 import { STEP_TITLES, type CurrentStep } from "@/types/painCard";
-
-const STEP_TIMES: Record<number, string> = {
-  1: "5-10",
-  2: "5-10",
-  3: "10-15",
-  4: "5-10",
-  5: "5-10",
-  6: "10-15",
-  7: "10-15",
-  8: "5-10",
-  9: "5-10",
-};
 
 export function ProgressVisual() {
   const steps = Array.from({ length: 9 }, (_, i) => (i + 1) as CurrentStep);
@@ -56,9 +44,6 @@ export function ProgressVisual() {
             </div>
             <span className="mt-3 font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
               {String(n).padStart(2, "0")}
-            </span>
-            <span className="mt-1 text-[11px] tabular-nums text-text-secondary leading-tight">
-              {STEP_TIMES[n]} 分鐘
             </span>
           </li>
         ))}

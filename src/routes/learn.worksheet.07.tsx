@@ -73,22 +73,6 @@ function CardSevenPage() {
   const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
   const showDraftBanner = hydrated && hasDraft && !draftBannerDismissed;
 
-  // hydrate 前顯示骨架，避免 SSR/CSR mismatch（React error #419）
-  if (!hydrated) {
-    return (
-      <div className="flex flex-col min-h-[calc(100vh-7.5rem)] bg-page">
-        <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
-          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
-          <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
-          <div className="h-32 w-full bg-muted rounded animate-pulse" />
-          <div className="h-64 w-full bg-muted rounded animate-pulse" />
-          <p className="text-[12px] text-text-muted text-center">
-            正在恢復草稿…
-          </p>
-        </main>
-      </div>
-    );
-  }
 
   // 同步 store 變化（當 reset / 退回時清空）
   useEffect(() => {

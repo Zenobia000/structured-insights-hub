@@ -218,14 +218,53 @@ export function TargetsForm({
       </div>
 
       {targets.length < TARGETS_MAX && (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onAdd}
-          className="text-secondary hover:text-secondary/80"
-        >
-          + 加第 {targets.length + 1} 位（最多 {TARGETS_MAX}）
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onAdd}
+            className="text-secondary hover:text-secondary/80"
+          >
+            + 加第 {targets.length + 1} 位（最多 {TARGETS_MAX}）
+          </Button>
+
+          {onAddFromTemplate && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-secondary/40 bg-secondary/5 text-secondary hover:bg-secondary/10 hover:text-secondary"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  從範本快速新增
+                  <ChevronDown className="h-3.5 w-3.5 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[300px]">
+                <DropdownMenuLabel className="text-[12px] text-text-secondary font-normal">
+                  選一個情境,自動填好欄位骨架(再改成你的真實資料)
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {TARGET_TEMPLATES.map((tpl) => (
+                  <DropdownMenuItem
+                    key={tpl.id}
+                    onSelect={() => onAddFromTemplate(tpl)}
+                    className="flex flex-col items-start gap-0.5 py-2 cursor-pointer"
+                  >
+                    <span className="text-[13px] font-medium text-text-primary">
+                      {tpl.label}
+                    </span>
+                    <span className="text-[11.5px] text-text-secondary leading-snug">
+                      {tpl.description}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       )}
     </div>
   );

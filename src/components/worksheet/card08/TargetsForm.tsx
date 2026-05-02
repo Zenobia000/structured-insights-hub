@@ -1,8 +1,16 @@
-import { Check, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Sparkles, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   CONTACT_MIN,
@@ -11,6 +19,7 @@ import {
   TARGETS_MAX,
   TARGETS_MIN,
 } from "@/lib/cardEightValidators";
+import { TARGET_TEMPLATES, type TargetTemplate } from "./TargetTemplates";
 
 export type TargetItem = {
   persona: string;
@@ -24,10 +33,18 @@ type Props = {
   highlightIndex: number | null;
   onUpdate: (index: number, field: keyof TargetItem, value: string | boolean) => void;
   onAdd: () => void;
+  onAddFromTemplate?: (template: TargetTemplate) => void;
   onRemove: (index: number) => void;
 };
 
-export function TargetsForm({ targets, highlightIndex, onUpdate, onAdd, onRemove }: Props) {
+export function TargetsForm({
+  targets,
+  highlightIndex,
+  onUpdate,
+  onAdd,
+  onAddFromTemplate,
+  onRemove,
+}: Props) {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-2">
@@ -201,14 +218,53 @@ export function TargetsForm({ targets, highlightIndex, onUpdate, onAdd, onRemove
       </div>
 
       {targets.length < TARGETS_MAX && (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onAdd}
-          className="text-secondary hover:text-secondary/80"
-        >
-          + 加第 {targets.length + 1} 位（最多 {TARGETS_MAX}）
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onAdd}
+            className="text-secondary hover:text-secondary/80"
+          >
+            + 加第 {targets.length + 1} 位（最多 {TARGETS_MAX}）
+          </Button>
+
+          {onAddFromTemplate && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-secondary/40 bg-secondary/5 text-secondary hover:bg-secondary/10 hover:text-secondary"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  從範本快速新增
+                  <ChevronDown className="h-3.5 w-3.5 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[300px]">
+                <DropdownMenuLabel className="text-[12px] text-text-secondary font-normal">
+                  選一個情境,自動填好欄位骨架(再改成你的真實資料)
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {TARGET_TEMPLATES.map((tpl) => (
+                  <DropdownMenuItem
+                    key={tpl.id}
+                    onSelect={() => onAddFromTemplate(tpl)}
+                    className="flex flex-col items-start gap-0.5 py-2 cursor-pointer"
+                  >
+                    <span className="text-[13px] font-medium text-text-primary">
+                      {tpl.label}
+                    </span>
+                    <span className="text-[11.5px] text-text-secondary leading-snug">
+                      {tpl.description}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       )}
     </div>
   );

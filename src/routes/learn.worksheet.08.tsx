@@ -87,6 +87,23 @@ function CardEightPage() {
     ]);
   };
 
+  const addTargetFromTemplate = (tpl: { data: typeof plan.targets[number] }) => {
+    if (plan.targets.length >= TARGETS_MAX) return;
+    const next = [...plan.targets, { ...tpl.data }];
+    updateField("interview_plan.targets", next);
+    // 捲動 + 高亮新加的那筆,讓使用者馬上看到
+    const newIdx = next.length - 1;
+    setHighlightIndex(newIdx);
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`contact-${newIdx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => el.focus(), 350);
+      }
+    });
+    window.setTimeout(() => setHighlightIndex(null), 2500);
+  };
+
   const removeTarget = (i: number) => {
     if (plan.targets.length <= TARGETS_MIN) return;
     const next = plan.targets.filter((_, idx) => idx !== i);
@@ -292,6 +309,7 @@ function CardEightPage() {
             highlightIndex={highlightIndex}
             onUpdate={setTargetField}
             onAdd={addTarget}
+            onAddFromTemplate={addTargetFromTemplate}
             onRemove={removeTarget}
           />
 

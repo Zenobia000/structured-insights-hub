@@ -39,16 +39,32 @@ export function CardNineExitGateFooter({
   onAdvance,
   onBack,
 }: Props) {
-  const hints = [
-    { label: "想想看你選了哪一種判斷（真 / 假 / 待訪談）", done: judgmentChosen },
+  // 蘇格拉底問句版本(與 Card 1-8 共用 ReflectionHint 格式)
+  const reflections: Array<{
+    question: string;
+    state: ReflectionHintState;
+    hint?: string;
+    done: boolean;
+  }> = [
     {
-      label: `想想看你的書面理由有沒有寫到 ${reasonMin} 字（目前 ${reasonLen}）`,
+      question: "你選了哪一種判斷?真痛、假痛、還是要先去訪談?",
+      state: judgmentChosen ? "ok" : "pending",
+      done: judgmentChosen,
+    },
+    {
+      question: "你的書面理由,能不能讓另一個人讀完就懂你為什麼這樣判?",
+      state: reasonPassed ? "ok" : reasonLen > 0 ? "thinking" : "pending",
+      hint: !reasonPassed ? `至少 ${reasonMin} 字才算寫清楚(目前 ${reasonLen} 字)。` : undefined,
       done: reasonPassed,
     },
-    { label: "想想看你之後最想做哪一件事", done: nextActionChosen },
+    {
+      question: "判完之後,你接下來最想做的那件事是什麼?",
+      state: nextActionChosen ? "ok" : "pending",
+      done: nextActionChosen,
+    },
   ];
-  const allDone = hints.every((h) => h.done);
-  const remaining = hints.filter((h) => !h.done).length;
+  const allDone = reflections.every((h) => h.done);
+  const remaining = reflections.filter((h) => !h.done).length;
   const statusPreview = judgment ? STATUS_LABEL[judgment] : null;
 
   // 預設摺疊,避免提示遮擋主畫面;有 blockedMessage 時自動展開;狀態持久化

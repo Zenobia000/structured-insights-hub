@@ -19,34 +19,53 @@
 10. [404 / Error Page](#10-404--error-page)
 11. [Status Page](#11-status-page)
 12. [Changelog Page](#12-changelog-page)
+13. [News Index / Article（x.ai/news/*）](#13-news-index--article)
+14. [Careers Page（x.ai/careers）](#14-careers-page)
 
 ---
 
 ## 1. Landing / Marketing Home
 
-最重要的頁面 — 品牌第一接觸點。Grok 風格的 Landing 必須極具張力。
+最重要的頁面 — 品牌第一接觸點。提供兩種變體：
 
-### 1.1 區段順序
+### 1.0 變體 A：x.ai Manifesto-style（**預設 / x.ai 主站**）
+
+> 極端 minimalism。**不超過 5 個區段**，全頁純黑、巨大文字、單句宣言。
 
 ```
-1. Top Navigation (transparent)
-2. Hero Section (with-terminal 或 text-only)
-3. Marquee Banner (logo wall - optional)
-4. Stats Strip (3-4 個關鍵數字)
-5. Feature Bento Grid (產品核心能力展示，6-8 格)
-6. Feature Triplet × 1-2 (條列功能說明)
-7. Compare Slider 或 Code Demo Panel (展示「之前 vs 之後」)
+1. Top Navigation (default - 純黑無分隔線)
+2. Hero (manifesto variant - 一行宣言 + 單 CTA)
+3. Mission Statement (大字一段 + 連結)
+4. News Highlights (2-3 篇最近發布 - 文章卡片，純文字)
+5. Footer (minimal 一行式)
+```
+
+對應 x.ai/ 實況：純黑、極少資訊、引導使用者點擊 CTA 進入 grok.com / API 子頁。
+
+### 1.1 變體 B：Marketing-rich（產品介紹 / x.ai/api 風格）
+
+```
+1. Top Navigation (default)
+2. Hero Section (with-cta-pair 或 with-terminal)
+3. Stats Strip (3-4 個關鍵數字)
+4. Feature Triplet × 2 (條列功能說明)
+5. Code Demo Panel (展示 API 使用)
+6. Feature Bento Grid (產品核心能力展示，6-8 格 — 🧩 Extension)
+7. Logo Wall (客戶 - 可選)
 8. Pricing Preview (簡化版)
 9. FAQ (5-7 條最常見)
-10. CTA Block (centered, with spotlight)
-11. Footer (full)
+10. CTA Block (centered)
+11. Footer (rich variant)
 ```
 
 ### 1.2 區段間距規則
 
 | 區段 | padding-top | padding-bottom |
 |------|-------------|----------------|
-| Hero | `space.section.xl` (160px) | `space.section.lg` (128px) |
+| Hero（變體 A） | `space.section.2xl` (192px) | `space.section.xl` (160px) |
+| Hero（變體 B） | `space.section.xl` (160px) | `space.section.lg` (128px) |
+| Mission（變體 A） | `space.section.lg` | `space.section.lg` |
+| News Highlights | `space.section.md` | `space.section.lg` |
 | Stats Strip | `space.section.md` | `space.section.md` |
 | Bento / Feature | `space.section.lg` | `space.section.lg` |
 | FAQ | `space.section.lg` | `space.section.md` |
@@ -59,9 +78,57 @@
  - Hero 進場動畫：序列 fade + slide up（見 Patterns §2.3）
  - Scroll-triggered fade in：每個區段進入 viewport 80% 時 fade in（180ms ease.out）
  - 不使用 parallax（與 Grok 銳利風格衝突）
- - Hero 背景：bg.spotlight.top 或 bg.dot.dim + bg.noise.subtle
+ - 變體 A（x.ai 預設）：Hero 背景純黑，無 spotlight、無 dot grid、無 noise
+ - 變體 B（marketing-rich）：Hero 仍為純黑，**禁止 spotlight 漸層**；可加極弱 bg.dot.dim（dot grid）作為唯一紋理
  - 全頁背景：canvas.base
 ```
+
+### 1.3a Mission Statement 區塊（變體 A 專用）
+
+```
+                      (大量留白)
+
+ We are an AI company with a mission to understand
+ the universe.
+
+ [Learn more →]
+
+                      (大量留白)
+```
+
+| 屬性 | 值 |
+|------|-----|
+| Container | max-width 1280px，padding-y `space.section.lg` |
+| 段落字 | `type.display.md` (44px) 或 `type.display.lg` (56px) |
+| 段落字色 | `text.primary` |
+| 段落字距 | -0.02em |
+| max-width | 32em |
+| 連結 | `Button.link` 風 + `→`，間距上方 32px |
+| 對齊 | left（同 Hero） |
+
+### 1.3b News Highlights 區塊（變體 A 專用）
+
+```
+ ─── LATEST (eyebrow.with-line)
+
+ ┌──────────────────┬──────────────────┬──────────────────┐
+ │ 2026-04-22       │ 2026-03-30       │ 2026-02-15       │
+ │                  │                  │                  │
+ │ Grok 4 launches  │ Colossus 2 hits  │ Grok Voice Agent │
+ │ with reasoning   │ 200K H100 GPUs   │ API now open     │
+ │                  │                  │                  │
+ │ Read →           │ Read →           │ Read →           │
+ └──────────────────┴──────────────────┴──────────────────┘
+```
+
+| 屬性 | 值 |
+|------|-----|
+| Container | grid 3 欄 + gap-px bg-border-hairline |
+| 卡片 | bg `canvas.base`，padding 32px，min-h 240px |
+| 日期 | `type.body.xs` font-mono + `text.tertiary` |
+| 標題 | `type.heading.xl`，line-clamp 2 |
+| 連結 | `Button.link` + `→`，下方對齊 |
+| Hover | bg → `surface.hover`，全卡可點擊 |
 
 ### 1.4 SEO / Meta
 
@@ -126,7 +193,7 @@
  - bg: canvas.base + backdrop-blur(16px)
  - border-bottom: 1px hairline
  - 連結：type.label.md，間距 24px
- - active: text.primary + 下方 2px accent.electric underline，scroll-spy 自動高亮
+ - active: text.primary + 下方 2px text.primary underline，scroll-spy 自動高亮
 ```
 
 ### 2.3 Capability Section
@@ -189,7 +256,7 @@
 | 副標 | `type.body.lg` + `text.secondary` |
 | padding-y | `space.section.lg`（比 Landing Hero 短） |
 | text-align | center |
-| 背景 | `bg.spotlight.top` 弱 |
+| 背景 | `canvas.base` 純黑（**禁止 spotlight**） |
 
 ### 3.3 Compare Table
 
@@ -278,7 +345,7 @@
 | Image | full-width，radius `radius.md`，border 1px `border.hairline` |
 | Image caption | `type.body.sm` + `text.tertiary`，margin-top 8px |
 | Table | 同 §11 Data Table 簡化版 |
-| Quote | left 4px `accent.electric` + padding-left 16px + italic |
+| Quote | left 4px `text.primary` + padding-left 16px + italic |
 
 ### 4.4 Callout
 
@@ -291,10 +358,12 @@
 
 | Variant | left border | icon | bg |
 |---------|-------------|------|-----|
-| `note` | `accent.electric` 3px | ℹ | `accent.electric.subtle` 8% |
-| `tip` | `status.success` 3px | ✦ | `status.success.bg` 8% |
-| `warning` | `status.warning` 3px | ⚠ | `status.warning.bg` 8% |
-| `danger` | `status.danger` 3px | ✕ | `status.danger.bg` 8% |
+| `note` | `text.primary` 3px | ℹ | `surface.elevated`（純色，**無透明色塊**） |
+| `tip` | `text.primary` 3px | ✦ | `surface.elevated`（純色） |
+| `warning` | `border.strong` 3px | ⚠ | `surface.elevated`（純色） |
+| `danger` | `border.strong` 3px | ✕ | `surface.elevated`（純色） |
+
+> 注意：所有 callout **不染色塊背景**，僅靠左側 hairline + icon 區分。Warning / Danger icon 顏色用 `status.warning` / `status.danger` 去飽和色（見 §2.6）。
 
 ### 4.5 On-page TOC
 
@@ -312,7 +381,7 @@
 |------|-----|
 | Eyebrow | `Eyebrow.with-line` 「ON THIS PAGE」 |
 | Item | `type.body.sm` + `text.secondary`，行高 28px |
-| Active item | `text.primary` + 左 2px `accent.electric` |
+| Active item | `text.primary` + 左 2px `text.primary` |
 | Sub item | indent 16px，`type.body.xs` |
 | Scroll spy | IntersectionObserver，當前 viewport 中心對應 H 高亮 |
 
@@ -369,7 +438,7 @@
 | Card | 同 Card.interactive |
 | Cover | aspect-ratio 16/9，full bleed，無 padding |
 | Tag | Tag.outline.sm |
-| Title | `type.heading.xl`，`text.primary`，hover `accent.electric` |
+| Title | `type.heading.xl`，`text.primary`，hover `text.primary` |
 | Description | `type.body.md` + `text.secondary`，line-clamp 3 |
 | Footer | `type.body.sm` + `text.tertiary`，flex items-center gap 8px |
 
@@ -499,7 +568,7 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 | Search | Input.sm，bg `canvas.sunken` |
 | Group label | 時間分組（Today / Yesterday / Last 7 days）`type.label.sm` uppercase |
 | Thread item | h 40px，padding 0 16px，title line-clamp 1，`type.body.sm` |
-| Active thread | bg `surface.hover` + 左 2px `accent.electric` |
+| Active thread | bg `surface.hover` + 左 2px `text.primary` |
 | Hover ⋯ | 顯示三點按鈕（Rename / Delete） |
 
 ### 7.3 Conversation Body
@@ -516,8 +585,6 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 當 thread 為空時顯示：
 
 ```
-                ◆
-
          Grok knows.
 
    Ask anything. Get truth.
@@ -525,7 +592,7 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
    [Suggest 1] [Suggest 2] [Suggest 3] [Suggest 4]
 ```
 
-- 大型 ◆ icon (64px) `accent.electric`
+- **不使用 mark icon**（v1.2 移除 ◆，避免 AI 套路意象）
 - 標題 `type.display.sm`
 - 副標 `type.body.lg` + `text.secondary`
 - 建議 chip：4 個範例問題，按一下自動填入輸入框
@@ -576,9 +643,9 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 
 | 屬性 | 值 |
 |------|-----|
-| Eyebrow | uppercase + `status.danger` |
-| Card border | 1px `status.danger` 30% opacity |
-| Card bg | `status.danger.bg` 透明度 5% |
+| Eyebrow | uppercase + `text.primary`（純白，文字本身就警示） |
+| Card border | 1.5px `border.strong`（**不染紅色**） |
+| Card bg | `surface.default`（**不染色塊**） |
 | Button | `Button.danger` |
 | 觸發 | Modal 確認流程，需輸入帳號名稱才能 Confirm |
 
@@ -613,7 +680,7 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 │   Forgot password?  ·  Sign up        │
 └──────────────────────────────────────┘
 
-           （背景：bg.spotlight.dual + bg.noise.subtle）
+           （背景：純黑 canvas.base，無任何特效）
 ```
 
 ### 9.2 規格
@@ -645,10 +712,10 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 ### 9.4 背景特效
 
 ```
- - bg.spotlight.dual：左上電光藍 + 右下紫色聚光
- - 可選 Star Field（§Foundations 10.5），50-80 個點
- - bg.noise.subtle 疊加
- - 完全不影響閱讀（聚光中心避開卡片區域）
+ v1.2 純化：禁止所有背景特效。
+ - 純黑底 canvas.base，無 spotlight、無星空、無 noise、無漸層
+ - 卡片即視覺主角，不需任何氛圍光
+ - 唯一允許的「分區」手法：在卡片底部加一條 hairline 延伸至視窗邊緣（極克制使用）
 ```
 
 ---
@@ -658,8 +725,6 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 ### 10.1 結構
 
 ```
-                        ◆
-
                   404
 
            This page does not exist.
@@ -667,17 +732,17 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
       [Go home]   [Search docs]
 
 
-      （背景：星空 + 大型 spotlight）
+      （背景：純黑 canvas.base，**無星空、無 spotlight、無 glow**）
 ```
 
 | 屬性 | 值 |
 |------|-----|
 | 容器 | `min-h-screen flex flex-col items-center justify-center`，bg `canvas.base` |
-| Mark | 64px ◆ `accent.electric`，optional |
-| 數字 | `type.display.2xl` font-mono，`text.primary`，可帶 `glow.accent.lg` |
+| Mark | **不使用**（v1.2 移除 ◆ icon） |
+| 數字 | `type.display.3xl` (120px) font-mono，`text.primary`（**純色，無 glow**） |
 | 描述 | `type.body.lg` + `text.secondary`，margin-top 16px，max-width 32em |
-| CTA | flex gap 12px，margin-top 48px |
-| 背景 | Star Field + bg.spotlight.center，僅在 404 / 500 / Maintenance 使用 |
+| CTA | flex gap 12px，margin-top 48px，使用 `Button.primary` + `Button.ghost` |
+| 背景 | `canvas.base` 純黑（**禁止 Star Field、spotlight、glow**） |
 
 ### 10.2 Variants
 
@@ -727,7 +792,7 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 | Status dot | 8px，依狀態色 |
 | Service name | `type.body.md` |
 | Uptime bar | 90 個方塊（每個代表一天），`gap: 2px` |
-| 方塊 | 4×24，`status.success` 預設，事故日 `status.danger` 或 `status.warning` |
+| 方塊 | 4×24，預設 `text.primary`（純白）；事故日 `text.tertiary`（暗灰）；嚴重事故 `border.strong` 1px 描邊（不染紅） |
 | Uptime % | font-mono tabular-nums `text.tertiary` |
 
 ---
@@ -787,15 +852,152 @@ Grok 風格的對話式 AI 介面 — 全螢幕。
 
 ---
 
+## 13. News Index / Article
+
+對應 x.ai/news/* — 公司公告、產品發佈、技術文章。**比 Blog 更正式、更技術導向**。
+
+### 13.1 News Index 結構
+
+```
+1. Top Navigation
+2. Page Hero
+   - 標題 "News" 或 "Latest from xAI"
+   - type.display.lg，左對齊
+3. Article List（時間倒序）
+   - 每篇：日期 / 分類 / 標題 / 一行摘要
+   - 純列表，無 cover image（或極小縮圖）
+4. Pagination
+5. Footer (rich)
+```
+
+### 13.2 Article List Item
+
+```
+ ─── 2026-04-22  ·  PRODUCT ───────────────────────
+
+   Introducing Grok Voice Agent API
+
+   A new programmable voice interface for building
+   real-time conversational applications.
+
+                                          Read →
+```
+
+| 屬性 | 值 |
+|------|-----|
+| Item | padding 40px 0，border-bottom 1px `border.hairline` |
+| Eyebrow | 日期 + ` · ` + 分類 uppercase，font-mono `type.label.sm` |
+| 標題 | `type.heading.xl` (28px)，hover `accent.default` |
+| 摘要 | `type.body.md` + `text.secondary`，max-width 64ch |
+| Read 連結 | 右下角，`Button.link` + `→` |
+| Hover | item 整行 cursor pointer，標題色變化 |
+
+### 13.3 Article 詳情頁
+
+```
+1. Top Navigation
+2. Article Header
+   - Eyebrow: 日期 · 分類
+   - 標題 type.display.lg
+   - 副標 type.body.lg + text.secondary（一段，可選）
+   - 作者 row: avatar + name (type.body.sm)
+3. Article Body
+   - max-width 768px center
+   - 同 Docs Article 排版（§4.3）
+4. Share Bar (sticky right or bottom)
+   - X / Copy link / Email
+5. Related Articles (3 篇，§13.2 風格)
+6. Footer (rich)
+```
+
+| 元素 | 樣式 |
+|------|------|
+| Article container | max-width 768px，padding 96px 48px |
+| H1 | `type.display.lg`（56px），下方 32px 距離 |
+| Lead paragraph | `type.body.lg` + `text.secondary` |
+| Body | 同 Docs §4.3 |
+| 圖片 | full-width 768px + 上下 48px padding，optional caption |
+| Quote | left 4px 白色 + padding-left 24px + italic |
+| Code block | 同元件 §16.2 |
+| Inline links | `accent.default`（白）+ underline，hover 加粗（不變色） |
+
+---
+
+## 14. Careers Page
+
+對應 x.ai/careers — 招募資訊。
+
+### 14.1 結構
+
+```
+1. Top Navigation
+2. Mission Hero
+   - 大字一段使命宣言（同 §1.3a Mission Statement 風）
+3. Why xAI 區段
+   - 3-4 個 Core Values（Feature Triplet 風）
+4. Office Locations
+   - 地圖 + 城市列表（Palo Alto, SF, Seattle, London 等）
+5. Open Positions
+   - 部門分組 + 職位列表
+6. Apply CTA Block
+7. Footer (rich)
+```
+
+### 14.2 Open Positions 列表
+
+```
+ ─── ENGINEERING (eyebrow)
+
+ ┌────────────────────────────────────────────────┐
+ │ Software Engineer, ML Infrastructure          → │
+ │ Palo Alto · Full-time                           │
+ ├────────────────────────────────────────────────┤
+ │ Site Reliability Engineer                     → │
+ │ Palo Alto · Full-time                           │
+ ├────────────────────────────────────────────────┤
+ │ ...                                             │
+ └────────────────────────────────────────────────┘
+```
+
+| 屬性 | 值 |
+|------|-----|
+| Group eyebrow | `Eyebrow.with-line` 部門名稱 |
+| Item | h 80px，padding 24px，border-bottom 1px `border.hairline`，hover `surface.hover` |
+| 職位名稱 | `type.heading.md`（18px） |
+| Meta | `type.body.sm` + `text.tertiary`：地點 · 雇用類型 |
+| 右側 | `→` 16px arrow，hover 向右移 4px |
+
+### 14.3 Office Locations
+
+```
+ Palo Alto HQ      San Francisco     Seattle           London
+ ━━━━━━━━━━━━━━     ━━━━━━━━━━━━━     ━━━━━━━━━━━━━     ━━━━━━━━━━━━━
+ 1234 Hanover St   Mission St        ...               ...
+ Open positions:   Open positions:   ...               ...
+ 24                12                                  
+```
+
+| 屬性 | 值 |
+|------|-----|
+| Layout | grid 4 欄（≥ md），單欄（mobile） |
+| 城市標題 | `type.heading.lg`（22px） |
+| 下方分隔線 | 2px `text.primary`，width 32px，margin-y 16px |
+| 地址 / 數字 | `type.body.sm` + `text.secondary` |
+
+---
+
 ## 模板實作優先序
 
-1. **Landing / Marketing Home** — 品牌門面，最關鍵
-2. **Documentation Page** — 開發者社群必備
-3. **Pricing Page** — 商業轉換
-4. **Console Dashboard** — 產品核心介面
-5. **Chat Workspace** — Grok 招牌應用
-6. **Auth Flow** — 入口流程
-7. 其餘模板 — 視業務需求補上
+1. **Landing / Marketing Home（變體 A，x.ai manifesto）** — 品牌門面，最關鍵
+2. **News Index / Article** — 公司形象、SEO 主力
+3. **Careers Page** — 招募，x.ai 重點頁
+4. **Documentation Page** — 開發者社群必備
+5. **API / Product Detail** — Marketing-rich landing
+6. **Console Dashboard** — 產品核心介面
+7. **Chat Workspace** — Grok 招牌應用
+8. **Pricing Page** — 商業轉換
+9. **Auth Flow** — 入口流程
+10. 其餘模板 — 視業務需求補上
 
 ---
 

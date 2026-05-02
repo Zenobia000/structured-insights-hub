@@ -32,7 +32,7 @@
 
 ## 1. Button
 
-Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow。
+Grok 按鈕：銳利、低 radius、無陰影、無發光、hover 純粹切換 surface 顏色。
 
 ### 1.1 Variants
 
@@ -40,11 +40,10 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 |---------|------|-----|------|--------|----------|
 | `primary` | 主要 CTA | `text.primary` (#FAFAFA) | `text.inverse` (#0A0A0A) | none | `#E5E5E5` |
 | `secondary` | 次要動作 | `surface.default` | `text.primary` | `border.default` (1px) | `surface.hover` |
-| `accent` | 品牌強調（少用） | `accent.electric` | `#FFFFFF` | none | `accent.electric.hover` |
 | `ghost` | 純文字 / icon | transparent | `text.primary` | none | `surface.hover` |
 | `outline` | 邊框型 | transparent | `text.primary` | `border.default` (1px) | `surface.hover` |
-| `danger` | 危險動作 | transparent | `status.danger` | `status.danger` (1px) | `rgba(248,113,113,0.1)` |
-| `link` | 內聯連結式 | none | `accent.electric` | none（hover 加底線） | none |
+| `danger` | 危險動作 | transparent | `status.danger` (icon 色) | `border.default` (1px) | `surface.hover` |
+| `link` | 內聯連結式 | none | `text.primary` | none（hover 加底線） | none |
 
 ### 1.2 Sizes
 
@@ -63,7 +62,7 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 | Default | 按 §1.1 定義 |
 | Hover | 切換 hover bg，**不做 translate / scale** |
 | Active | bg 加深一階（用 active token） |
-| Focus | `outline: none` + `box-shadow: glow.focus`（白色 ring + electric glow） |
+| Focus | `outline: 2px solid text.primary` + `outline-offset: 2px`（純白 ring，無發光） |
 | Disabled | `opacity: 0.4` + `cursor: not-allowed` + 移除 hover |
 | Loading | 文字保留但 `opacity: 0`，覆蓋 16px spinner（§15.3） |
 
@@ -124,7 +123,7 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 |-------|-----|--------|------|
 | Default | `canvas.sunken` | `border.default` | `text.primary` |
 | Hover | `canvas.sunken` | `border.strong` | `text.primary` |
-| Focus | `canvas.sunken` | `text.primary` (1px) + `glow.focus` | `text.primary` |
+| Focus | `canvas.sunken` | `text.primary` 2px（純線條，無發光） | `text.primary` |
 | Filled | 同 default | 同 default | `text.primary` |
 | Error | `canvas.sunken` | `status.danger` | `text.primary` |
 | Disabled | `surface.disabled` | `border.subtle` | `text.disabled` |
@@ -190,8 +189,9 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 | font | `type.body.md` |
 | radius | `radius.xs` |
 | hover bg | `surface.hover` |
-| selected bg | `accent.electric.subtle` |
-| selected text | `accent.electric` |
+| selected bg | `surface.active` |
+| selected text | `text.primary` |
+| selected indicator | 左側 2px `text.primary` 邊條 |
 | icon（左） | 16px，可選 |
 | check（右） | 16px，僅 selected 顯示 |
 
@@ -271,7 +271,7 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 | Variant | bg | text | border |
 |---------|-----|------|--------|
 | `neutral` | `surface.elevated` | `text.secondary` | none |
-| `accent` | `accent.electric.subtle` | `accent.electric` | none |
+| `accent` | `surface.elevated` | `text.primary` | `border.default` 1px |
 | `success` | `status.success.bg` (#0F2A1B) | `status.success.text` (#BBF7D0) | none |
 | `warning` | `status.warning.bg` (#2A1F0A) | `status.warning.text` (#FDE68A) | none |
 | `danger` | `status.danger.bg` (#2A0F0F) | `status.danger.text` (#FECACA) | none |
@@ -281,7 +281,7 @@ Grok 按鈕：銳利、低 radius、無陰影、hover 用 surface 切換或 glow
 
 | Type | 樣式 |
 |------|------|
-| Dot | 6×6 圓點，`radius.full`，`accent.electric` 或 `status.danger` |
+| Dot | 6×6 圓點，`radius.full`，`text.primary`（純白） |
 | Numeric | min-w 16，h 16，padding 0 4，`type.body.xs`，`radius.full`，`status.danger` bg + 白字 |
 | Cap (`99+`) | 同 numeric，文字 `99+` |
 
@@ -349,7 +349,7 @@ Grok 卡片：低調、銳利、無陰影、靠 surface + hairline 切分。
 |---------|-----|--------|--------|
 | `default` | `surface.default` | `border.hairline` 1px | `radius.md` |
 | `flat` | transparent | `border.hairline` 1px | `radius.md` |
-| `elevated` | `surface.default` | `border.subtle` 1px + `glow.accent.sm`（hover） | `radius.md` |
+| `elevated` | `surface.default` | `border.default` 1px（hover 切到 `border.strong`，無發光） | `radius.md` |
 | `interactive` | `surface.default` | `border.hairline` 1px | `radius.md` |
 
 ### 7.2 Anatomy
@@ -383,7 +383,7 @@ Grok 卡片：低調、銳利、無陰影、靠 surface + hairline 切分。
  - cursor: pointer
  - transition: background 180ms, border 180ms
  - hover: bg → surface.hover, border → border.default
- - focus: + glow.focus（外框白色 ring）
+ - focus: outline 2px text.primary + offset 2px（純線條，無發光）
  - active: bg → surface.active
  - 不做 translate / scale
 ```
@@ -528,11 +528,11 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 
 | Variant | left border | icon |
 |---------|-------------|------|
-| `info` | `accent.electric` | ℹ |
+| `info` | `text.primary` | ℹ |
 | `success` | `status.success` | ✓ |
 | `warning` | `status.warning` | ⚠ |
 | `danger` | `status.danger` | ✕ |
-| `loading` | `accent.electric` | spinner |
+| `loading` | `text.primary` | spinner |
 
 ---
 
@@ -542,7 +542,7 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 
 ```
   Tab 1     Tab 2     Tab 3
- ─────                       ← 2px underline，accent.electric（active）
+ ─────                       ← 2px underline，text.primary（active）
  ───────────────────────────  ← 1px hairline，border.hairline（base line）
 ```
 
@@ -554,7 +554,7 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 | Default text | `text.secondary` |
 | Hover text | `text.primary` |
 | Active text | `text.primary` |
-| Active underline | 2px `text.primary`（或 `accent.electric`） |
+| Active underline | 2px `text.primary`（純白） |
 | Underline animate | `transform`，`motion.duration.fast` |
 
 ### 12.2 Pill
@@ -571,7 +571,7 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 
 ```
  │ Tab 1     │
- │ Tab 2  ←  │  active 左側 2px accent.electric
+ │ Tab 2  ←  │  active 左側 2px text.primary
  │ Tab 3     │
  - 用於 Settings、文件側邊導航
 ```
@@ -615,7 +615,7 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 
 ```
  ━━━━━━━━━━━━━━━━━━━━  ← track：surface.elevated，2px height
- ━━━━━━━━━━            ← bar：text.primary 或 accent.electric
+ ━━━━━━━━━━            ← bar：text.primary（純白）
 ```
 
 | 屬性 | 值 |
@@ -627,10 +627,11 @@ Grok 風格常用「Bento」格狀展示（仿 Apple WWDC、X premium）：
 ### 15.2 Skeleton
 
 ```
- - bg: linear-gradient(90deg, surface.default 0%, surface.hover 50%, surface.default 100%)
- - 動畫：background-position -200% → 200% / 1.4s linear infinite
+ - bg: surface.default（純色，無漸層）
+ - 動畫：opacity 0.4 ↔ 1.0 交替，1.4s ease.standard infinite
  - radius: 同被替代元素（text → 4px，avatar → full，card → md）
  - 高度：依文字行高（16/20/24px 三種預設）
+ - 規則：禁止 shimmer 漸層動畫，改為純粹 opacity 呼吸
 ```
 
 ### 15.3 Spinner
@@ -749,7 +750,7 @@ Grok 標誌性元素。
 |---------|------|
 | `plain` | 純文字 |
 | `numbered` | 起頭 `01` 數字編號 |
-| `dotted` | 起頭加 `●` 6px 圓點，`accent.electric` |
+| `dotted` | 起頭加 `●` 6px 圓點，`text.primary`（純白） |
 | `with-line` | 後方延伸 `border.hairline` 至父容器寬度 |
 
 ---
@@ -767,7 +768,7 @@ Grok 標誌性元素。
 | 速度 | 30s / 一輪 |
 | 動畫 | `transform: translateX(0 → -50%)` linear infinite |
 | Hover | 暫停（`animation-play-state: paused`） |
-| Mask | 左右兩端 `linear-gradient` fade（避免硬切） |
+| Mask | 左右兩端 24px solid `canvas.base` 同色蓋片（**禁止 linear-gradient fade**） |
 | 容器 | overflow hidden，子元素 `flex shrink-0` |
 
 ---

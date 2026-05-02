@@ -5,6 +5,22 @@
 
 ---
 
+## 模式分類（v1.1 校準）
+
+依 x.ai 實況分為兩類：
+
+| 類別 | 模式 | 使用情境 |
+|------|------|---------|
+| **🎯 Core**（x.ai 主站常用） | Top Nav / Hero / Stats Strip / Feature Triplet / Logo Wall / FAQ / CTA Block / Footer (minimal) | x.ai/、x.ai/api、x.ai/company、x.ai/news/* |
+| **🧩 Extension**（子產品 / 子站使用） | Sidebar Nav / Bento Grid / Pricing Table / Data Table / Empty State / Form Section / Chat Conversation / Command Palette / Notification Center / Compare Slider / Code Demo Panel / Marquee Banner | console.x.ai、docs.x.ai、grok.com、Settings |
+
+**規則**：
+- 主行銷站 (x.ai/*) 嚴格使用 Core 模式維持品牌極簡
+- 子產品 / Console / Docs 可組合 Extension 模式增加功能性
+- 在同一頁面中混用兩類時，視覺上應有明確區隔（容器、padding 或 hairline）
+
+---
+
 ## 目錄
 
 1. [Top Navigation Bar](#1-top-navigation-bar)
@@ -32,109 +48,131 @@
 
 ## 1. Top Navigation Bar
 
-Grok 標誌性導航：高 64px、透明 backdrop blur、左 logo 中 nav 右 actions。
+x.ai 實際導航：高 64–80px、純黑底、左 logo 中 nav（少量 5–6 項）右 1 個 CTA。**無 backdrop blur、無透明、無多 CTA**。
 
-### 1.1 結構
+### 1.1 結構（x.ai 實況版）
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│ [logo]    Product  Solutions  Docs  Pricing       [Login] [Try ↗]│
+│ [✕logo]    Grok  API  Company  Colossus  Careers  News  [Try Grok ↗]│
 └──────────────────────────────────────────────────────────────────┘
                                                             ↑
-                                            border-b 1px hairline
+                                       無 border、純黑（#000）滿底
 ```
 
 ### 1.2 規格
 
 | 屬性 | 值 |
 |------|-----|
-| height | `space.header` (64px) |
-| bg | `rgba(0, 0, 0, 0.7)` + `backdrop-filter: blur(16px) saturate(1.2)` |
-| border-bottom | 1px `border.hairline` |
-| padding | 0 `layout.container.padding.*`（隨斷點） |
+| height | 64px (mobile) / 72px (tablet) / 80px (desktop) |
+| bg | `canvas.base` (純 #000，**不透明**) |
+| border-bottom | 無（x.ai 不用分隔線，靠 padding 區隔） |
+| padding | 0 24px (mobile) / 0 32px (tablet) / 0 48px (desktop) |
 | position | `sticky top-0` |
 | z-index | `z.sticky` |
-| Logo | 高 24px，純白 SVG |
-| Nav link | `type.label.md`，`text.secondary`，hover `text.primary`，間距 32px |
-| Active link | `text.primary` + 下方 2px underline `text.primary` |
-| Right actions | `Button.ghost` Login + `Button.primary` Try（外連加 `↗`） |
+| Logo | 高 20px（mobile）/ 24px（desktop），**單一 ✕ 字符或黑洞圓**，純白 |
+| Nav 對齊 | logo 左對齊；nav 中央偏左群組；CTA 右對齊 |
+| Nav link | `type.label.md`，`text.primary`（**白色，非 secondary**），hover `text.secondary`，間距 24px (tablet) / 32px (desktop) |
+| Active link | 無下方 underline（x.ai 實況），改 `text.tertiary` 標示 |
+| Right CTA | 單一 `Button.primary`（白底黑字 pill） + 後綴 `↗`，文字 `Try Grok` |
+| 「+ Sign in」 | 移除（x.ai 主站無 Sign in 按鈕，登入入口在 grok.com / console.x.ai） |
 
-### 1.3 Mobile 行為
+### 1.3 真實 Nav 項目（依 x.ai/ 實況）
+
+| 連結文字 | URL | 用途 |
+|---------|-----|------|
+| `Grok` | grok.com | 消費端產品（外連） |
+| `API` | x.ai/api | API 平台 |
+| `Company` | x.ai/company | 公司 |
+| `Colossus` | x.ai/colossus | 訓練叢集 |
+| `Careers` | x.ai/careers | 招募 |
+| `News` | x.ai/news | 新聞 |
+
+### 1.4 Mobile 行為
 
 - 中央 nav 隱藏，改右側 hamburger（IconButton.ghost，24px Menu icon）
 - 點擊展開全螢幕 overlay（bg `canvas.base`，列表 `type.heading.lg`）
 - Overlay 進場：fade + translateY(-8px) → 0，280ms ease.out
 
-### 1.4 Variants
+### 1.5 Variants
 
 | Variant | 差異 |
 |---------|------|
-| `transparent` | 在 Hero 上方時無 border、無 bg，scroll > 64px 後切換為預設 |
-| `with-banner` | 上方加一條 32px Marquee Banner（§20） |
-| `console` | 取消中央 nav，改顯示 breadcrumb + 環境切換 |
+| `default`（x.ai 主站） | 純黑、無分隔線、單 CTA（如上述） |
+| `console` | 切換到 console.x.ai 變體：左 logo + breadcrumb，右 user avatar；強調色仍為白色（不啟用霓虹） |
+| `docs` | 切換到 docs.x.ai 變體：加 search input（中央，width 320px），右 GitHub icon |
+| `with-banner` | 上方加一條 32px News banner（最新公告，§20，僅在重大發佈時啟用） |
 
 ---
 
 ## 2. Hero Section
 
-Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光暈或星空。
+x.ai 風 Hero：**單句宣言式巨大標題、無 eyebrow、無副標（或極短一行）、單一純文字 CTA、純黑無漸層**。
 
-### 2.1 結構
+### 2.1 結構（x.ai 實況版）
 
 ```
-                     [eyebrow / 01 / FOUNDATIONS]
-
-           Build truth-seeking AI
-           for the universe.
-
-           A new kind of intelligence
-           that understands context.
-
-                  [Try Grok ↗]  [Read paper]
+ (上方留白 space.section.2xl = 192px)
 
 
-                  ──── (光暈底色) ────
+
+           Understand the universe.
+
+
+
+           Try Grok ↗
+
+
+
+ (下方留白 space.section.xl = 160px)
+
+ (純黑背景，無 spotlight、無星空、無 dot grid)
 ```
+
+> 注意：x.ai/ 主頁 Hero 只有一行宣言句 + 一個 CTA，**沒有副標、沒有 eyebrow、沒有特效背景**。極端 minimalism。
 
 ### 2.2 規格
 
 | 區塊 | 屬性 | 值 |
 |------|------|-----|
-| Container | min-height | 80vh（mobile 100vh） |
-| Container | padding-y | `space.section.xl` (160px) desktop，`space.24` (96px) mobile |
-| Container | text-align | left（預設）/ center（特殊頁） |
-| Container | max-width | `layout.container.narrow-max-width` (768px) for content |
-| Eyebrow | 採用 `Eyebrow.dotted` 變體 | margin-bottom 24px |
-| 主標題 | `type.display.2xl` desktop / `type.display.xl` tablet / `type.display.lg` mobile | `text.primary` |
-| 主標題 | max-width | 14em |
-| 主標題 | margin-bottom | 24px |
-| 副標題 | `type.body.lg` | `text.secondary` |
-| 副標題 | max-width | 32em |
-| 副標題 | margin-bottom | 48px |
-| CTA group | flex gap 12px，wrap | 主 + 次 button.lg |
-| 背景 | `bg.spotlight.top` 或 `bg.dot.dim`，可疊加 `bg.noise.default` | — |
+| Container | min-height | 90vh（desktop）/ 80vh（mobile） |
+| Container | padding-y | `space.section.2xl` (192px) ≥ 1440px / `space.section.xl` (160px) desktop / `space.24` (96px) mobile |
+| Container | text-align | left（x.ai 偏好左對齊，**非置中**） |
+| Container | max-width | none（標題吃滿 container） |
+| Eyebrow | **不使用**（x.ai 實況） | — |
+| 主標題 | `type.display.4xl` (160px) ≥ 1440px / `type.display.3xl` (120px) desktop / `type.display.2xl` (96px) tablet / `type.display.xl` (72px) mobile | `text.primary` |
+| 主標題 | font-weight | 600（不到 700，避免過重） |
+| 主標題 | letter-spacing | -0.05em（更緊縮） |
+| 主標題 | max-width | 16em（允許換行 1–2 行） |
+| 主標題 | margin-bottom | 48px（直接接 CTA，不放副標） |
+| 副標題 | **可選**，極短，僅 1 行 | `type.body.lg` + `text.secondary`，max-width 28em |
+| CTA | 單一按鈕：`Button.primary`（白底黑字 pill）+ 後綴 `↗`，size `lg` 或 `xl` | — |
+| CTA group | 不使用雙 CTA（x.ai 實況） | — |
+| 背景 | 純 `canvas.base` (#000)，**不加任何特效** | — |
+| 旁邊視覺 | 可選右側放抽象幾何圖（黑洞、線條、3D 物件），但主頁不用 | — |
 
 ### 2.3 動畫進場
 
 ```
- 序列入場（總時長 1200ms）：
- 1. Eyebrow：fade + translateY(8px) → 0，0ms 觸發，280ms
- 2. 主標題：同上，120ms 觸發，480ms
- 3. 副標題：同上，280ms 觸發，480ms
- 4. CTA：同上，420ms 觸發，280ms
- 5. 背景光暈：fade in 800ms，整段同步
+ 序列入場（極簡，總時長 800ms）：
+ 1. 主標題：fade + translateY(12px) → 0，0ms 觸發，480ms ease.out
+ 2. CTA：同上，280ms 觸發，280ms
+
+ 不做：眉題動畫、背景光暈動畫、視差
+ reduced motion 時：直接顯示，跳過動畫
 ```
 
 ### 2.4 Variants
 
 | Variant | 用途 |
 |---------|------|
-| `text-only` | 純文字（最 Grok）|
+| `manifesto`（**x.ai 預設**） | 單句巨大標題 + 單 CTA，純黑底，無副標 |
+| `with-subtitle` | 加一行短副標於標題下方（Company / About 頁） |
+| `with-cta-pair` | 雙 CTA：主白底黑字 + 次純文字 + ↗（API / 產品介紹頁） |
+| `with-visual` | 右側放抽象幾何圖、黑洞、3D 渲染（產品介紹頁） |
 | `with-image` | 右側放裝置截圖或抽象視覺，使用 grid 1fr/1fr |
-| `with-terminal` | 右側放 Code Demo Panel（§19）|
-| `with-video` | 全幅自動播放靜音影片 + 文字疊加 |
-| `centered` | 文字置中 + 背景全幅光暈 |
-| `split` | 左標題、右副標題的不對稱排版 |
+| `with-terminal` | 右側放 Code Demo Panel（§19，API/Docs 頁專用） |
+| `centered`（**節制使用**） | 文字置中 + 弱光暈，僅用於品牌時刻或 404 |
 
 ---
 
@@ -221,7 +259,7 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 | 容器 | `grid grid-cols-1 md:grid-cols-3 gap-px bg-border-hairline` |
 | Card bg | `canvas.base`（讓 gap-px 形成分隔線效果）|
 | Card padding | 32px |
-| Icon | 24px stroke 1.5，`accent.electric` |
+| Icon | 24px stroke 1.5，`text.primary` |
 | Icon margin-bottom | 24px |
 | 標題 | `type.heading.xl` |
 | 標題 margin-bottom | 12px |
@@ -301,7 +339,7 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 |------|-----|
 | 容器 | `grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6` |
 | Card | Card.default，padding 32px |
-| 推薦版 Card | border 由 hairline 改為 `accent.electric` 1.5px + `glow.accent.sm` |
+| 推薦版 Card | border 由 hairline 改為 `text.primary` 1.5px（**無發光**） |
 | Plan 名稱 | `type.heading.xl` |
 | Price | `type.display.lg` font-mono，tabular-nums |
 | Price 後綴 | `type.body.sm` + `text.tertiary`（`/mo`、`per user`）|
@@ -315,7 +353,7 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 ```
  [Monthly] [Annual (-20%)]
  - Switch 風格，水平排列
- - Annual 後綴折扣 chip：accent.electric.subtle bg + accent.electric text
+ - Annual 後綴折扣 chip：surface.elevated bg + text.primary text
  - 切換時數字 fade 替換，180ms
 ```
 
@@ -392,13 +430,13 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
                   [Try Grok free]  [Talk to sales]
 
 
-             ──── (背景大型 spotlight) ────
+             ──── (純黑底，無背景特效) ────
 ```
 
 | 屬性 | 值 |
 |------|-----|
 | 容器 | `space.section.xl` padding-y |
-| 背景 | `bg.spotlight.center` 或 `bg.dot.default` + `bg.noise.subtle` |
+| 背景 | `canvas.base` 純黑（**禁止 spotlight 與漸層**） |
 | 標題 | `type.display.lg` |
 | 副標 | `type.body.lg` + `text.secondary`，max-width 32em |
 | CTA | flex gap 12px，wrap，置中 |
@@ -424,53 +462,59 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 
 ## 9. Footer
 
-### 9.1 結構
+> **v1.1 校準**：x.ai 主站使用**極簡一行式 Footer**（單列 logo + nav links + copyright），不使用多欄 link wall。多欄 wall 改為「Variant: rich」備用。
+
+### 9.1 預設結構（x.ai 實況版 / 極簡）
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│ [logo]                                                            │
-│ One-line tagline                                                  │
 │                                                                   │
-│ Product       Resources    Company        Legal                  │
-│ Features      Docs         About          Privacy                │
-│ Pricing       Blog         Careers ✦      Terms                  │
-│ Changelog     Support      Contact        Cookies                │
-│ Roadmap       Status                      Security               │
+│ [✕]   Grok  API  Company  Colossus  Careers  News  Privacy ·  │
 │                                                                   │
-│ ───────────────────────────────────────────────────────────────  │
-│                                                                   │
-│ © 2026 xAI. All rights reserved.       [GitHub] [X] [LinkedIn]  │
+│              Terms   © 2026 xAI Corp.            [X]  [GitHub]   │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-### 9.2 規格
+### 9.2 規格（預設 / minimal）
 
 | 屬性 | 值 |
 |------|-----|
-| bg | `canvas.sunken` (#050505) |
-| border-top | 1px `border.hairline` |
+| bg | `canvas.base` (#000，與頁面同色) |
+| border-top | **無**（x.ai 不用，靠 padding 區隔） |
+| padding-y | 64px (mobile) / 96px (desktop) |
+| padding-x | 同 nav |
+| Logo | 高 20px，左對齊 |
+| Layout | flex / 中段是 nav links inline，右側 social icons |
+| Nav link | `type.body.sm` + `text.secondary`，hover `text.primary`，間距 24px |
+| Copyright | `type.body.sm` + `text.tertiary`，可放在最後 |
+| Social icons | 16px `text.secondary`，hover `text.primary`，間距 16px |
+| Mobile | 全部換行為 stack，每行 1–2 個 link，置中對齊 |
+
+### 9.3 Variant：rich（多欄連結 wall — 用於 Docs / API / Careers 頁）
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ [✕logo]                                                           │
+│                                                                   │
+│ Products      Company       Resources     Legal                  │
+│ Grok          About         Docs          Privacy                │
+│ API           Careers       News          Terms                  │
+│ Colossus      Press         Status        Cookies                │
+│                                                                   │
+│ ───────────────────────────────────────────────────────────────  │
+│ © 2026 xAI Corp.                          [X] [GitHub] [YouTube]│
+└──────────────────────────────────────────────────────────────────┘
+```
+
+| 屬性 | 值 |
+|------|-----|
+| bg | `canvas.base` 或 `canvas.sunken` |
 | padding-y | `space.section.lg` (128px) |
-| padding-x | `layout.container.padding.*` |
-| Logo | 高 24px |
-| Tagline | `type.body.sm` + `text.tertiary`，max-width 32em |
 | Logo 區 margin-bottom | 64px |
 | Link grid | `grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12` |
 | Group title | `type.label.sm` uppercase + `text.tertiary`，margin-bottom 16px |
 | Link | `type.body.sm` + `text.secondary`，hover `text.primary`，行高 32px |
-| Hot 標記 | 連結後 `Tag.accent.sm` 顯示 `New` 或 `✦` |
-| Bottom row | margin-top 64px，flex justify-between，border-top hairline padding-top 32px |
-| Copyright | `type.body.sm` + `text.tertiary` |
-| Social icons | 20px `text.secondary`，hover `text.primary`，間距 24px |
-
-### 9.3 Variant：minimal
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│ [logo]                       © 2026 xAI       [GitHub] [X]      │
-└──────────────────────────────────────────────────────────────────┘
- - 用於 Docs、Console，單列極簡
- - 高 64px，padding 0 48px
-```
+| Bottom row | margin-top 64px，flex justify-between，border-top `border.hairline` padding-top 32px |
 
 ---
 
@@ -512,7 +556,7 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 | Item icon | 16px |
 | Item text | `type.body.sm` |
 | Item default | `text.secondary`，hover `surface.hover` + `text.primary` |
-| Item active | `text.primary` + 左側 2px `accent.electric` 邊條 + `surface.hover` bg |
+| Item active | `text.primary` + 左側 2px `text.primary` 邊條 + `surface.hover` bg |
 | Item with badge | 右側 Tag.sm 顯示 `New` / 數字 |
 | Bottom user | h 64px，border-top hairline，padding 12px 16px，hover `surface.hover` |
 
@@ -559,7 +603,7 @@ Grok 風 Hero：超大標題、單行眉題、一句副標、雙 CTA、底部光
 | Row border-bottom | 1px `border.hairline` |
 | Row padding | 0 16px |
 | Row hover | bg `surface.hover` |
-| Row selected | bg `accent.electric.subtle` + 左側 2px `accent.electric` 邊條 |
+| Row selected | bg `surface.elevated` + 左側 2px `text.primary` 邊條 |
 | Cell font | `type.body.sm` |
 | Numeric cell | font-mono + tabular-nums + 右對齊 |
 | Status cell | `Tag.sm` |
@@ -732,7 +776,7 @@ Grok 對話介面標誌設計。
 |------|------|
 | User bubble | 右對齊，max-width 70%，bg `surface.elevated`，padding 12px 16px，radius `radius.md`，文字 `type.body.md` |
 | Grok bubble | 左對齊，無 bg（或 `canvas.raised` 全寬），文字 `type.body.md` |
-| Avatar / Mark | Grok 訊息開頭加 ◆ 16px `accent.electric` 標記（不顯示頭像） |
+| Avatar / Mark | Grok 訊息開頭加 ✕ 12px `text.tertiary` 字符標記（不顯示頭像，亦不用 ◆） |
 | 時間戳 | `type.body.xs` + `text.tertiary`，bubble 上方 4px |
 | Action toolbar | bubble 下方 8px，IconButton.ghost.sm 排列，hover 才顯示完整 |
 | 串流游標 | 文字結尾 ▌ 閃爍（500ms），結束時消失 |
@@ -801,7 +845,7 @@ Grok 對話介面標誌設計。
 | Item icon | 16px，左 |
 | Item text | `type.body.sm` |
 | Item shortcut | `Kbd` group 右對齊 |
-| Item hover / selected | bg `surface.hover` + 左側 2px `accent.electric` 邊條 |
+| Item hover / selected | bg `surface.hover` + 左側 2px `text.primary` 邊條 |
 | 動畫 | scale 0.96 → 1 + fade，280ms |
 
 ### 16.3 Variants
@@ -842,7 +886,7 @@ Grok 對話介面標誌設計。
 | Mark all read | `Button.link` |
 | Item 高 | auto，padding 12px 16px |
 | Item border-bottom | 1px `border.subtle` |
-| Item unread dot | 6px，`accent.electric`，左側絕對定位 |
+| Item unread dot | 6px，`text.primary`，左側絕對定位 |
 | Item icon | 16px，依 type 著色（system/security/billing） |
 | Footer | h 40px，padding 0 16px，border-top hairline，文字 link 置中 |
 
@@ -864,7 +908,7 @@ Grok 對話介面標誌設計。
 |------|-----|
 | 容器 | `relative`，aspect-ratio 16/9 |
 | Divider | 2px `text.primary` 縱線 + 中央 32px 圓形 handle（white bg + ↔ icon 黑色） |
-| Handle | `radius.full`，box-shadow `glow.accent.sm`，cursor `ew-resize` |
+| Handle | `radius.full`，1px `border.strong` 邊框（**無發光**），cursor `ew-resize` |
 | 角落標籤 | `Tag.outline.sm`，左上 BEFORE / 右上 AFTER |
 | 動畫 | divider 跟手指即時，clip-path 過渡 |
 
@@ -926,12 +970,12 @@ Hero / Feature 區常用的 Terminal 風 mock 視窗。
 | 屬性 | 值 |
 |------|-----|
 | 高度 | 32px |
-| bg | `canvas.base` 或 `accent.electric.subtle`（特殊宣傳） |
+| bg | `canvas.base` 純黑（特殊宣傳改用 `surface.elevated` 純色，**不用霓虹底色**） |
 | border-bottom | 1px `border.hairline` |
 | 字 | `type.body.sm` + `text.secondary` |
 | Item 間隔 | `◆` 圓點 / `•`，前後 24px |
 | 動畫 | `translateX 0 → -50%`，30s linear infinite |
-| Mask | 左右各 64px 漸層 fade（避免硬切） |
+| Mask | 左右各 24px solid `canvas.base` 同色蓋片（**禁止漸層 fade**） |
 | Hover | 暫停動畫 |
 | 關閉按鈕 | 右側 IconButton.ghost.sm，可選 |
 

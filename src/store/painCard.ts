@@ -269,14 +269,19 @@ export const usePainCardStore = create<PainCardStore>()(
       },
 
       advanceStep: (step) => {
-        set((state) => ({
-          card: {
-            ...state.card,
-            current_step: step,
-            updated_at: new Date().toISOString(),
-            status: step >= 9 ? "structured" : "in_progress",
-          },
-        }));
+        set((state) => {
+          // 進度條只升不降:current_step 代表「最高到達過的卡」
+          // 回到前面卡片不該降低進度,改用 URL 來判斷「目前在哪一卡」
+          const next = (Math.max(state.card.current_step, step) as CurrentStep);
+          return {
+            card: {
+              ...state.card,
+              current_step: next,
+              updated_at: new Date().toISOString(),
+              status: next >= 9 ? "structured" : "in_progress",
+            },
+          };
+        });
       },
 
       markAsDraft: () => {

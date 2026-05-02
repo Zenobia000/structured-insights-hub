@@ -47,8 +47,8 @@ export function ExampleReferenceCard2() {
             </p>
             {PEOPLE.map(([n, name, contact, relation]) => (
               <p key={n} className="text-text-secondary">
-                <span className="font-semibold text-text-primary">{n}.</span>{" "}
-                {name}｜{contact}｜{relation}
+                <span className="font-semibold text-text-primary">{n}.</span> {name}｜{contact}｜
+                {relation}
               </p>
             ))}
           </blockquote>

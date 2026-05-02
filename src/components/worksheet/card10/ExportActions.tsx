@@ -8,12 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { usePainCardStore } from "@/store/painCard";
 import { useDisplayModeStore } from "@/store/displayMode";
-import {
-  buildMarkdown,
-  downloadBlob,
-  exportFilename,
-  exportPdf,
-} from "@/lib/cardTenExport";
+import { buildMarkdown, downloadBlob, exportFilename, exportPdf } from "@/lib/cardTenExport";
 
 export function ExportActions() {
   const card = usePainCardStore((s) => s.card);
@@ -23,10 +18,7 @@ export function ExportActions() {
 
   const recordExport = (fmt: "markdown" | "json" | "pdf") => {
     updateField("exported.exported_at", new Date().toISOString());
-    updateField(
-      "exported.formats",
-      Array.from(new Set([...card.exported.formats, fmt])),
-    );
+    updateField("exported.formats", Array.from(new Set([...card.exported.formats, fmt])));
   };
 
   const handleMarkdown = () => {
@@ -61,9 +53,7 @@ export function ExportActions() {
     <section className="max-w-3xl mx-auto space-y-4">
       <div>
         <h2 className="text-xl font-bold text-text-primary">匯出你的身份證</h2>
-        <p className="text-sm text-text-secondary mt-1">
-          資料只在你本機。匯出後請自己保存。
-        </p>
+        <p className="text-sm text-text-secondary mt-1">資料只在你本機。匯出後請自己保存。</p>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">
@@ -75,9 +65,7 @@ export function ExportActions() {
         >
           <FileText className="h-6 w-6 text-secondary" aria-hidden />
           <span className="font-semibold text-base">📄 Markdown</span>
-          <span className="text-xs text-text-muted text-center">
-            給 Notion / GitHub / 部落格用
-          </span>
+          <span className="text-xs text-text-muted text-center">給 Notion / GitHub / 部落格用</span>
         </Button>
         <Button
           onClick={handleJson}
@@ -87,9 +75,7 @@ export function ExportActions() {
         >
           <FileJson className="h-6 w-6 text-secondary" aria-hidden />
           <span className="font-semibold text-base">🔧 JSON</span>
-          <span className="text-xs text-text-muted text-center">
-            跨工具搬移、備份、給開發者用
-          </span>
+          <span className="text-xs text-text-muted text-center">跨工具搬移、備份、給開發者用</span>
         </Button>
         <Button
           onClick={handlePdf}

@@ -124,10 +124,7 @@ function KeyboardHint() {
       role="note"
       className="flex items-start gap-2 rounded-md border border-secondary/30 bg-secondary/5 px-3 py-2 text-[12.5px] leading-[1.55] text-text-secondary"
     >
-      <Keyboard
-        className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5"
-        aria-hidden
-      />
+      <Keyboard className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5" aria-hidden />
       <p>
         <span className="font-semibold text-text-primary">鍵盤操作：</span>
         <kbd className="px-1 mx-0.5 rounded bg-muted text-[11px]">Tab</kbd>進入維度，
@@ -192,10 +189,7 @@ function DimensionRow({
           <h3 id={labelId} className="text-[16px] font-semibold text-text-primary">
             {d.label}
           </h3>
-          <p
-            id={descId}
-            className="text-[13px] text-text-secondary leading-[1.55] mt-0.5"
-          >
+          <p id={descId} className="text-[13px] text-text-secondary leading-[1.55] mt-0.5">
             {d.subtitle}
           </p>
         </div>
@@ -212,10 +206,7 @@ function DimensionRow({
       <ul className="text-[12.5px] text-text-secondary space-y-0.5 leading-[1.55]">
         {d.levels.map((l) => (
           <li key={l.v}>
-            <span className="font-mono font-semibold text-text-primary">
-              {l.v}
-            </span>{" "}
-            {l.text}
+            <span className="font-mono font-semibold text-text-primary">{l.v}</span> {l.text}
           </li>
         ))}
       </ul>

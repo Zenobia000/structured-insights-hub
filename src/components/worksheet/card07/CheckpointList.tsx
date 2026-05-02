@@ -29,13 +29,8 @@ export function CheckpointList({ values, onChange }: Props) {
                 onCheckedChange={(v) => onChange(f.key, v === true)}
                 className="mt-0.5"
               />
-              <label
-                htmlFor={`cp-${f.key}`}
-                className="cursor-pointer flex-1 space-y-0.5"
-              >
-                <p className="text-[14.5px] font-semibold text-text-primary">
-                  {f.question}
-                </p>
+              <label htmlFor={`cp-${f.key}`} className="cursor-pointer flex-1 space-y-0.5">
+                <p className="text-[14.5px] font-semibold text-text-primary">{f.question}</p>
                 <p className="text-[12.5px] text-text-secondary leading-[1.55]">
                   通過條件：{f.criterion}
                 </p>

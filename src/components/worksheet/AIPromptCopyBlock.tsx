@@ -92,16 +92,9 @@ export function AIPromptCopyBlock({
         {/* 左：Prompt */}
         <div className="p-4 sm:p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-text-primary">
-              複製這段 prompt
-            </h3>
+            <h3 className="text-sm font-semibold text-text-primary">複製這段 prompt</h3>
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleCopy}
-                className="h-8"
-              >
+              <Button size="sm" variant="outline" onClick={handleCopy} className="h-8">
                 {copied ? (
                   <>
                     <Check className="h-3.5 w-3.5 mr-1" /> 已複製
@@ -131,9 +124,7 @@ export function AIPromptCopyBlock({
 
         {/* 右：Response */}
         <div className="p-4 sm:p-6 space-y-3">
-          <h3 className="text-sm font-semibold text-text-primary">
-            貼回 AI 的回覆
-          </h3>
+          <h3 className="text-sm font-semibold text-text-primary">貼回 AI 的回覆</h3>
           <Textarea
             value={response}
             onChange={(e) => onResponseChange(e.target.value)}

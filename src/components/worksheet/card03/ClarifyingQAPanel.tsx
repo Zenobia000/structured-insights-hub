@@ -51,14 +51,16 @@ export function ClarifyingQAPanel({
       )}
     >
       <header>
-        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 3
-        </p>
-        <h2 id="step-3-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">Step 3</p>
+        <h2
+          id="step-3-label"
+          className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]"
+        >
           回答 AI 列的「需要再問清楚」
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
-          這些問題就是 AI 看出你描述還含糊的地方。把答案寫下來——這就是把抱怨變成可驗證痛點的關鍵。如果某題你答不出來，勾選「已預約找主人翁問」也可以過關。
+          這些問題就是 AI
+          看出你描述還含糊的地方。把答案寫下來——這就是把抱怨變成可驗證痛點的關鍵。如果某題你答不出來，勾選「已預約找主人翁問」也可以過關。
         </p>
       </header>
 
@@ -68,7 +70,8 @@ export function ClarifyingQAPanel({
           <div className="text-[14px] leading-[1.55] text-text-primary">
             <p className="font-semibold">AI 沒列出需要再問清楚的問題</p>
             <p className="text-[13px] text-text-secondary mt-0.5">
-              代表卡 1 的抱怨原句寫得夠具體，可以直接進入卡 4。如果 AI 其實有列問題、但你沒貼到 Step 2，請補上。
+              代表卡 1 的抱怨原句寫得夠具體，可以直接進入卡 4。如果 AI 其實有列問題、但你沒貼到 Step
+              2，請補上。
             </p>
           </div>
         </div>
@@ -96,7 +99,8 @@ export function ClarifyingQAPanel({
             className="flex items-center justify-between gap-3 rounded-md bg-page/60 border border-border px-3.5 py-2.5 text-[13px]"
           >
             <span className="text-text-secondary">
-              已處理 <span className="font-semibold text-text-primary">{resolvedCount}</span> / {totalCount} 題
+              已處理 <span className="font-semibold text-text-primary">{resolvedCount}</span> /{" "}
+              {totalCount} 題
               <span className="text-text-muted">（每題答 ≥ {ANSWER_MIN} 字、或勾選預約問）</span>
             </span>
             {resolvedCount === totalCount && (
@@ -164,9 +168,7 @@ function ClarifyingItem({
         rows={2}
         maxLength={500}
         placeholder={
-          status.reserved
-            ? "已標記為「預約找主人翁問」"
-            : `你的回答（至少 ${ANSWER_MIN} 字）…`
+          status.reserved ? "已標記為「預約找主人翁問」" : `你的回答（至少 ${ANSWER_MIN} 字）…`
         }
         className={cn(status.reserved && "opacity-60 cursor-not-allowed")}
       />
@@ -177,10 +179,7 @@ function ClarifyingItem({
       )}
 
       <label className="flex items-center gap-2 text-[12.5px] text-text-secondary cursor-pointer">
-        <Checkbox
-          checked={status.reserved}
-          onCheckedChange={(v) => onReservedChange(v === true)}
-        />
+        <Checkbox checked={status.reserved} onCheckedChange={(v) => onReservedChange(v === true)} />
         <span>答不出來，已預約找主人翁問</span>
       </label>
     </li>

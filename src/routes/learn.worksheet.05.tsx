@@ -21,8 +21,7 @@ export const Route = createFileRoute("/learn/worksheet/05")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content:
-          "從 6 種 TRIZ 矛盾中選 1 個最像的：拆出他想要的 A、B 兩件事，以及通常會犧牲哪邊。",
+        content: "從 6 種 TRIZ 矛盾中選 1 個最像的：拆出他想要的 A、B 兩件事，以及通常會犧牲哪邊。",
       },
     ],
   }),
@@ -50,8 +49,7 @@ function CardFivePage() {
   const checks = useMemo(() => evaluateCardFive(c), [c]);
 
   // Prompt 變數插值
-  const stuck =
-    card.stuck_formula.ai_polished?.trim() ?? "";
+  const stuck = card.stuck_formula.ai_polished?.trim() ?? "";
   const workaroundStr = useMemo(() => {
     const w = card.workaround;
     const dis = w.user_dissatisfactions.filter(Boolean).join("、") || "（尚未填寫）";
@@ -123,9 +121,7 @@ ${workaroundStr}
   const handleAdvance = () => {
     setAttempted(true);
     if (!trizPass) {
-      setBlockedMessage(
-        "請選 1 種矛盾。如果 6 個都不像，點下方「退回卡 3 重新拆」。",
-      );
+      setBlockedMessage("請選 1 種矛盾。如果 6 個都不像，點下方「退回卡 3 重新拆」。");
       setFailureCount((c) => c + 1);
       return;
     }
@@ -230,7 +226,8 @@ ${workaroundStr}
               Step 2：AI 推薦的是哪個？（記下來）
             </h2>
             <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              這一格只是給你自己對照用，<span className="font-semibold">不會替你做選擇</span>。Step 3 才是正式選擇。
+              這一格只是給你自己對照用，<span className="font-semibold">不會替你做選擇</span>。Step
+              3 才是正式選擇。
             </p>
           </div>
 
@@ -278,7 +275,8 @@ ${workaroundStr}
           >
             <AlertTriangle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
             <span>
-              <span className="font-bold">單選</span>（不可複選）— 複選代表你還沒拆乾淨，會被擋過關。如果你覺得超過一個，退回卡 3 再聊。
+              <span className="font-bold">單選</span>（不可複選）—
+              複選代表你還沒拆乾淨，會被擋過關。如果你覺得超過一個，退回卡 3 再聊。
             </span>
           </div>
 
@@ -306,9 +304,7 @@ ${workaroundStr}
               rows={3}
               maxLength={300}
               error={
-                attempted && checks.sideAFilled !== "pass"
-                  ? "請寫具體（至少 10 字）"
-                  : undefined
+                attempted && checks.sideAFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
               }
               highlight={attempted && checks.sideAFilled !== "pass"}
             />
@@ -323,9 +319,7 @@ ${workaroundStr}
               rows={3}
               maxLength={300}
               error={
-                attempted && checks.sideBFilled !== "pass"
-                  ? "請寫具體（至少 10 字）"
-                  : undefined
+                attempted && checks.sideBFilled !== "pass" ? "請寫具體（至少 10 字）" : undefined
               }
               highlight={attempted && checks.sideBFilled !== "pass"}
             />
@@ -340,7 +334,9 @@ ${workaroundStr}
           >
             <legend className="text-[18px] font-semibold text-text-primary">
               如果只能選一邊，他通常會犧牲哪邊？
-              <span aria-hidden className="text-text-muted ml-1">*</span>
+              <span aria-hidden className="text-text-muted ml-1">
+                *
+              </span>
             </legend>
             <div className="flex flex-col sm:flex-row gap-2">
               {(["a", "b"] as const).map((v) => {

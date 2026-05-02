@@ -2,16 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Edit, Sparkles } from "lucide-react";
 
-
 import { AiPromptBlock } from "@/components/worksheet/card03/AiPromptBlock";
 import { AiResponseInput } from "@/components/worksheet/card03/AiResponseInput";
 import { ClarifyingQAPanel } from "@/components/worksheet/card03/ClarifyingQAPanel";
 import { ExampleReferenceCard3 } from "@/components/worksheet/card03/ExampleReferenceCard3";
 import { CardThreeExitGateFooter } from "@/components/worksheet/card03/CardThreeExitGateFooter";
-import {
-  evaluateCardThree,
-  interpolatePrompt,
-} from "@/lib/cardThreeValidators";
+import { evaluateCardThree, interpolatePrompt } from "@/lib/cardThreeValidators";
 import { usePainCardStore } from "@/store/painCard";
 
 export const Route = createFileRoute("/learn/worksheet/03")({
@@ -78,26 +74,20 @@ function CardThreePage() {
   const setQuestions = (next: string[]) => {
     const prev = stuck.ai_clarifying_answers ?? [];
     const byQ = new Map(prev.map((a) => [a.question, a]));
-    const rebuilt = next.map(
-      (q) => byQ.get(q) ?? { question: q, answer: "", reserved: false },
-    );
+    const rebuilt = next.map((q) => byQ.get(q) ?? { question: q, answer: "", reserved: false });
     updateField("stuck_formula.ai_clarifying_questions", next);
     updateField("stuck_formula.ai_clarifying_answers", rebuilt);
   };
 
   const setAnswerForQuestion = (question: string, answer: string) => {
     const prev = stuck.ai_clarifying_answers ?? [];
-    const next = prev.map((a) =>
-      a.question === question ? { ...a, answer } : a,
-    );
+    const next = prev.map((a) => (a.question === question ? { ...a, answer } : a));
     updateField("stuck_formula.ai_clarifying_answers", next);
   };
 
   const setReservedForQuestion = (question: string, reserved: boolean) => {
     const prev = stuck.ai_clarifying_answers ?? [];
-    const next = prev.map((a) =>
-      a.question === question ? { ...a, reserved } : a,
-    );
+    const next = prev.map((a) => (a.question === question ? { ...a, reserved } : a));
     updateField("stuck_formula.ai_clarifying_answers", next);
   };
 
@@ -160,7 +150,10 @@ function CardThreePage() {
           </div>
 
           <p className="mt-4 text-[14.5px] leading-[1.65] text-text-secondary">
-            最終會整理成的句型：<code className="font-mono px-1.5 py-0.5 rounded bg-muted-bg text-text-primary">「我每次要 [想做的事]，都會卡在 [障礙]。」</code>
+            最終會整理成的句型：
+            <code className="font-mono px-1.5 py-0.5 rounded bg-muted-bg text-text-primary">
+              「我每次要 [想做的事]，都會卡在 [障礙]。」
+            </code>
           </p>
         </header>
 
@@ -186,9 +179,7 @@ function CardThreePage() {
           />
 
           <p className="text-[12px] text-text-muted" aria-live="polite">
-            {hydrated && savedAgo
-              ? `已自動儲存到瀏覽器 · ${savedAgo}`
-              : "尚未開始輸入"}
+            {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
           </p>
 
           <ExampleReferenceCard3 />

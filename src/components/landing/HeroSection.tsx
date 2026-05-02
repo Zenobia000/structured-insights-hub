@@ -19,11 +19,7 @@ export function HeroSection() {
   };
 
   return (
-    <SectionFade
-      eager
-      ariaLabelledBy="hero-headline"
-      className="bg-page border-b border-border"
-    >
+    <SectionFade eager ariaLabelledBy="hero-headline" className="bg-page border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left: copy */}
@@ -40,7 +36,8 @@ export function HeroSection() {
               是真痛點還是假痛點。
             </h1>
             <p className="mt-6 text-base sm:text-[17px] leading-[1.7] text-text-secondary max-w-2xl">
-              第一次 90 分鐘，熟練後 30 分鐘。你不需要懂創新理論、AI 模型、創業框架；你只需要會抄、會問、會打電話。
+              第一次 90 分鐘，熟練後 30 分鐘。你不需要懂創新理論、AI
+              模型、創業框架；你只需要會抄、會問、會打電話。
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -65,9 +62,7 @@ export function HeroSection() {
           {/* Right: 9-dot ProgressVisual */}
           <div className="lg:col-span-5">
             <div className="rounded-xl border border-border bg-surface p-5 sm:p-6 shadow-[0_1px_3px_rgba(30,58,95,0.06)]">
-              <p className="text-xs font-semibold text-text-secondary mb-1">
-                你會走過的 9 個步驟
-              </p>
+              <p className="text-xs font-semibold text-text-secondary mb-1">你會走過的 9 個步驟</p>
               <p className="text-[11px] text-text-muted mb-5">
                 每張卡都有明確產出，可隨時暫停儲存。
               </p>

@@ -40,8 +40,7 @@ export function findSellingHits(text: string): string[] {
 
 export function evaluateTargets(plan: PainCard["interview_plan"]) {
   const targets = plan.targets;
-  const personaOk = targets
-    .map((t) => t.persona.trim().length >= PERSONA_MIN);
+  const personaOk = targets.map((t) => t.persona.trim().length >= PERSONA_MIN);
   const contactOk = targets.map((t) => t.contact_info.trim().length >= CONTACT_MIN);
   const plannedOk = targets.map((t) => t.planned_time.trim().length >= PLANNED_MIN);
   const anyContact = contactOk.some(Boolean);

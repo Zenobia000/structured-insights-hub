@@ -12,9 +12,7 @@ export function SixContradictionsPreview() {
       <ol className="space-y-1.5">
         {TRIZ_OPTIONS.map((o) => (
           <li key={o.id} className="flex gap-2 text-[14.5px] text-text-primary leading-[1.55]">
-            <span className="font-mono font-semibold text-secondary shrink-0 w-5">
-              {o.id}.
-            </span>
+            <span className="font-mono font-semibold text-secondary shrink-0 w-5">{o.id}.</span>
             <span>{o.label}</span>
           </li>
         ))}

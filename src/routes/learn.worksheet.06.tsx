@@ -23,8 +23,7 @@ export const Route = createFileRoute("/learn/worksheet/06")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content:
-          "用 AI 跑 8 題證據蒐集 prompt，把回覆原文與結構化結果保存。AI 不可推銷產品。",
+        content: "用 AI 跑 8 題證據蒐集 prompt，把回覆原文與結構化結果保存。AI 不可推銷產品。",
       },
     ],
   }),
@@ -50,14 +49,10 @@ function CardSixPage() {
 
   const ev = card.ai_evidence;
 
-  const stuck =
-    card.stuck_formula.ai_polished?.trim() ?? "";
+  const stuck = card.stuck_formula.ai_polished?.trim() ?? "";
   const peopleBg = card.people.background.trim();
   const tool = card.workaround.tool_name.trim();
-  const dis = card.workaround.user_dissatisfactions
-    .filter(Boolean)
-    .slice(0, 3)
-    .join("、");
+  const dis = card.workaround.user_dissatisfactions.filter(Boolean).slice(0, 3).join("、");
 
   const promptText = useMemo(
     () => `我想研究一個可能的痛點：
@@ -173,9 +168,7 @@ function CardSixPage() {
       return;
     }
     if (!noSolutionPassed) {
-      setBlockedMessage(
-        "AI 回覆出現推銷詞 — 請使用補強 prompt 重跑，或勾選「手動覆寫」確認。",
-      );
+      setBlockedMessage("AI 回覆出現推銷詞 — 請使用補強 prompt 重跑，或勾選「手動覆寫」確認。");
       return;
     }
 
@@ -226,7 +219,8 @@ function CardSixPage() {
                 <li>不是想 App</li>
               </ul>
               <p className="pt-1">
-                最重要的一句 prompt 是：「<span className="font-semibold">請不要幫我設計產品，也不要提出商業模式</span>」。
+                最重要的一句 prompt 是：「
+                <span className="font-semibold">請不要幫我設計產品，也不要提出商業模式</span>」。
               </p>
             </div>
           </div>
@@ -235,17 +229,13 @@ function CardSixPage() {
         {prereqMissing && (
           <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary">
             <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
-            <span>
-              卡 2 / 3 / 4 尚未填完，下方 prompt 變數會缺。建議先補完再來這一卡。
-            </span>
+            <span>卡 2 / 3 / 4 尚未填完，下方 prompt 變數會缺。建議先補完再來這一卡。</span>
           </div>
         )}
 
         {/* Section 3: tool selector */}
         <section className="space-y-3">
-          <h2 className="text-[20px] font-bold text-text-primary">
-            第一步：選一個 AI 工具
-          </h2>
+          <h2 className="text-[20px] font-bold text-text-primary">第一步：選一個 AI 工具</h2>
           <p className="text-[14px] text-text-secondary leading-[1.6]">
             4 種工具各有強項，依你想找的證據類型挑一個。第一次不確定就先用 ChatGPT Deep Research。
           </p>
@@ -270,12 +260,7 @@ function CardSixPage() {
                 完整 prompt（含「請不要幫我設計產品」鐵律）
               </span>
               <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCopy}
-                  className="h-8"
-                >
+                <Button size="sm" variant="outline" onClick={handleCopy} className="h-8">
                   {copied ? (
                     <>
                       <Check className="h-3.5 w-3.5 mr-1" /> 已複製
@@ -292,11 +277,7 @@ function CardSixPage() {
                     size="sm"
                     className="h-8 bg-secondary text-secondary-foreground hover:bg-secondary/90"
                   >
-                    <a
-                      href={selectedTool.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href={selectedTool.url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3.5 w-3.5 mr-1" />
                       打開 {selectedTool.name}
                     </a>
@@ -309,15 +290,14 @@ function CardSixPage() {
             </pre>
           </div>
           <p className="text-[12.5px] text-text-secondary">
-            複製後到 {selectedTool ? selectedTool.name : "上方選的 AI 工具"} 貼上跑一次，再回來填下面的欄位。
+            複製後到 {selectedTool ? selectedTool.name : "上方選的 AI 工具"}{" "}
+            貼上跑一次，再回來填下面的欄位。
           </p>
         </section>
 
         {/* Section 5: 8 answers */}
         <section className="space-y-3">
-          <h2 className="text-[20px] font-bold text-text-primary">
-            第三步：把 AI 回覆貼回來
-          </h2>
+          <h2 className="text-[20px] font-bold text-text-primary">第三步：把 AI 回覆貼回來</h2>
           <p className="text-[14px] text-text-secondary leading-[1.6]">
             先貼整段原文（保存用），再把 8 題答案分別貼進對應欄位。
           </p>
@@ -333,9 +313,7 @@ function CardSixPage() {
 
         {/* Section 6: anti-solution check */}
         <section className="space-y-3">
-          <h2 className="text-[20px] font-bold text-text-primary">
-            第四步：反推銷檢查
-          </h2>
+          <h2 className="text-[20px] font-bold text-text-primary">第四步：反推銷檢查</h2>
           <AntiSolutionCheck
             hits={hits}
             manualOverride={manualOverride}
@@ -344,9 +322,7 @@ function CardSixPage() {
         </section>
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo
-            ? `已自動儲存到瀏覽器 · ${savedAgo}`
-            : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
         </p>
       </main>
 

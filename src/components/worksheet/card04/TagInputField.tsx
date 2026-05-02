@@ -69,7 +69,11 @@ export function TagInputField({
         className="block text-[18px] font-semibold text-text-primary leading-[1.4]"
       >
         {label}
-        {required && <span aria-hidden className="text-text-muted ml-1">*</span>}
+        {required && (
+          <span aria-hidden className="text-text-muted ml-1">
+            *
+          </span>
+        )}
       </label>
       <p id={`${id}-helper`} className="text-[13px] leading-[1.5] text-text-secondary">
         {helper}
@@ -119,9 +123,7 @@ export function TagInputField({
 
       <div className="flex items-center justify-between text-[12px]">
         <span className={cn("text-text-muted", countShort && "text-caution font-medium")}>
-          {minCount !== undefined
-            ? `${values.length} / 至少 ${minCount}`
-            : `${values.length} 個`}
+          {minCount !== undefined ? `${values.length} / 至少 ${minCount}` : `${values.length} 個`}
         </span>
         <span className="text-text-muted">按 Enter 新增</span>
       </div>

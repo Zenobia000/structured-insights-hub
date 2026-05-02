@@ -10,8 +10,7 @@ import type { CheckStatus } from "@/lib/cardOneValidators";
 import { cn } from "@/lib/utils";
 
 function statusIcon(status: CheckStatus) {
-  if (status === "pass")
-    return <Check className="h-4 w-4 text-verified" aria-label="通過" />;
+  if (status === "pass") return <Check className="h-4 w-4 text-verified" aria-label="通過" />;
   if (status === "warning")
     return <AlertTriangle className="h-4 w-4 text-caution" aria-label="需要修正" />;
   return <Circle className="h-4 w-4 text-text-muted" aria-label="尚未開始" />;
@@ -57,9 +56,7 @@ export function AntiFakeCheckPanelCard2({
       >
         即時檢核
       </h2>
-      <p className="mt-1 text-[13px] leading-[1.5] text-text-secondary">
-        這是品質提示,不是評分。
-      </p>
+      <p className="mt-1 text-[13px] leading-[1.5] text-text-secondary">這是品質提示,不是評分。</p>
 
       <ul aria-live="polite" className="mt-4 space-y-3.5">
         {items.map((it, i) => (
@@ -78,9 +75,7 @@ export function AntiFakeCheckPanelCard2({
                   {it.label}
                 </p>
                 {it.status === "warning" && (
-                  <p className="mt-1 text-[12.5px] leading-[1.55] text-text-secondary">
-                    {it.hint}
-                  </p>
+                  <p className="mt-1 text-[12.5px] leading-[1.55] text-text-secondary">{it.hint}</p>
                 )}
               </div>
             </div>

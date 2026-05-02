@@ -56,9 +56,7 @@ export function CompletionHeader() {
       <p className="mt-4 italic text-sm text-text-secondary">
         這份身份證裡沒有「錢」。階段一只訓練判斷力。
       </p>
-      {j && (
-        <p className="sr-only">當前判斷：{JUDGMENT_LABEL[j]}</p>
-      )}
+      {j && <p className="sr-only">當前判斷：{JUDGMENT_LABEL[j]}</p>}
     </header>
   );
 }

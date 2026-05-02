@@ -68,8 +68,7 @@ export function CardSevenExitGateFooter({
 
         {blockedMessage && (
           <div className="rounded-md border-2 border-secondary/40 bg-secondary/5 px-3 py-2 text-sm text-text-secondary">
-            <span className="font-medium text-text-primary">還缺什麼：</span>{" "}
-            {blockedMessage}
+            <span className="font-medium text-text-primary">還缺什麼：</span> {blockedMessage}
           </div>
         )}
 

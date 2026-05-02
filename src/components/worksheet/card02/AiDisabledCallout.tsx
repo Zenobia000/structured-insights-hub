@@ -12,10 +12,7 @@ export function AiDisabledCallout() {
       className="rounded-lg border-2 border-caution/60 bg-caution/10 p-5"
     >
       <div className="flex items-start gap-3">
-        <AlertOctagon
-          className="h-5 w-5 text-caution shrink-0 mt-0.5"
-          aria-hidden
-        />
+        <AlertOctagon className="h-5 w-5 text-caution shrink-0 mt-0.5" aria-hidden />
         <div className="min-w-0">
           <h3
             id="ai-disabled-title"
@@ -36,10 +33,7 @@ export function AiDisabledCallout() {
           <ul className="mt-3 space-y-1 text-[13.5px] leading-[1.55] text-text-secondary list-disc list-inside">
             <li>本頁無「AI 推薦人選」按鈕</li>
             <li>本頁無「AI 自動補充背景描述」按鈕</li>
-            <li>
-              如果你想不出 3 個真名 →
-              這代表你還不認識這個圈子（後面會教你怎麼辦）
-            </li>
+            <li>如果你想不出 3 個真名 → 這代表你還不認識這個圈子（後面會教你怎麼辦）</li>
           </ul>
         </div>
       </div>

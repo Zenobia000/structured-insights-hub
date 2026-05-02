@@ -77,18 +77,11 @@ export function evaluateCardFour(input: CardFourInput): CardFourEvaluation {
 
   return {
     toolNameFilled: tool.length >= 3 ? "pass" : tool.length > 0 ? "warn" : "empty",
-    toolNameNotForbidden: tool.length === 0
-      ? "empty"
-      : isForbiddenToolName(tool)
-        ? "warn"
-        : "pass",
+    toolNameNotForbidden: tool.length === 0 ? "empty" : isForbiddenToolName(tool) ? "warn" : "pass",
     whyStillStuckFilled: why.length >= 5 ? "pass" : why.length > 0 ? "warn" : "empty",
     aiAlternativesEnough: alts.length >= 3 ? "pass" : alts.length > 0 ? "warn" : "empty",
     dissatisfactionsEnough: dis.length >= 3 ? "pass" : dis.length > 0 ? "warn" : "empty",
-    dissatisfactionsConcrete: dis.length === 0
-      ? "empty"
-      : hasAnyAbstractDissatisfaction(dis)
-        ? "warn"
-        : "pass",
+    dissatisfactionsConcrete:
+      dis.length === 0 ? "empty" : hasAnyAbstractDissatisfaction(dis) ? "warn" : "pass",
   };
 }

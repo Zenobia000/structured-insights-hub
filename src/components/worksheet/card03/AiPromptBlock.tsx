@@ -10,11 +10,7 @@ import { Copy, ExternalLink, Check, ShieldAlert } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  AI_TOOL_OPTIONS,
-  AI_TOOL_PREF_KEY,
-  type AiToolPref,
-} from "@/lib/cardThreeValidators";
+import { AI_TOOL_OPTIONS, AI_TOOL_PREF_KEY, type AiToolPref } from "@/lib/cardThreeValidators";
 
 type Props = {
   prompt: string;
@@ -60,14 +56,17 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
       className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-4"
     >
       <header>
-        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 1
-        </p>
-        <h2 id="step-1-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">Step 1</p>
+        <h2
+          id="step-1-label"
+          className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]"
+        >
           複製這段 prompt 到 ChatGPT / Claude / Gemini
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">
-          AI 在這張卡的角色：<span className="font-semibold text-text-primary">把卡 1 的抱怨整理成卡關公式句型</span>，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
+          AI 在這張卡的角色：
+          <span className="font-semibold text-text-primary">把卡 1 的抱怨整理成卡關公式句型</span>
+          ，並列出「需要再問清楚」的 3 個問題（不會替你回答）。
         </p>
       </header>
 
@@ -99,9 +98,7 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
           className="flex items-start gap-2 rounded-md border border-caution/50 bg-caution/5 px-3 py-2.5 text-[13px] leading-[1.55] text-text-primary"
         >
           <ShieldAlert className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
-          <span>
-            請先完成卡 1（抱怨原句）與卡 2（背景）— prompt 才能正確帶入主人翁資訊。
-          </span>
+          <span>請先完成卡 1（抱怨原句）與卡 2（背景）— prompt 才能正確帶入主人翁資訊。</span>
         </div>
       )}
 
@@ -126,12 +123,7 @@ export function AiPromptBlock({ prompt, prereqReady }: Props) {
             </>
           )}
         </Button>
-        <Button
-          asChild
-          size="default"
-          variant="outline"
-          className="h-9"
-        >
+        <Button asChild size="default" variant="outline" className="h-9">
           <a href={current.url} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="h-4 w-4 mr-1.5" />
             在新分頁開啟 {current.label}

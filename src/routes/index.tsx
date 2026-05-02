@@ -6,8 +6,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title:
-          "PainMap Worksheet — 9 張卡片學會判斷一句抱怨是真痛點還是假痛點",
+        title: "PainMap Worksheet — 9 張卡片學會判斷一句抱怨是真痛點還是假痛點",
       },
       {
         name: "description",
@@ -20,8 +19,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:description",
-        content:
-          "9 張卡片，從一句抱怨到書面判斷的痛點身份證。教學優先、結構化、零遊戲化。",
+        content: "9 張卡片，從一句抱怨到書面判斷的痛點身份證。教學優先、結構化、零遊戲化。",
       },
     ],
   }),

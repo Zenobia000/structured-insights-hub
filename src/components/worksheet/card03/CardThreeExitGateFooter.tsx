@@ -36,14 +36,8 @@ export function CardThreeExitGateFooter({
     <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-3">
         <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
-          <ConditionItem
-            passed={aiPolishedPass}
-            label="已貼回 AI 整理後的卡關公式句"
-          />
-          <ConditionItem
-            passed={confirmedPass}
-            label="AI 列的釐清問題已全部回答（或標記預約問）"
-          />
+          <ConditionItem passed={aiPolishedPass} label="已貼回 AI 整理後的卡關公式句" />
+          <ConditionItem passed={confirmedPass} label="AI 列的釐清問題已全部回答（或標記預約問）" />
         </ul>
 
         {blockedMessage && (
@@ -110,9 +104,7 @@ function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
       >
         ✓
       </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>
-        {label}
-      </span>
+      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
     </li>
   );
 }

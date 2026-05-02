@@ -51,8 +51,7 @@ function CardFourPage() {
 
   const checks = useMemo(() => evaluateCardFour(w), [w]);
 
-  const stuckPolished =
-    card.stuck_formula.ai_polished?.trim() ?? "";
+  const stuckPolished = card.stuck_formula.ai_polished?.trim() ?? "";
 
   const promptText = useMemo(() => {
     const stuck = stuckPolished || "（請先到卡 3 填寫卡關公式）";
@@ -86,18 +85,12 @@ ${stuck}
   // 任意輸入後清除 blocked message
   useEffect(() => {
     setBlockedMessage(null);
-  }, [
-    w.tool_name,
-    w.why_still_stuck,
-    w.ai_alternatives.length,
-    w.user_dissatisfactions.length,
-  ]);
+  }, [w.tool_name, w.why_still_stuck, w.ai_alternatives.length, w.user_dissatisfactions.length]);
 
   const setTool = (v: string) => updateField("workaround.tool_name", v);
   const setWhy = (v: string) => updateField("workaround.why_still_stuck", v);
   const setAlternatives = (v: string[]) => updateField("workaround.ai_alternatives", v);
-  const setDissatisfactions = (v: string[]) =>
-    updateField("workaround.user_dissatisfactions", v);
+  const setDissatisfactions = (v: string[]) => updateField("workaround.user_dissatisfactions", v);
 
   // 內嵌 AIPromptCopyBlock 需要 response slot — 我們把 response 暫存到 alternatives 旁邊（page-local）
   const [aiResponse, setAiResponse] = useState("");
@@ -106,11 +99,7 @@ ${stuck}
   const abstractHits = useMemo(
     () =>
       Array.from(
-        new Set(
-          w.user_dissatisfactions.flatMap((d) =>
-            findAbstractDissatisfactionKeywords(d),
-          ),
-        ),
+        new Set(w.user_dissatisfactions.flatMap((d) => findAbstractDissatisfactionKeywords(d))),
       ),
     [w.user_dissatisfactions],
   );
@@ -133,9 +122,7 @@ ${stuck}
       return;
     }
     if (checks.toolNameFilled !== "pass") {
-      setBlockedMessage(
-        "請填具體工具/方法名（≥ 3 字，例：『Notion 模板』『Excel + 翻群組』）。",
-      );
+      setBlockedMessage("請填具體工具/方法名（≥ 3 字，例：『Notion 模板』『Excel + 翻群組』）。");
       setFailureCount((c) => c + 1);
       return;
     }
@@ -194,21 +181,21 @@ ${stuck}
             <Wrench className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">為什麼這張卡關鍵：</span>
-              如果他現在沒有用任何方法在解 → 痛點可能不夠痛。如果他用了好幾個方法都不滿意 → 真痛點可能在這裡。
+              如果他現在沒有用任何方法在解 → 痛點可能不夠痛。如果他用了好幾個方法都不滿意 →
+              真痛點可能在這裡。
             </div>
           </div>
 
           <p className="mt-4 text-[15px] leading-[1.65] text-text-secondary">
-            這張卡會做 4 步：① 你先憑訪談寫 → ② AI 提案 5 個常見 workaround → ③ 你貼回 AI 提案 → ④ 拿 AI 清單去問主人翁，填回 3 個不滿理由
+            這張卡會做 4 步：① 你先憑訪談寫 → ② AI 提案 5 個常見 workaround → ③ 你貼回 AI 提案 → ④
+            拿 AI 清單去問主人翁，填回 3 個不滿理由
           </p>
         </header>
 
         {stuckMissing && (
           <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary">
             <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
-            <span>
-              還沒填卡 3「卡關公式」，下方 prompt 會缺變數。建議先回卡 3 完成。
-            </span>
+            <span>還沒填卡 3「卡關公式」，下方 prompt 會缺變數。建議先回卡 3 完成。</span>
           </div>
         )}
 
@@ -219,7 +206,9 @@ ${stuck}
               Step 1：你從訪談聽到的（先寫）
             </h2>
             <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              從卡 1-3 你聽到的，主人翁現在用什麼解這個問題？可能是：一個工具、一個人、一個習慣動作、一個 Excel 表。
+              從卡 1-3
+              你聽到的，主人翁現在用什麼解這個問題？可能是：一個工具、一個人、一個習慣動作、一個
+              Excel 表。
             </p>
           </div>
 
@@ -255,9 +244,7 @@ ${stuck}
             rows={3}
             maxLength={300}
             error={
-              attempted && checks.whyStillStuckFilled !== "pass"
-                ? "請寫至少 5 個字"
-                : undefined
+              attempted && checks.whyStillStuckFilled !== "pass" ? "請寫至少 5 個字" : undefined
             }
             highlight={attempted && checks.whyStillStuckFilled !== "pass"}
           />
@@ -270,7 +257,8 @@ ${stuck}
               Step 2：AI 提案其他 5 個常見 workaround
             </h2>
             <p className="mt-1 text-[14px] text-text-secondary leading-[1.6]">
-              複製下方 prompt → 貼到 ChatGPT / Claude / Perplexity / Gemini → 把 AI 列的 5 個貼回 Step 3。
+              複製下方 prompt → 貼到 ChatGPT / Claude / Perplexity / Gemini → 把 AI 列的 5 個貼回
+              Step 3。
             </p>
           </div>
 
@@ -320,8 +308,8 @@ ${stuck}
           >
             <AlertCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary">
-              <span className="font-bold">這一步是真實性的關鍵。</span>
-              把 AI 列的 5 個 workaround 拿去問主人翁：「這幾個你有用過嗎？哪個最像你的狀況？」然後
+              <span className="font-bold">這一步是真實性的關鍵。</span>把 AI 列的 5 個 workaround
+              拿去問主人翁：「這幾個你有用過嗎？哪個最像你的狀況？」然後
               <span className="font-semibold">寫下他不滿意現有方法的具體理由（≥ 3 個）</span>。
               這一步可能要花幾天等主人翁回覆 — 頁面會自動儲存。
             </div>

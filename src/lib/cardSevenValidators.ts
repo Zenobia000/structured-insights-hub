@@ -103,8 +103,7 @@ export function evaluatePhaseA(sg: PainCard["self_guess"]) {
   const filled: Record<GuessKey, boolean> = {
     most_painful_person: sg.guesses.most_painful_person.trim().length >= GUESS_MIN,
     most_common_scene: sg.guesses.most_common_scene.trim().length >= GUESS_MIN,
-    biggest_dissatisfaction:
-      sg.guesses.biggest_dissatisfaction.trim().length >= GUESS_MIN,
+    biggest_dissatisfaction: sg.guesses.biggest_dissatisfaction.trim().length >= GUESS_MIN,
     possible_fake_pain: sg.guesses.possible_fake_pain.trim().length >= GUESS_MIN,
   };
   const allFilled = Object.values(filled).every(Boolean);

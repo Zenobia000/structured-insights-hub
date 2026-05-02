@@ -43,11 +43,25 @@ function formatDateTime(iso: string) {
 function stepToPath(step: CurrentStep) {
   if (step === 10) return "/learn/worksheet/result" as const;
   const n = String(step).padStart(2, "0") as
-    | "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09";
-  return (`/learn/worksheet/${n}`) as
-    | "/learn/worksheet/01" | "/learn/worksheet/02" | "/learn/worksheet/03"
-    | "/learn/worksheet/04" | "/learn/worksheet/05" | "/learn/worksheet/06"
-    | "/learn/worksheet/07" | "/learn/worksheet/08" | "/learn/worksheet/09";
+    | "01"
+    | "02"
+    | "03"
+    | "04"
+    | "05"
+    | "06"
+    | "07"
+    | "08"
+    | "09";
+  return `/learn/worksheet/${n}` as
+    | "/learn/worksheet/01"
+    | "/learn/worksheet/02"
+    | "/learn/worksheet/03"
+    | "/learn/worksheet/04"
+    | "/learn/worksheet/05"
+    | "/learn/worksheet/06"
+    | "/learn/worksheet/07"
+    | "/learn/worksheet/08"
+    | "/learn/worksheet/09";
 }
 
 export function StartOrResumeSection() {
@@ -71,15 +85,9 @@ export function StartOrResumeSection() {
   };
 
   return (
-    <SectionFade
-      ariaLabelledBy="start-resume-title"
-      className="bg-page border-b border-border"
-    >
+    <SectionFade ariaLabelledBy="start-resume-title" className="bg-page border-b border-border">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <h2
-          id="start-resume-title"
-          className="sr-only"
-        >
+        <h2 id="start-resume-title" className="sr-only">
           開始填寫或繼續未完成
         </h2>
 
@@ -91,9 +99,7 @@ export function StartOrResumeSection() {
         >
           {/* Start card */}
           <article className="rounded-xl border-2 border-accent/40 bg-accent-light/40 p-6 sm:p-7 flex flex-col">
-            <h3 className="text-[18px] font-semibold text-text-primary">
-              30 秒開始新的 PainCard
-            </h3>
+            <h3 className="text-[18px] font-semibold text-text-primary">30 秒開始新的 PainCard</h3>
             <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">
               建立一張空白的痛點身份證，從卡 1 開始填。
             </p>
@@ -113,14 +119,13 @@ export function StartOrResumeSection() {
           {/* Resume card — 只在有未完成時顯示 */}
           {resume.showResume && (
             <article className="rounded-xl border border-secondary/40 bg-surface p-6 sm:p-7 flex flex-col">
-              <h3 className="text-[18px] font-semibold text-text-primary">
-                我有未完成的 PainCard
-              </h3>
+              <h3 className="text-[18px] font-semibold text-text-primary">我有未完成的 PainCard</h3>
               <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">
                 上次填到「卡 {resume.currentStep}：{resume.cardName}」，繼續嗎？
               </p>
               <p className="mt-3 text-xs text-text-muted leading-[1.5]">
-                建立於 {formatDateTime(resume.createdAt)} · 最後修改 {formatDateTime(resume.updatedAt)}
+                建立於 {formatDateTime(resume.createdAt)} · 最後修改{" "}
+                {formatDateTime(resume.updatedAt)}
               </p>
               <div className="mt-5 flex flex-col sm:flex-row gap-2">
                 <button
@@ -146,14 +151,13 @@ export function StartOrResumeSection() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>確定要捨棄這份 PainCard？</AlertDialogTitle>
                       <AlertDialogDescription>
-                        這個動作會清除瀏覽器內目前儲存的進度，無法復原。建議先匯出 Markdown / JSON 後再捨棄。
+                        這個動作會清除瀏覽器內目前儲存的進度，無法復原。建議先匯出 Markdown / JSON
+                        後再捨棄。
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>取消</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDiscard}>
-                        確定捨棄
-                      </AlertDialogAction>
+                      <AlertDialogAction onClick={handleDiscard}>確定捨棄</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

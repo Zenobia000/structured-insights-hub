@@ -36,20 +36,17 @@ export function EightAnswersForm({
         >
           <span>
             AI 回覆原文（完整貼上）
-            <span aria-hidden className="text-text-muted ml-1">*</span>
+            <span aria-hidden className="text-text-muted ml-1">
+              *
+            </span>
           </span>
           <span
-            className={cn(
-              "text-[12px] font-normal",
-              rawOk ? "text-verified" : "text-text-muted",
-            )}
+            className={cn("text-[12px] font-normal", rawOk ? "text-verified" : "text-text-muted")}
           >
             {rawResponse.length} 字{rawOk ? " ✓" : "（最少 200 字）"}
           </span>
         </label>
-        <p className="text-[13px] text-text-secondary">
-          整段原文會保存在你的本機，未來查核用。
-        </p>
+        <p className="text-[13px] text-text-secondary">整段原文會保存在你的本機，未來查核用。</p>
         <textarea
           id="raw_response"
           value={rawResponse}
@@ -98,9 +95,7 @@ export function EightAnswersForm({
                   已填 {value.length} 字（最少 {min} 字）
                 </span>
               </div>
-              <p className="text-[12.5px] text-text-secondary leading-[1.5]">
-                {meta.hint}
-              </p>
+              <p className="text-[12.5px] text-text-secondary leading-[1.5]">{meta.hint}</p>
               <textarea
                 id={fieldId}
                 value={value}

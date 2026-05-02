@@ -113,9 +113,7 @@ function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
       >
         ✓
       </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>
-        {label}
-      </span>
+      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
     </li>
   );
 }

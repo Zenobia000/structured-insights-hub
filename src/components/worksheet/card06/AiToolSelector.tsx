@@ -15,20 +15,11 @@ type Props = {
   highlight?: boolean;
 };
 
-export function AiToolSelector({
-  selected,
-  onSelect,
-  reason,
-  onReasonChange,
-  highlight,
-}: Props) {
+export function AiToolSelector({ selected, onSelect, reason, onReasonChange, highlight }: Props) {
   return (
     <div className="space-y-4">
       <fieldset
-        className={cn(
-          "rounded-lg",
-          highlight && !selected && "ring-2 ring-secondary/30 p-1",
-        )}
+        className={cn("rounded-lg", highlight && !selected && "ring-2 ring-secondary/30 p-1")}
       >
         <legend className="sr-only">選 1 個 AI 工具</legend>
         <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">

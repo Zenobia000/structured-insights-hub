@@ -20,10 +20,7 @@ export function ExampleReferenceCard4() {
           📖 看 worksheet 林老師範例
         </span>
         <ChevronDown
-          className={cn(
-            "h-4 w-4 text-text-secondary transition-transform",
-            open && "rotate-180",
-          )}
+          className={cn("h-4 w-4 text-text-secondary transition-transform", open && "rotate-180")}
           aria-hidden
         />
       </button>

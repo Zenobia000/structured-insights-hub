@@ -9,31 +9,18 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { usePainCardStore } from "@/store/painCard";
 import { useDisplayModeStore } from "@/store/displayMode";
-import {
-  JUDGMENT_LABEL,
-  NEXT_ACTION_LABEL,
-  trizLabel,
-  sacrificedLabel,
-} from "@/lib/cardTenExport";
+import { JUDGMENT_LABEL, NEXT_ACTION_LABEL, trizLabel, sacrificedLabel } from "@/lib/cardTenExport";
 import { cn } from "@/lib/utils";
 
 const DECOR = "═══════════════════════════════════";
 
-function FieldBlock({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function FieldBlock({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <section className="py-5 border-b border-border last:border-b-0">
       <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-2">
         {label}
       </h3>
-      <div className="text-text-primary text-[15px] leading-relaxed space-y-2">
-        {children}
-      </div>
+      <div className="text-text-primary text-[15px] leading-relaxed space-y-2">{children}</div>
     </section>
   );
 }
@@ -228,13 +215,9 @@ export function PainIdCard() {
         </FieldBlock>
 
         <FieldBlock label="我的判斷">
-          <div className="flex items-center gap-3 flex-wrap">
-            {judgmentBadge ?? <Empty />}
-          </div>
+          <div className="flex items-center gap-3 flex-wrap">{judgmentBadge ?? <Empty />}</div>
           {card.verdict.reason_100w && (
-            <p className="text-text-secondary leading-relaxed pt-1">
-              {card.verdict.reason_100w}
-            </p>
+            <p className="text-text-secondary leading-relaxed pt-1">{card.verdict.reason_100w}</p>
           )}
           <div className="grid sm:grid-cols-2 gap-2 pt-2 text-sm">
             <p>

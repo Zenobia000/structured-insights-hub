@@ -26,11 +26,7 @@ export function ProgressVisual() {
   const steps = Array.from({ length: 9 }, (_, i) => (i + 1) as CurrentStep);
 
   return (
-    <div
-      role="list"
-      aria-label="9 個步驟概覽，從卡 1 抱怨原句到卡 9 真假判斷"
-      className="w-full"
-    >
+    <div role="list" aria-label="9 個步驟概覽，從卡 1 抱怨原句到卡 9 真假判斷" className="w-full">
       <ol className="flex items-start justify-between gap-1 sm:gap-2">
         {steps.map((n, idx) => (
           <li

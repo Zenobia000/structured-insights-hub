@@ -8,19 +8,14 @@ export function PhaseBLockedPreview() {
     >
       <div className="relative z-10 flex flex-col items-center text-center gap-2 mb-6">
         <Lock className="h-8 w-8 text-text-muted" aria-hidden />
-        <h2 className="text-[22px] font-bold text-text-primary">
-          填完上面 4 欄就會解鎖
-        </h2>
+        <h2 className="text-[22px] font-bold text-text-primary">填完上面 4 欄就會解鎖</h2>
         <p className="text-[14.5px] text-text-secondary max-w-md leading-[1.6]">
           AI 回覆 + 痛點判斷表 + 第二輪 prompt 在這下面，但你必須先寫完自己的猜測。
         </p>
       </div>
 
       {/* blurred preview outline */}
-      <div
-        className="space-y-4 select-none pointer-events-none"
-        style={{ filter: "blur(8px)" }}
-      >
+      <div className="space-y-4 select-none pointer-events-none" style={{ filter: "blur(8px)" }}>
         <div className="h-6 w-2/3 bg-text-muted/40 rounded" />
         <div className="h-4 w-5/6 bg-text-muted/30 rounded" />
         <div className="h-32 w-full bg-text-muted/20 rounded" />

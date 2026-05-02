@@ -82,9 +82,7 @@ export function JudgmentForm({
         <legend className="text-[16px] font-semibold text-text-primary">
           這是真痛點還是假痛點？
         </legend>
-        <p className="sr-only">
-          可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。
-        </p>
+        <p className="sr-only">可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。</p>
         <RadioGroup
           value={judgment ?? ""}
           onValueChange={(v) => onJudgmentChange(v as Judgment)}
@@ -109,9 +107,7 @@ export function JudgmentForm({
                   <span className="font-mono text-[15px] font-bold text-text-primary">
                     {opt.marker}
                   </span>
-                  <span className="text-[15px] font-semibold text-text-primary">
-                    {opt.label}
-                  </span>
+                  <span className="text-[15px] font-semibold text-text-primary">{opt.label}</span>
                 </div>
                 <p className="text-[12.5px] text-text-secondary leading-[1.55]">
                   {opt.description}
@@ -125,10 +121,7 @@ export function JudgmentForm({
       {/* reason 100w */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between gap-2">
-          <label
-            htmlFor="reason-100w"
-            className="text-[16px] font-semibold text-text-primary"
-          >
+          <label htmlFor="reason-100w" className="text-[16px] font-semibold text-text-primary">
             書面理由（≥ {REASON_MIN} 字）
           </label>
           {reasonPassed && (
@@ -162,10 +155,7 @@ export function JudgmentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label
-              htmlFor="most-confident"
-              className="text-[14px] font-semibold text-text-primary"
-            >
+            <label htmlFor="most-confident" className="text-[14px] font-semibold text-text-primary">
               我最有把握的證據是
             </label>
             {mostOk && (
@@ -214,12 +204,8 @@ export function JudgmentForm({
 
       {/* next action */}
       <fieldset className="space-y-2">
-        <legend className="text-[16px] font-semibold text-text-primary">
-          下一步我會
-        </legend>
-        <p className="sr-only">
-          可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。
-        </p>
+        <legend className="text-[16px] font-semibold text-text-primary">下一步我會</legend>
+        <p className="sr-only">可用 Tab 進入後，按方向鍵切換選項，按 Enter 或空白鍵確認。</p>
         <RadioGroup
           value={nextAction ?? ""}
           onValueChange={(v) => onNextActionChange(v as NextAction)}

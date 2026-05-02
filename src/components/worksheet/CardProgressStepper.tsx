@@ -43,9 +43,7 @@ export function CardProgressStepper() {
           卡 <span className="font-semibold text-text-primary">{current}</span> / 9
           {current === 10 && " · 已完成"}
         </span>
-        <span className="text-text-muted text-xs">
-          {STEP_LABELS[current]}
-        </span>
+        <span className="text-text-muted text-xs">{STEP_LABELS[current]}</span>
       </div>
 
       {/* Desktop / Tablet: 水平 stepper */}
@@ -118,8 +116,7 @@ function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
       <span className="text-sm font-semibold">{step}</span>
     );
 
-  const baseClasses =
-    "h-10 w-10 rounded-full flex items-center justify-center transition-colors";
+  const baseClasses = "h-10 w-10 rounded-full flex items-center justify-center transition-colors";
 
   if (state === "locked") {
     return (
@@ -142,8 +139,7 @@ function StepDot({ step, state }: { step: CurrentStep; state: StepState }) {
       className={cn(
         baseClasses,
         state === "completed" && "bg-verified text-verified-foreground hover:opacity-90",
-        state === "current" &&
-          "bg-secondary text-secondary-foreground ring-4 ring-secondary/20",
+        state === "current" && "bg-secondary text-secondary-foreground ring-4 ring-secondary/20",
       )}
     >
       {content}

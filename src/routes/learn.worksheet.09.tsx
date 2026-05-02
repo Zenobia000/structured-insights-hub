@@ -131,12 +131,7 @@ function CardNinePage() {
 
   useEffect(() => {
     setBlockedMessage(null);
-  }, [
-    v.scores,
-    v.judgment,
-    v.reason_100w,
-    v.next_action,
-  ]);
+  }, [v.scores, v.judgment, v.reason_100w, v.next_action]);
 
   function handleAdvance() {
     if (!scoresEval.allFilled) {
@@ -216,14 +211,12 @@ function CardNinePage() {
             role="alert"
             className="mt-5 flex items-start gap-3 rounded-lg border-2 border-destructive/40 bg-destructive/5 p-4"
           >
-            <ShieldOff
-              className="h-5 w-5 text-destructive shrink-0 mt-0.5"
-              aria-hidden
-            />
+            <ShieldOff className="h-5 w-5 text-destructive shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
               <p className="font-semibold">這張卡片 AI 完全不參與</p>
               <p>
-                真假判斷是這套訓練的唯一交付物。AI 可以幫你蒐集證據（卡 6）、整理表（卡 7）、模擬訪談（卡 8），但「真的嗎」「值得嗎」這兩題永遠是你來判。
+                真假判斷是這套訓練的唯一交付物。AI 可以幫你蒐集證據（卡 6）、整理表（卡
+                7）、模擬訪談（卡 8），但「真的嗎」「值得嗎」這兩題永遠是你來判。
               </p>
             </div>
           </div>
@@ -232,9 +225,7 @@ function CardNinePage() {
             <Award className="h-5 w-5 text-secondary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
               <p className="font-semibold">這份填空簿的唯一交付物</p>
-              <p>
-                你不需要做產品、不需要架網站、不需要收錢。你只需要交出這個書面判斷。
-              </p>
+              <p>你不需要做產品、不需要架網站、不需要收錢。你只需要交出這個書面判斷。</p>
             </div>
           </div>
         </header>
@@ -273,9 +264,7 @@ function CardNinePage() {
         {mode === "teaching" ? (
           <section className="space-y-4">
             <div>
-              <h2 className="text-[20px] font-bold text-text-primary">
-                第一步：5 維度反思評分
-              </h2>
+              <h2 className="text-[20px] font-bold text-text-primary">第一步：5 維度反思評分</h2>
               <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
                 這 5 個維度幫你檢視卡 1-8 的證據強度。每個維度問自己：「我為什麼給這個分數？」
               </p>
@@ -286,19 +275,14 @@ function CardNinePage() {
             {/* total_score_display */}
             <div className="rounded-lg border border-border bg-surface p-4 sm:p-5 space-y-2">
               <div className="flex items-baseline justify-between">
-                <span className="text-[15px] font-semibold text-text-primary">
-                  總分
-                </span>
+                <span className="text-[15px] font-semibold text-text-primary">總分</span>
                 <span className="font-mono text-[20px] font-bold text-text-primary">
                   {total ?? "—"} <span className="text-[14px] text-text-muted">/ 25</span>
                 </span>
               </div>
               {hint && (
                 <div className="flex items-start gap-2 text-[13px] text-text-secondary leading-[1.55]">
-                  <Lightbulb
-                    className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5"
-                    aria-hidden
-                  />
+                  <Lightbulb className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5" aria-hidden />
                   <span>下一步建議：{hint}</span>
                 </div>
               )}
@@ -306,10 +290,7 @@ function CardNinePage() {
 
             {/* teaching_warning */}
             <div className="flex items-start gap-3 rounded-lg border-2 border-caution/40 bg-caution/5 p-4">
-              <AlertTriangle
-                className="h-5 w-5 text-caution shrink-0 mt-0.5"
-                aria-hidden
-              />
+              <AlertTriangle className="h-5 w-5 text-caution shrink-0 mt-0.5" aria-hidden />
               <div className="text-[14px] leading-[1.6] text-text-primary space-y-1">
                 <p className="font-semibold">為什麼分數只是工具，不是答案？</p>
                 <ul className="list-disc pl-5 space-y-0.5 text-text-secondary">
@@ -351,9 +332,7 @@ function CardNinePage() {
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo
-            ? `已自動儲存到瀏覽器 · ${savedAgo}`
-            : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
         </p>
       </main>
 

@@ -57,11 +57,7 @@ export function evaluateCardOne(input: CardOneInput): CardOneChecks {
       ? "warning"
       : "pass";
 
-  const observableScene: CheckStatus = !scene
-    ? "pending"
-    : scene.length >= 5
-      ? "pass"
-      : "warning";
+  const observableScene: CheckStatus = !scene ? "pending" : scene.length >= 5 ? "pass" : "warning";
 
   const allFilled =
     verbatim.length >= 10 &&

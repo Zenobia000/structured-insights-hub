@@ -67,10 +67,7 @@ function CardTwoPage() {
   const background = card.people.background;
 
   // 即時檢核
-  const checks = useMemo(
-    () => evaluateCardTwo({ background, list: people }),
-    [background, people],
-  );
+  const checks = useMemo(() => evaluateCardTwo({ background, list: people }), [background, people]);
 
   // 自我承諾 checkbox（不持久化到 PainCard schema — 僅 page-local）
   const [commitment, setCommitment] = useState(false);
@@ -134,17 +131,13 @@ function CardTwoPage() {
     }
     // d：background 具體性
     if (checks.specificBackground !== "pass") {
-      setBlockedMessage(
-        "背景描述太籠統。至少寫 2 個具體屬性（年齡 / 職業 / 地點）。",
-      );
+      setBlockedMessage("背景描述太籠統。至少寫 2 個具體屬性（年齡 / 職業 / 地點）。");
       setFailureCount((c) => c + 1);
       return;
     }
     // e：commitment
     if (!commitment) {
-      setBlockedMessage(
-        "請勾選右側「我確認今天能聯絡到至少 1 位」— 這是你對自己的承諾。",
-      );
+      setBlockedMessage("請勾選右側「我確認今天能聯絡到至少 1 位」— 這是你對自己的承諾。");
       setFailureCount((c) => c + 1);
       return;
     }
@@ -209,7 +202,9 @@ function CardTwoPage() {
             <Users className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="text-[15px] leading-[1.6] text-text-primary">
               <span className="font-semibold">規則：</span>
-              抱怨主人翁是誰？這種人你能聯絡到 <span className="font-semibold">3 個</span> 嗎？必須是<span className="font-semibold">真名</span>（不是「補習班老師 A」），且你<span className="font-semibold">今天</span>就能聯絡到至少 1 位。
+              抱怨主人翁是誰？這種人你能聯絡到 <span className="font-semibold">3 個</span>{" "}
+              嗎？必須是<span className="font-semibold">真名</span>（不是「補習班老師 A」），且你
+              <span className="font-semibold">今天</span>就能聯絡到至少 1 位。
             </div>
           </div>
 
@@ -244,16 +239,10 @@ function CardTwoPage() {
               highlight={attempted && !backgroundPass}
             />
 
-            <PersonGroupRepeater
-              people={people}
-              attempted={attempted}
-              onChange={setPersonField}
-            />
+            <PersonGroupRepeater people={people} attempted={attempted} onChange={setPersonField} />
 
             <p className="text-[12px] text-text-muted" aria-live="polite">
-              {hydrated && savedAgo
-                ? `已自動儲存到瀏覽器 · ${savedAgo}`
-                : "尚未開始輸入"}
+              {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
             </p>
 
             <ExampleReferenceCard2 />
@@ -279,10 +268,11 @@ function CardTwoPage() {
               <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">LINE</code>
               <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">電話</code>
               <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">Email</code>
-              <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">Messenger</code>
+              <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">
+                Messenger
+              </code>
               <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">FB</code>
-              <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">IG</code>
-              … 等
+              <code className="inline-block font-mono mx-0.5 px-1 rounded bg-muted-bg">IG</code>… 等
             </p>
             <p className="mt-2 text-[11px] leading-[1.5] text-text-muted">
               是否有可聯絡到的真人：

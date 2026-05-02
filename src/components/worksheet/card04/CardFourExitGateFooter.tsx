@@ -48,10 +48,7 @@ export function CardFourExitGateFooter({
             passed={toolNamePass && !forbiddenTriggered}
             label="主人翁現在用的方法有具體名字"
           />
-          <ConditionItem
-            passed={dissatisfactionsPass}
-            label="3 個他不滿意現有方法的具體理由"
-          />
+          <ConditionItem passed={dissatisfactionsPass} label="3 個他不滿意現有方法的具體理由" />
         </ul>
 
         {blockedMessage && !showRetreat && (
@@ -73,8 +70,8 @@ export function CardFourExitGateFooter({
                   這個人可能還沒真正在意這個問題
                 </h3>
                 <p className="mt-1.5 text-[13.5px] leading-[1.6] text-text-secondary">
-                  過不了 → 退回卡片 1，這個人可能還沒真正在意這個問題（沒在花錢花時間解）。
-                  卡 2-4 的資料會保留供參考。
+                  過不了 → 退回卡片 1，這個人可能還沒真正在意這個問題（沒在花錢花時間解）。 卡 2-4
+                  的資料會保留供參考。
                 </p>
                 <button
                   type="button"

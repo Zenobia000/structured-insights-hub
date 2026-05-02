@@ -36,11 +36,10 @@ export function ExampleReferenceCard3() {
       {open && (
         <div id="example-content-card3" className="px-5 pb-5 space-y-3">
           <div>
-            <p className="text-[13px] font-semibold text-text-primary mb-1.5">
-              AI 整理後
-            </p>
+            <p className="text-[13px] font-semibold text-text-primary mb-1.5">AI 整理後</p>
             <blockquote className="border-l-2 border-secondary pl-4 text-[14px] leading-[1.7] text-text-secondary">
-              我每次要在週末寫 30 則家長回報訊息，都會卡在「資料散在週間 7 次小考、要寫得具體、不能傷家長感情」這 3 件事同時要顧。
+              我每次要在週末寫 30 則家長回報訊息，都會卡在「資料散在週間 7
+              次小考、要寫得具體、不能傷家長感情」這 3 件事同時要顧。
             </blockquote>
           </div>
           <div>

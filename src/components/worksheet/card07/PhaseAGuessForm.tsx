@@ -2,12 +2,7 @@ import { Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  GUESS_FIELDS,
-  GUESS_MIN,
-  GUESS_MAX,
-  type GuessKey,
-} from "@/lib/cardSevenValidators";
+import { GUESS_FIELDS, GUESS_MIN, GUESS_MAX, type GuessKey } from "@/lib/cardSevenValidators";
 
 type Props = {
   guesses: Record<GuessKey, string>;
@@ -65,9 +60,7 @@ export function PhaseAGuessForm({
                   </span>
                 )}
               </div>
-              <p className="text-[12.5px] text-text-secondary leading-[1.55]">
-                {f.hint}
-              </p>
+              <p className="text-[12.5px] text-text-secondary leading-[1.55]">{f.hint}</p>
               <Textarea
                 id={`guess-${f.key}`}
                 value={value}

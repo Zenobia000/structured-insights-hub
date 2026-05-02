@@ -63,10 +63,7 @@ export function CardTwoExitGateFooter({
             passed={realNamesPass && allFilledPass}
             label="3 個都有真名（不是「補習班老師 A」）"
           />
-          <ConditionItem
-            passed={contactablePass && commitment}
-            label="你今天就能聯絡到至少 1 位"
-          />
+          <ConditionItem passed={contactablePass && commitment} label="你今天就能聯絡到至少 1 位" />
         </ul>
 
         {/* Blocked message */}
@@ -90,7 +87,8 @@ export function CardTwoExitGateFooter({
                   想不到 3 個真名怎麼辦？
                 </h3>
                 <p className="mt-1.5 text-[13.5px] leading-[1.6] text-text-secondary">
-                  你還不認識這個圈子。解法：先去這群人聚集的地方混 1-2 週（社團、LINE 群、實體場合），再回來。
+                  你還不認識這個圈子。解法：先去這群人聚集的地方混 1-2 週（社團、LINE
+                  群、實體場合），再回來。
                 </p>
                 <button
                   type="button"
@@ -158,9 +156,7 @@ function ConditionItem({ passed, label }: { passed: boolean; label: string }) {
       >
         ✓
       </span>
-      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>
-        {label}
-      </span>
+      <span className={cn(passed ? "text-text-primary" : "text-text-secondary")}>{label}</span>
     </li>
   );
 }

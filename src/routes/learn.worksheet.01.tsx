@@ -21,8 +21,7 @@ export const Route = createFileRoute("/learn/worksheet/01")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content:
-          "把你聽到的那句抱怨原話寫下來。不美化、不解釋、不分析。AI 在這張卡完全不能介入。",
+        content: "把你聽到的那句抱怨原話寫下來。不美化、不解釋、不分析。AI 在這張卡完全不能介入。",
       },
     ],
   }),
@@ -172,7 +171,9 @@ function CardOnePage() {
         <div className="grid lg:grid-cols-[1fr_320px] gap-8 lg:gap-10 items-start">
           {/* Form */}
           <section aria-labelledby="form-title" className="space-y-6">
-            <h2 id="form-title" className="sr-only">5 個欄位</h2>
+            <h2 id="form-title" className="sr-only">
+              5 個欄位
+            </h2>
 
             <TextareaField
               id="verbatim"
@@ -186,7 +187,11 @@ function CardOnePage() {
               maxLength={500}
               warning={verbatimWarning}
               error={verbatimError}
-              highlight={attempted && (complaint.verbatim.trim().length < 10 || detectAnalysisWords(complaint.verbatim).length > 0)}
+              highlight={
+                attempted &&
+                (complaint.verbatim.trim().length < 10 ||
+                  detectAnalysisWords(complaint.verbatim).length > 0)
+              }
             />
 
             <TextField
@@ -198,7 +203,9 @@ function CardOnePage() {
               onChange={set("source_name")}
               required
               warning={sourceNameWarning}
-              highlight={attempted && (!complaint.source_name || isForbiddenName(complaint.source_name))}
+              highlight={
+                attempted && (!complaint.source_name || isForbiddenName(complaint.source_name))
+              }
             />
 
             <TextField

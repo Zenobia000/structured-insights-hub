@@ -34,9 +34,9 @@ type Props = {
 
 type Mode =
   | "prioritize_contact" // 真痛點/待訪談 + interview
-  | "gather_more_first"  // next_action = more_evidence
-  | "no_interview"       // fake_pain 或 change_topic
-  | "needs_judgment";    // 尚未選 judgment
+  | "gather_more_first" // next_action = more_evidence
+  | "no_interview" // fake_pain 或 change_topic
+  | "needs_judgment"; // 尚未選 judgment
 
 function deriveMode(j: Judgment | null, na: NextAction | null): Mode {
   if (j === null) return "needs_judgment";
@@ -60,9 +60,7 @@ export function InterviewTargetsPrefill({ targets, judgment, nextAction }: Props
     });
   }, [targets]);
 
-  const contactReady = sorted.filter(
-    (t) => t.contact_known && t.contact_info.trim().length > 0,
-  );
+  const contactReady = sorted.filter((t) => t.contact_known && t.contact_info.trim().length > 0);
   const contactMissing = sorted.filter(
     (t) => !t.contact_known || t.contact_info.trim().length === 0,
   );
@@ -99,10 +97,7 @@ export function InterviewTargetsPrefill({ targets, judgment, nextAction }: Props
       ) : mode === "gather_more_first" ? (
         <GatherMoreBlock targets={sorted} />
       ) : (
-        <PrioritizeBlock
-          contactReady={contactReady}
-          contactMissing={contactMissing}
-        />
+        <PrioritizeBlock contactReady={contactReady} contactMissing={contactMissing} />
       )}
     </section>
   );
@@ -124,9 +119,7 @@ function ModeBlurb({
     return (
       <>
         目前判斷：
-        <strong className="text-text-primary">
-          {judgment === "fake_pain" ? "假痛點" : "—"}
-        </strong>
+        <strong className="text-text-primary">{judgment === "fake_pain" ? "假痛點" : "—"}</strong>
         ／下一步：
         <strong className="text-text-primary">
           {nextAction === "change_topic" ? "換題目" : "—"}
@@ -138,11 +131,7 @@ function ModeBlurb({
   if (mode === "gather_more_first") {
     return <>下一步是「補證據」。先回卡 6 跑一輪 AI，再回來看訪談對象。</>;
   }
-  return (
-    <>
-      下一步是「訪談」。優先聯絡有資訊的對象；缺聯絡的需要先補上才能約。
-    </>
-  );
+  return <>下一步是「訪談」。優先聯絡有資訊的對象；缺聯絡的需要先補上才能約。</>;
 }
 
 function EmptyHint() {
@@ -203,9 +192,7 @@ function GatherMoreBlock({ targets }: { targets: Target[] }) {
     <div className="space-y-3">
       <div className="flex items-start gap-2.5 rounded-md border border-secondary/30 bg-secondary/5 px-3 py-2.5 text-[13px] leading-[1.55] text-text-primary">
         <AlertCircle className="h-4 w-4 text-secondary shrink-0 mt-0.5" aria-hidden />
-        <span>
-          目前選擇「補證據」優先。下面是卡 8 已列的對象，補完證據後再回來確認名單。
-        </span>
+        <span>目前選擇「補證據」優先。下面是卡 8 已列的對象，補完證據後再回來確認名單。</span>
       </div>
       <ul className="space-y-2">
         {targets.map((t, i) => (
@@ -221,9 +208,7 @@ function NoInterviewBlock({ targets }: { targets: Target[] }) {
     <div className="space-y-3">
       <div className="flex items-start gap-2.5 rounded-md border border-text-muted/30 bg-muted/30 px-3 py-2.5 text-[13px] leading-[1.55] text-text-primary">
         <AlertCircle className="h-4 w-4 text-text-muted shrink-0 mt-0.5" aria-hidden />
-        <span>
-          這次判斷不需訪談。卡 8 名單保留下來，未來換題目時可回來重看誰仍可聯絡。
-        </span>
+        <span>這次判斷不需訪談。卡 8 名單保留下來，未來換題目時可回來重看誰仍可聯絡。</span>
       </div>
       <details className="text-[13px] text-text-secondary">
         <summary className="cursor-pointer hover:text-text-primary">
@@ -239,26 +224,16 @@ function NoInterviewBlock({ targets }: { targets: Target[] }) {
   );
 }
 
-function TargetRow({
-  target,
-  ready,
-  muted,
-}: {
-  target: Target;
-  ready: boolean;
-  muted?: boolean;
-}) {
+function TargetRow({ target, ready, muted }: { target: Target; ready: boolean; muted?: boolean }) {
   const [copied, setCopied] = useState(false);
   const hasContact = target.contact_known && target.contact_info.trim().length > 0;
 
   function copyContact() {
     if (!hasContact) return;
-    void navigator.clipboard
-      .writeText(`${target.persona} — ${target.contact_info}`)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      });
+    void navigator.clipboard.writeText(`${target.persona} — ${target.contact_info}`).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
   }
 
   return (
@@ -281,9 +256,7 @@ function TargetRow({
           <p className="text-[12px] text-caution">缺聯絡資訊</p>
         )}
         {target.planned_time.trim().length > 0 && (
-          <p className="text-[11.5px] text-text-muted">
-            預計時間：{target.planned_time}
-          </p>
+          <p className="text-[11.5px] text-text-muted">預計時間：{target.planned_time}</p>
         )}
       </div>
       {hasContact && (

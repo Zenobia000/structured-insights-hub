@@ -23,10 +23,11 @@ export function AiResponseInput({
       className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-5"
     >
       <header>
-        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">
-          Step 2
-        </p>
-        <h2 id="step-2-label" className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]">
+        <p className="text-[12px] font-semibold tracking-widest uppercase text-secondary">Step 2</p>
+        <h2
+          id="step-2-label"
+          className="mt-1 text-[20px] font-bold text-text-primary leading-[1.35]"
+        >
           把 AI 的回覆貼回來
         </h2>
         <p className="mt-1.5 text-[13.5px] text-text-secondary leading-[1.6]">

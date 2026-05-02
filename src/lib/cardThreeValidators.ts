@@ -98,12 +98,11 @@ export const PROMPT_TEMPLATE = `我有一個抱怨原句：
 3. 不要建議解決方案、不要推薦工具、不要分析市場
 4. 直接給我句子，不要解釋為什麼`;
 
-export function interpolatePrompt(
-  complaintVerbatim: string,
-  peopleBackground: string,
-): string {
-  return PROMPT_TEMPLATE.replace("{complaint_verbatim}", complaintVerbatim || "（尚未填寫卡 1 抱怨原句）")
-    .replace("{people_background}", peopleBackground || "（尚未填寫卡 2 背景）");
+export function interpolatePrompt(complaintVerbatim: string, peopleBackground: string): string {
+  return PROMPT_TEMPLATE.replace(
+    "{complaint_verbatim}",
+    complaintVerbatim || "（尚未填寫卡 1 抱怨原句）",
+  ).replace("{people_background}", peopleBackground || "（尚未填寫卡 2 背景）");
 }
 
 export type AiToolPref = "chatgpt" | "claude" | "gemini" | "perplexity";

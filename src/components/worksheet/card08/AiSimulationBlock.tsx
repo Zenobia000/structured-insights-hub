@@ -61,9 +61,7 @@ export function AiSimulationBlock({
           )}
           （可選）熱身：請 AI 模擬受訪者
         </span>
-        <span className="text-[12px] text-text-secondary">
-          {open ? "收起" : "展開"}
-        </span>
+        <span className="text-[12px] text-text-secondary">{open ? "收起" : "展開"}</span>
       </button>
 
       {open && (
@@ -74,9 +72,7 @@ export function AiSimulationBlock({
 
           <div className="rounded-lg border border-border bg-surface overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-border bg-muted-bg/40">
-              <span className="text-[13px] font-semibold text-text-primary">
-                AI 模擬 prompt
-              </span>
+              <span className="text-[13px] font-semibold text-text-primary">AI 模擬 prompt</span>
               <Button size="sm" variant="outline" onClick={handleCopy} className="h-8">
                 {copied ? (
                   <>
@@ -111,13 +107,8 @@ export function AiSimulationBlock({
           </div>
 
           <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/40 bg-caution/5 p-3 text-[13px] leading-[1.6] text-text-primary">
-            <AlertTriangle
-              className="h-4 w-4 text-caution shrink-0 mt-0.5"
-              aria-hidden
-            />
-            <p>
-              AI 模擬只是熱身。真實的沉默、猶豫、身體語言，AI 給不了你。
-            </p>
+            <AlertTriangle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
+            <p>AI 模擬只是熱身。真實的沉默、猶豫、身體語言，AI 給不了你。</p>
           </div>
         </div>
       )}

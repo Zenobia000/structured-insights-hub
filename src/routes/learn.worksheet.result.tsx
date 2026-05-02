@@ -109,8 +109,7 @@ function ResultPage() {
           <ArrowLeft className="h-3 w-3" /> 卡 9
         </Link>
         <span className="text-text-muted">
-          資料只在你的本機 ·{" "}
-          {card.updated_at.slice(11, 16)} 最後更新
+          資料只在你的本機 · {card.updated_at.slice(11, 16)} 最後更新
         </span>
       </div>
 

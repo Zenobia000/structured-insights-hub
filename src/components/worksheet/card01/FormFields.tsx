@@ -42,13 +42,32 @@ function fieldClasses(opts: { warning?: boolean; error?: boolean; highlight?: bo
 }
 
 export function TextField(props: CommonProps) {
-  const { id, label, helper, value, placeholder, required, warning, error, highlight, onChange, onBlur } = props;
+  const {
+    id,
+    label,
+    helper,
+    value,
+    placeholder,
+    required,
+    warning,
+    error,
+    highlight,
+    onChange,
+    onBlur,
+  } = props;
   const describedBy = `${id}-helper${warning ? ` ${id}-warning` : ""}${error ? ` ${id}-error` : ""}`;
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-[18px] font-semibold text-text-primary leading-[1.4]">
+      <label
+        htmlFor={id}
+        className="block text-[18px] font-semibold text-text-primary leading-[1.4]"
+      >
         {label}
-        {required && <span aria-hidden className="text-text-muted ml-1">*</span>}
+        {required && (
+          <span aria-hidden className="text-text-muted ml-1">
+            *
+          </span>
+        )}
       </label>
       <p id={`${id}-helper`} className="text-[13px] leading-[1.5] text-text-secondary">
         {helper}
@@ -66,7 +85,11 @@ export function TextField(props: CommonProps) {
         className={fieldClasses({ warning: !!warning, error: !!error, highlight })}
       />
       {warning && (
-        <p id={`${id}-warning`} role="status" className="flex items-start gap-1.5 text-[13px] text-caution leading-[1.5]">
+        <p
+          id={`${id}-warning`}
+          role="status"
+          className="flex items-start gap-1.5 text-[13px] text-caution leading-[1.5]"
+        >
           <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" aria-hidden />
           <span>{warning}</span>
         </p>
@@ -86,13 +109,34 @@ type TextareaProps = CommonProps & {
 };
 
 export function TextareaField(props: TextareaProps) {
-  const { id, label, helper, value, placeholder, rows = 4, maxLength, required, warning, error, highlight, onChange, onBlur } = props;
+  const {
+    id,
+    label,
+    helper,
+    value,
+    placeholder,
+    rows = 4,
+    maxLength,
+    required,
+    warning,
+    error,
+    highlight,
+    onChange,
+    onBlur,
+  } = props;
   const describedBy = `${id}-helper${warning ? ` ${id}-warning` : ""}${error ? ` ${id}-error` : ""}`;
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-[18px] font-semibold text-text-primary leading-[1.4]">
+      <label
+        htmlFor={id}
+        className="block text-[18px] font-semibold text-text-primary leading-[1.4]"
+      >
         {label}
-        {required && <span aria-hidden className="text-text-muted ml-1">*</span>}
+        {required && (
+          <span aria-hidden className="text-text-muted ml-1">
+            *
+          </span>
+        )}
       </label>
       <p id={`${id}-helper`} className="text-[13px] leading-[1.5] text-text-secondary">
         {helper}
@@ -108,18 +152,29 @@ export function TextareaField(props: TextareaProps) {
         aria-invalid={!!error}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
         onBlur={onBlur}
-        className={cn(fieldClasses({ warning: !!warning, error: !!error, highlight }), "resize-y min-h-[6rem]")}
+        className={cn(
+          fieldClasses({ warning: !!warning, error: !!error, highlight }),
+          "resize-y min-h-[6rem]",
+        )}
       />
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1">
           {warning && (
-            <p id={`${id}-warning`} role="status" className="flex items-start gap-1.5 text-[13px] text-caution leading-[1.5]">
+            <p
+              id={`${id}-warning`}
+              role="status"
+              className="flex items-start gap-1.5 text-[13px] text-caution leading-[1.5]"
+            >
               <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" aria-hidden />
               <span>{warning}</span>
             </p>
           )}
           {error && (
-            <p id={`${id}-error`} role="alert" className="text-[13px] text-destructive leading-[1.5]">
+            <p
+              id={`${id}-error`}
+              role="alert"
+              className="text-[13px] text-destructive leading-[1.5]"
+            >
               {error}
             </p>
           )}

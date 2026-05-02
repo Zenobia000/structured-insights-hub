@@ -75,19 +75,13 @@ export function ThreeStepTeachingSection() {
                   {index} · {cards}
                 </span>
               </div>
-              <h3 className="text-[18px] font-semibold text-text-primary leading-[1.4]">
-                {title}
-              </h3>
-              <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">
-                {body}
-              </p>
+              <h3 className="text-[18px] font-semibold text-text-primary leading-[1.4]">{title}</h3>
+              <p className="mt-2.5 text-[15px] leading-[1.6] text-text-secondary">{body}</p>
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-[11px] font-semibold text-text-muted tracking-wider uppercase mb-1">
                   產出
                 </p>
-                <p className="text-[13px] leading-[1.5] text-text-primary">
-                  {output}
-                </p>
+                <p className="text-[13px] leading-[1.5] text-text-primary">{output}</p>
               </div>
             </li>
           ))}

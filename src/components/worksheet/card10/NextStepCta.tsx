@@ -27,7 +27,8 @@ export function NextStepCta() {
       {j === "fake_pain" && <FakePainVariant />}
       {!j && (
         <p className="text-text-secondary text-sm">
-          尚未完成真假判斷。<Link to="/learn/worksheet/09" className="text-secondary underline">
+          尚未完成真假判斷。
+          <Link to="/learn/worksheet/09" className="text-secondary underline">
             回到卡 9
           </Link>
         </p>
@@ -39,12 +40,9 @@ export function NextStepCta() {
 function TruePainVariant() {
   return (
     <>
-      <p className="text-base sm:text-lg font-medium text-text-primary">
-        你判定這是真痛點。
-      </p>
+      <p className="text-base sm:text-lg font-medium text-text-primary">你判定這是真痛點。</p>
       <p className="mt-2 text-text-secondary text-[15px] leading-relaxed">
-        卡 8 的訪談對象排起來，現場確認後，可以進入 PainMap App
-        進階版繼續分析。
+        卡 8 的訪談對象排起來，現場確認後，可以進入 PainMap App 進階版繼續分析。
       </p>
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <Button size="lg" className="bg-secondary hover:bg-secondary/90" asChild>
@@ -90,11 +88,7 @@ function PendingInterviewVariant() {
 function FakePainVariant() {
   const reset = usePainCardStore((s) => s.reset);
   const handleNew = () => {
-    if (
-      confirm(
-        "建立新的痛點身份證？目前這張將被覆蓋（建議先匯出 .md 保存後再繼續）。",
-      )
-    ) {
+    if (confirm("建立新的痛點身份證？目前這張將被覆蓋（建議先匯出 .md 保存後再繼續）。")) {
       reset();
       window.location.href = "/learn/worksheet/01";
     }
@@ -102,9 +96,7 @@ function FakePainVariant() {
 
   return (
     <>
-      <p className="text-base sm:text-lg font-medium text-text-primary">
-        你判定這是假痛點。
-      </p>
+      <p className="text-base sm:text-lg font-medium text-text-primary">你判定這是假痛點。</p>
       <p className="mt-2 text-text-secondary text-[15px] leading-relaxed">
         <strong className="text-text-primary">
           不要難過。這就是這份卡片的價值 — 幫你省下 3 個月走錯路的時間。
@@ -112,11 +104,7 @@ function FakePainVariant() {
         換題目，從卡 1 重新填。
       </p>
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
-        <Button
-          size="lg"
-          onClick={handleNew}
-          className="bg-secondary hover:bg-secondary/90"
-        >
+        <Button size="lg" onClick={handleNew} className="bg-secondary hover:bg-secondary/90">
           換題目，從卡 1 開始 →
         </Button>
         <Button variant="ghost" size="lg" asChild>

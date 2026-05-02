@@ -58,9 +58,7 @@ function CardSevenPage() {
   const rawAi = card.ai_evidence.raw_response.trim();
 
   // Phase A 解鎖：state-driven，初始值依「已存在 phase_a_completed_at」
-  const [unlocked, setUnlocked] = useState<boolean>(
-    Boolean(sg.phase_a_completed_at),
-  );
+  const [unlocked, setUnlocked] = useState<boolean>(Boolean(sg.phase_a_completed_at));
 
   // hydrate 完成後，若偵測到任何已存在的 Card 7 草稿，顯示「已恢復」橫幅
   const hasDraft = useMemo(() => {
@@ -72,7 +70,6 @@ function CardSevenPage() {
   }, [sg]);
   const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
   const showDraftBanner = hydrated && hasDraft && !draftBannerDismissed;
-
 
   // 同步 store 變化（當 reset / 退回時清空）
   useEffect(() => {
@@ -87,12 +84,10 @@ function CardSevenPage() {
   const deltas = evaluateDeltas(sg);
   const tablePassed = evaluateTable(sg);
 
-  const setGuess = (key: GuessKey, v: string) =>
-    updateField(`self_guess.guesses.${key}`, v);
+  const setGuess = (key: GuessKey, v: string) => updateField(`self_guess.guesses.${key}`, v);
   const setCheckpoint = (key: CheckpointKey, v: boolean) =>
     updateField(`self_guess.ai_checkpoints_passed.${key}`, v);
-  const setDelta = (key: DeltaKey, v: string) =>
-    updateField(`self_guess.deltas.${key}`, v);
+  const setDelta = (key: DeltaKey, v: string) => updateField(`self_guess.deltas.${key}`, v);
   const setTable = (v: string) => updateField("self_guess.pain_judgment_table", v);
 
   function handleUnlock() {
@@ -107,12 +102,7 @@ function CardSevenPage() {
 
   useEffect(() => {
     setBlockedMessage(null);
-  }, [
-    sg.guesses,
-    sg.ai_checkpoints_passed,
-    sg.deltas,
-    sg.pain_judgment_table,
-  ]);
+  }, [sg.guesses, sg.ai_checkpoints_passed, sg.deltas, sg.pain_judgment_table]);
 
   function handleAdvance() {
     if (!unlocked || !phaseA.allFilled) {
@@ -120,9 +110,7 @@ function CardSevenPage() {
       return;
     }
     if (!cp.allPassed) {
-      setBlockedMessage(
-        `${4 - cp.passedCount} 個 checkpoint 沒過，可以用第二輪 prompt 補`,
-      );
+      setBlockedMessage(`${4 - cp.passedCount} 個 checkpoint 沒過，可以用第二輪 prompt 補`);
       return;
     }
     if (!tablePassed) {
@@ -144,17 +132,25 @@ function CardSevenPage() {
   }
 
   function handleBackToCard6() {
-    const ok = window.confirm(
-      "退回卡 6 會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？",
-    );
+    const ok = window.confirm("退回卡 6 會清空卡 7 進度（猜測、checkpoint、判斷表、差異），確定？");
     if (!ok) return;
     // 清空 self_guess
-    (["most_painful_person", "most_common_scene", "biggest_dissatisfaction", "possible_fake_pain"] as GuessKey[]).forEach(
-      (k) => updateField(`self_guess.guesses.${k}`, ""),
-    );
-    (["people_segmented", "scenes_observable", "workaround_dissatisfactions_listed", "fake_pains_flagged"] as CheckpointKey[]).forEach(
-      (k) => updateField(`self_guess.ai_checkpoints_passed.${k}`, false),
-    );
+    (
+      [
+        "most_painful_person",
+        "most_common_scene",
+        "biggest_dissatisfaction",
+        "possible_fake_pain",
+      ] as GuessKey[]
+    ).forEach((k) => updateField(`self_guess.guesses.${k}`, ""));
+    (
+      [
+        "people_segmented",
+        "scenes_observable",
+        "workaround_dissatisfactions_listed",
+        "fake_pains_flagged",
+      ] as CheckpointKey[]
+    ).forEach((k) => updateField(`self_guess.ai_checkpoints_passed.${k}`, false));
     updateField("self_guess.pain_judgment_table", "");
     (["biggest_diff", "ai_added", "guess_unsupported"] as DeltaKey[]).forEach((k) =>
       updateField(`self_guess.deltas.${k}`, ""),
@@ -212,9 +208,7 @@ function CardSevenPage() {
           <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
           <div className="h-32 w-full bg-muted rounded animate-pulse" />
           <div className="h-64 w-full bg-muted rounded animate-pulse" />
-          <p className="text-[12px] text-text-muted text-center">
-            正在從瀏覽器恢復草稿…
-          </p>
+          <p className="text-[12px] text-text-muted text-center">正在從瀏覽器恢復草稿…</p>
         </main>
       </div>
     );
@@ -249,7 +243,8 @@ function CardSevenPage() {
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
               <p className="font-semibold">為什麼要先猜？</p>
               <p>
-                先寫下自己的猜測，再對照 AI 回覆。差異就是你要學的地方。AI 不是給你答案，是讓你看到自己的盲區。
+                先寫下自己的猜測，再對照 AI 回覆。差異就是你要學的地方。AI
+                不是給你答案，是讓你看到自己的盲區。
               </p>
             </div>
           </div>
@@ -331,9 +326,7 @@ function CardSevenPage() {
                   {rawAi}
                 </pre>
               ) : (
-                <p className="text-[13px] text-text-secondary italic">
-                  （卡 6 尚未貼上 AI 回覆）
-                </p>
+                <p className="text-[13px] text-text-secondary italic">（卡 6 尚未貼上 AI 回覆）</p>
               )}
             </div>
 
@@ -367,18 +360,12 @@ function CardSevenPage() {
             </div>
 
             {/* Deltas */}
-            <DeltasForm
-              values={deltaValues}
-              filled={deltas.filled}
-              onChange={setDelta}
-            />
+            <DeltasForm values={deltaValues} filled={deltas.filled} onChange={setDelta} />
           </section>
         )}
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo
-            ? `已自動儲存到瀏覽器 · ${savedAgo}`
-            : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
         </p>
       </main>
 

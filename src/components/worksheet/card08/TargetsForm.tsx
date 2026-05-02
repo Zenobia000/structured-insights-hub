@@ -22,22 +22,12 @@ export type TargetItem = {
 type Props = {
   targets: TargetItem[];
   highlightIndex: number | null;
-  onUpdate: (
-    index: number,
-    field: keyof TargetItem,
-    value: string | boolean,
-  ) => void;
+  onUpdate: (index: number, field: keyof TargetItem, value: string | boolean) => void;
   onAdd: () => void;
   onRemove: (index: number) => void;
 };
 
-export function TargetsForm({
-  targets,
-  highlightIndex,
-  onUpdate,
-  onAdd,
-  onRemove,
-}: Props) {
+export function TargetsForm({ targets, highlightIndex, onUpdate, onAdd, onRemove }: Props) {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-2">
@@ -51,15 +41,11 @@ export function TargetsForm({
               key={i}
               className={cn(
                 "rounded-lg border bg-surface p-4 sm:p-5 space-y-4 transition-colors",
-                isHl
-                  ? "border-secondary ring-2 ring-secondary/30"
-                  : "border-border",
+                isHl ? "border-secondary ring-2 ring-secondary/30" : "border-border",
               )}
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-[15px] font-semibold text-text-primary">
-                  訪談對象 {i + 1}
-                </h3>
+                <h3 className="text-[15px] font-semibold text-text-primary">訪談對象 {i + 1}</h3>
                 {targets.length > TARGETS_MIN && (
                   <Button
                     type="button"

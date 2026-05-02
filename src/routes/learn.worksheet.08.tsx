@@ -24,8 +24,7 @@ export const Route = createFileRoute("/learn/worksheet/08")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content:
-          "規劃 2 位訪談對象、3 題非推銷題，並理解訪談禁忌。AI 不能取代真人訪談。",
+        content: "規劃 2 位訪談對象、3 題非推銷題，並理解訪談禁忌。AI 不能取代真人訪談。",
       },
     ],
   }),
@@ -108,11 +107,9 @@ function CardEightPage() {
     updateField("interview_plan.questions", next);
   };
 
-  const setTaboos = (v: boolean) =>
-    updateField("interview_plan.interview_taboos_understood", v);
+  const setTaboos = (v: boolean) => updateField("interview_plan.interview_taboos_understood", v);
 
-  const setAiResponse = (v: string) =>
-    updateField("interview_plan.ai_simulated_response", v);
+  const setAiResponse = (v: string) => updateField("interview_plan.ai_simulated_response", v);
 
   // chip pick → fill first empty persona
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
@@ -141,9 +138,7 @@ function CardEightPage() {
 
   function handleAdvance() {
     if (!targetsEval.anyContact) {
-      setBlockedMessage(
-        `至少要有 1 位你能聯絡到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`,
-      );
+      setBlockedMessage(`至少要有 1 位你能聯絡到的人（contact 欄位 ≥ ${CONTACT_MIN} 字）`);
       return;
     }
     if (!questionsEval.allFilled) {
@@ -222,7 +217,8 @@ function CardEightPage() {
             真人訪談規劃
           </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
-            AI 找到的證據是「文字痕跡」，不是「現場真實」。沉默、尷尬、害怕、猶豫、身體語言，AI 看不到。
+            AI 找到的證據是「文字痕跡」，不是「現場真實」。沉默、尷尬、害怕、猶豫、身體語言，AI
+            看不到。
           </p>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border-2 border-secondary/40 bg-secondary/5 p-4">
@@ -230,7 +226,8 @@ function CardEightPage() {
             <div className="text-[14.5px] leading-[1.6] text-text-primary space-y-1">
               <p className="font-semibold">為什麼還要訪談？</p>
               <p>
-                真人訪談仍然是必要的。AI 只是讓你更快找到該訪談誰。判斷一個痛點是真是假，最後永遠來自真人對話。
+                真人訪談仍然是必要的。AI
+                只是讓你更快找到該訪談誰。判斷一個痛點是真是假，最後永遠來自真人對話。
               </p>
             </div>
           </div>
@@ -239,9 +236,7 @@ function CardEightPage() {
         {/* Section 3: targets */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              第一步：挑 2 位訪談對象
-            </h2>
+            <h2 className="text-[20px] font-bold text-text-primary">第一步：挑 2 位訪談對象</h2>
             <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
               從卡 7 痛點判斷表 + 卡 6 第 8 題的人裡，選 2 種最容易聯絡到的。
             </p>
@@ -259,10 +254,7 @@ function CardEightPage() {
 
           {noContactAtAll && (
             <div className="flex items-start gap-2.5 rounded-md border-2 border-caution/50 bg-caution/5 px-3 py-2.5 text-[13.5px] text-text-primary">
-              <AlertCircle
-                className="h-4 w-4 text-caution shrink-0 mt-0.5"
-                aria-hidden
-              />
+              <AlertCircle className="h-4 w-4 text-caution shrink-0 mt-0.5" aria-hidden />
               <span>
                 目前所有訪談對象都還沒有具體聯絡管道。如果你連 1 位都聯絡不到，建議
                 <strong className="font-semibold"> 退回卡 2</strong> 補充你已認識的人。
@@ -274,9 +266,7 @@ function CardEightPage() {
         {/* Section 4: questions */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              第二步：寫 3 個訪談題
-            </h2>
+            <h2 className="text-[20px] font-bold text-text-primary">第二步：寫 3 個訪談題</h2>
             <p className="text-[14px] text-text-secondary leading-[1.6] mt-1">
               不是推銷題。問他「你最近一次怎麼解」，不要問「你會用 App 嗎」。
             </p>
@@ -287,9 +277,7 @@ function CardEightPage() {
         {/* Section 5: rules */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-[20px] font-bold text-text-primary">
-              第三步：訪談規則（很重要）
-            </h2>
+            <h2 className="text-[20px] font-bold text-text-primary">第三步：訪談規則（很重要）</h2>
           </div>
           <InterviewRulesTable
             understood={plan.interview_taboos_understood}
@@ -307,9 +295,7 @@ function CardEightPage() {
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">
-          {hydrated && savedAgo
-            ? `已自動儲存到瀏覽器 · ${savedAgo}`
-            : "尚未開始輸入"}
+          {hydrated && savedAgo ? `已自動儲存到瀏覽器 · ${savedAgo}` : "尚未開始輸入"}
         </p>
       </main>
 

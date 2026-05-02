@@ -16,10 +16,7 @@ export function CtaFooterSection() {
   };
 
   return (
-    <SectionFade
-      ariaLabelledBy="cta-footer-title"
-      className="bg-primary text-primary-foreground"
-    >
+    <SectionFade ariaLabelledBy="cta-footer-title" className="bg-primary text-primary-foreground">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
         <h2
           id="cta-footer-title"
@@ -28,7 +25,8 @@ export function CtaFooterSection() {
           不需要懂 AI，也能開始判斷
         </h2>
         <p className="mt-4 text-[17px] leading-[1.7] text-primary-foreground/85 max-w-2xl mx-auto">
-          選一個你最近反覆遇到的麻煩 — 自己的或聽別人說的都行 — 30 分鐘後你會有一張書面判斷的痛點身份證。
+          選一個你最近反覆遇到的麻煩 — 自己的或聽別人說的都行 — 30
+          分鐘後你會有一張書面判斷的痛點身份證。
         </p>
 
         <button
@@ -41,7 +39,8 @@ export function CtaFooterSection() {
         </button>
 
         <p className="mt-6 text-xs leading-[1.6] text-primary-foreground/70 max-w-xl mx-auto">
-          資料只存在你自己的瀏覽器（LocalStorage），不需要註冊、不上傳雲端。可隨時匯出 Markdown / JSON / PDF。
+          資料只存在你自己的瀏覽器（LocalStorage），不需要註冊、不上傳雲端。可隨時匯出 Markdown /
+          JSON / PDF。
         </p>
       </div>
     </SectionFade>

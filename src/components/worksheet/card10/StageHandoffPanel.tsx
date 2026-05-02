@@ -25,8 +25,7 @@ export function StageHandoffPanel() {
             </span>
           </div>
           <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-            9 張卡片，30-90 分鐘。產出：真假判斷的書面交付。
-            不需要：寫程式、收錢、做產品。
+            9 張卡片，30-90 分鐘。產出：真假判斷的書面交付。 不需要：寫程式、收錢、做產品。
           </p>
         </div>
 
@@ -51,8 +50,7 @@ export function StageHandoffPanel() {
                 )}
               </div>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-                72 小時 sprint。產出：第一筆真實付款。
-                讀：first_principles_sprint_manual.md
+                72 小時 sprint。產出：第一筆真實付款。 讀：first_principles_sprint_manual.md
               </p>
               {j === "true_pain" && (
                 <Button variant="outline" size="sm" className="mt-3" asChild>
@@ -67,8 +65,8 @@ export function StageHandoffPanel() {
 
         <aside className="text-sm text-text-secondary bg-muted-bg/40 border border-border rounded-md p-3 mt-2">
           <span aria-hidden>💡 </span>
-          為什麼分階段？因為「痛點是不是真的」和「能不能賺錢」是兩個不同問題。
-          階段一沒過 → 階段二一定會失敗。
+          為什麼分階段？因為「痛點是不是真的」和「能不能賺錢」是兩個不同問題。 階段一沒過 →
+          階段二一定會失敗。
         </aside>
       </div>
     </section>

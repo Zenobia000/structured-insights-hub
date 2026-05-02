@@ -10,11 +10,7 @@ const STAGE_1 = {
   product: "PainMap Worksheet（本系統）",
   output: "一張書面判斷的痛點身份證",
   time: "30-90 分鐘",
-  skills: [
-    "聽抱怨找真人寫卡關公式",
-    "用 AI 找證據自己先猜對照 AI",
-    "規劃訪談書面真假判斷",
-  ],
+  skills: ["聽抱怨找真人寫卡關公式", "用 AI 找證據自己先猜對照 AI", "規劃訪談書面真假判斷"],
   active: true,
 };
 
@@ -33,10 +29,7 @@ const STAGE_2 = {
 
 export function StageRelationshipSection() {
   return (
-    <SectionFade
-      ariaLabelledBy="stage-title"
-      className="bg-surface border-b border-border"
-    >
+    <SectionFade ariaLabelledBy="stage-title" className="bg-surface border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-3xl mb-10">
           <h2
@@ -55,7 +48,9 @@ export function StageRelationshipSection() {
             <div className="hidden md:flex flex-col items-center gap-2 text-text-muted">
               <ArrowRight className="h-6 w-6" />
               <span className="text-[11px] font-medium text-center leading-tight max-w-[8rem]">
-                通過階段一<br />才進階段二
+                通過階段一
+                <br />
+                才進階段二
               </span>
             </div>
             <div className="md:hidden flex items-center gap-2 text-text-muted">
@@ -88,16 +83,12 @@ function StageBlock({ badge, product, output, time, skills, active }: StageProps
   return (
     <article
       className={`rounded-xl border p-6 sm:p-7 ${
-        active
-          ? "border-secondary bg-primary-light/40"
-          : "border-border bg-page"
+        active ? "border-secondary bg-primary-light/40" : "border-border bg-page"
       }`}
     >
       <div
         className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold mb-4 ${
-          active
-            ? "bg-secondary text-secondary-foreground"
-            : "bg-muted-bg text-text-secondary"
+          active ? "bg-secondary text-secondary-foreground" : "bg-muted-bg text-text-secondary"
         }`}
       >
         {badge}
@@ -115,11 +106,10 @@ function StageBlock({ badge, product, output, time, skills, active }: StageProps
         </p>
         <ul className="space-y-1.5">
           {skills.map((s) => (
-            <li
-              key={s}
-              className="text-[13px] leading-[1.55] text-text-primary flex gap-2"
-            >
-              <span aria-hidden className="text-text-muted shrink-0">·</span>
+            <li key={s} className="text-[13px] leading-[1.55] text-text-primary flex gap-2">
+              <span aria-hidden className="text-text-muted shrink-0">
+                ·
+              </span>
               <span>{s}</span>
             </li>
           ))}

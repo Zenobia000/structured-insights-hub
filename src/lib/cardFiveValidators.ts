@@ -19,7 +19,6 @@ export function evaluateCardFive(input: Contradiction): CardFiveEvaluation {
     trizSelected: input.triz_id !== null ? "pass" : "empty",
     sideAFilled: a.length >= 10 ? "pass" : a.length > 0 ? "warn" : "empty",
     sideBFilled: b.length >= 10 ? "pass" : b.length > 0 ? "warn" : "empty",
-    sacrificedSelected:
-      input.sacrificed === "a" || input.sacrificed === "b" ? "pass" : "empty",
+    sacrificedSelected: input.sacrificed === "a" || input.sacrificed === "b" ? "pass" : "empty",
   };
 }

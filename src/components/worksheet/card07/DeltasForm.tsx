@@ -12,9 +12,7 @@ export function DeltasForm({ values, filled, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-[18px] font-semibold text-text-primary">
-          3 個差異對照（卡 7 核心）
-        </h3>
+        <h3 className="text-[18px] font-semibold text-text-primary">3 個差異對照（卡 7 核心）</h3>
         <p className="text-[13px] text-text-secondary leading-[1.55] mt-0.5">
           不是看 AI 對不對，是看 AI 補了什麼、漏了什麼。
         </p>
@@ -37,9 +35,7 @@ export function DeltasForm({ values, filled, onChange }: Props) {
                 </span>
               )}
             </div>
-            <p className="text-[12.5px] text-text-secondary leading-[1.55]">
-              {f.hint}
-            </p>
+            <p className="text-[12.5px] text-text-secondary leading-[1.55]">{f.hint}</p>
             <Textarea
               id={`delta-${f.key}`}
               value={value}

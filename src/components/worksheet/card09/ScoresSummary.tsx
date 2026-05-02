@@ -31,19 +31,15 @@ export function ScoresSummary({ filled, allFilled, onSwitchToTeaching }: Props) 
   return (
     <div className="rounded-lg border border-border bg-surface p-5 sm:p-6 space-y-4 max-w-3xl">
       <header className="space-y-1">
-        <h2 className="text-[20px] font-bold text-text-primary">
-          5 維度反思（已完成）
-        </h2>
+        <h2 className="text-[20px] font-bold text-text-primary">5 維度反思（已完成）</h2>
         <p className="text-[13.5px] text-text-secondary leading-[1.55]">
-          這個痛點已通過 5 維度反思評分。生產模式不顯示分數，避免異化為品質排名。如需查看分數請切到教學模式。
+          這個痛點已通過 5
+          維度反思評分。生產模式不顯示分數，避免異化為品質排名。如需查看分數請切到教學模式。
         </p>
       </header>
       <ul className="space-y-1.5">
         {DIMENSIONS.map((d) => (
-          <li
-            key={d.key}
-            className="flex items-center gap-2 text-[14px] text-text-primary"
-          >
+          <li key={d.key} className="flex items-center gap-2 text-[14px] text-text-primary">
             <Check className="h-4 w-4 text-verified shrink-0" aria-hidden />
             <span>{d.label.replace(/^\d+\.\s*/, "")}</span>
           </li>

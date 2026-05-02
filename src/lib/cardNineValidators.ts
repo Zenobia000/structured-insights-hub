@@ -8,13 +8,7 @@
  * - judgment → status 對應由 page 層 advance 時寫入
  */
 
-import type {
-  Judgment,
-  NextAction,
-  PainCard,
-  PainCardStatus,
-  Score,
-} from "@/types/painCard";
+import type { Judgment, NextAction, PainCard, PainCardStatus, Score } from "@/types/painCard";
 
 export const REASON_MIN = 100;
 export const REASON_MAX = 5000;
@@ -90,8 +84,7 @@ export function evaluateScores(v: PainCard["verdict"]) {
     people_specificity: typeof v.scores.people_specificity === "number",
     frequency: typeof v.scores.frequency === "number",
     intensity: typeof v.scores.intensity === "number",
-    workaround_dissatisfaction:
-      typeof v.scores.workaround_dissatisfaction === "number",
+    workaround_dissatisfaction: typeof v.scores.workaround_dissatisfaction === "number",
     evidence_credibility: typeof v.scores.evidence_credibility === "number",
   };
   const filledCount = Object.values(filled).filter(Boolean).length;
@@ -108,10 +101,8 @@ export function evaluateScores(v: PainCard["verdict"]) {
 
 export function bandHint(total: number | null): string | null {
   if (total === null) return null;
-  if (total >= 20)
-    return "這份證據強度建議你排真人訪談（卡 8 對象）。";
-  if (total >= 15)
-    return "建議先縮小人群或換場景再研究（退回卡 2 或 3）。";
+  if (total >= 20) return "這份證據強度建議你排真人訪談（卡 8 對象）。";
+  if (total >= 15) return "建議先縮小人群或換場景再研究（退回卡 2 或 3）。";
   return "可能只是抱怨，不是好痛點。可以考慮換題。";
 }
 

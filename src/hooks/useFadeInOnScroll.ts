@@ -26,18 +26,15 @@ export function useFadeInOnScroll<T extends HTMLElement = HTMLElement>(
       return;
     }
 
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            obs.disconnect();
-            break;
-          }
+    const obs = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+          break;
         }
-      },
-      options,
-    );
+      }
+    }, options);
     obs.observe(el);
     return () => obs.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps

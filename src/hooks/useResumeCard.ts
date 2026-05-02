@@ -34,10 +34,8 @@ export function useResumeCard(): ResumeInfo {
     };
   }
 
-  const finished =
-    card.status === "structured" || card.status === "archived_fake";
-  const hasContent =
-    !!card.complaint.verbatim.trim() || card.current_step > 1;
+  const finished = card.status === "structured" || card.status === "archived_fake";
+  const hasContent = !!card.complaint.verbatim.trim() || card.current_step > 1;
 
   return {
     showResume: !finished && hasContent,

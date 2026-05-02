@@ -9,11 +9,7 @@ import { useState } from "react";
 import { ChevronDown, AlertTriangle } from "lucide-react";
 
 import { TextField } from "@/components/worksheet/card01/FormFields";
-import {
-  hasContactableKeyword,
-  isForbiddenPersonName,
-  type Person,
-} from "@/lib/cardTwoValidators";
+import { hasContactableKeyword, isForbiddenPersonName, type Person } from "@/lib/cardTwoValidators";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -86,10 +82,7 @@ function PersonGroup({
           aria-controls={`${idBase}-body`}
           className="flex-1 flex items-center justify-between gap-2 text-left md:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
         >
-          <span
-            id={`${idBase}-title`}
-            className="text-[16px] font-semibold text-text-primary"
-          >
+          <span id={`${idBase}-title`} className="text-[16px] font-semibold text-text-primary">
             {`第 ${index + 1} 位`}
             {person.name && (
               <span className="ml-2 text-[13px] font-normal text-text-secondary">
@@ -98,9 +91,7 @@ function PersonGroup({
             )}
           </span>
           <span className="md:hidden flex items-center gap-2">
-            <span className="text-[12px] text-text-muted tabular-nums">
-              {filledCount}/3
-            </span>
+            <span className="text-[12px] text-text-muted tabular-nums">{filledCount}/3</span>
             <ChevronDown
               className={cn(
                 "h-4 w-4 text-text-secondary transition-transform",

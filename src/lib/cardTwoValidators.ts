@@ -13,25 +13,50 @@ export type Person = { name: string; contact: string; relation: string };
 
 /** R2.2 禁用代稱清單（單獨/包含偵測） */
 const FORBIDDEN_NAME_PATTERNS: RegExp[] = [
-  /^老師\s*[A-Za-z]$/i,                 // 老師 A / 老師B
-  /^同學\s*[A-Za-z]$/i,                 // 同學 A
+  /^老師\s*[A-Za-z]$/i, // 老師 A / 老師B
+  /^同學\s*[A-Za-z]$/i, // 同學 A
   /^學生\s*[A-Za-z]$/i,
-  /^[A-Za-z]$/,                          // A、B、C 單字母
-  /^persona\s*\d+$/i,                   // persona 1
-  /^user\s*\d+$/i,                      // User 1
+  /^[A-Za-z]$/, // A、B、C 單字母
+  /^persona\s*\d+$/i, // persona 1
+  /^user\s*\d+$/i, // User 1
   /^客戶\s*[A-Za-z\d]$/i,
-  /^某位?(老師|同學|學生|客戶|人)$/,     // 某老師、某位老師
+  /^某位?(老師|同學|學生|客戶|人)$/, // 某老師、某位老師
   /^(他|她|某人|某位)$/,
 ];
 
 /** 可聯絡關鍵字（contact 欄位包含其一即視為「今天能傳訊息」） */
 const CONTACTABLE_KEYWORDS = [
-  "LINE", "line", "電話", "手機", "Email", "email", "mail",
-  "Messenger", "messenger", "FB", "fb", "facebook",
-  "IG", "ig", "Instagram", "instagram",
-  "WhatsApp", "whatsapp", "WeChat", "wechat", "微信",
-  "Telegram", "telegram", "簡訊", "SMS", "sms",
-  "Discord", "discord", "Slack", "slack", "Teams",
+  "LINE",
+  "line",
+  "電話",
+  "手機",
+  "Email",
+  "email",
+  "mail",
+  "Messenger",
+  "messenger",
+  "FB",
+  "fb",
+  "facebook",
+  "IG",
+  "ig",
+  "Instagram",
+  "instagram",
+  "WhatsApp",
+  "whatsapp",
+  "WeChat",
+  "wechat",
+  "微信",
+  "Telegram",
+  "telegram",
+  "簡訊",
+  "SMS",
+  "sms",
+  "Discord",
+  "discord",
+  "Slack",
+  "slack",
+  "Teams",
   "@", // 含 @ 的視為 email/handle
 ];
 
@@ -39,16 +64,76 @@ const CONTACTABLE_KEYWORDS = [
 const BACKGROUND_CATEGORY_KEYWORDS: Record<"age" | "occupation" | "location", string[]> = {
   age: ["歲", "代", "年級", "後", "中年", "青年", "退休", "20", "30", "40", "50", "60"],
   occupation: [
-    "老師", "教師", "醫師", "護理", "工程師", "設計師", "業務", "經理", "主管",
-    "創業", "店長", "店主", "老闆", "員工", "助理", "顧問", "律師", "會計",
-    "學生", "家長", "媽媽", "爸爸", "工程", "行銷", "業者", "從業", "職人",
-    "RD", "PM", "HR", "QA", "客服", "廚師", "司機", "保全",
+    "老師",
+    "教師",
+    "醫師",
+    "護理",
+    "工程師",
+    "設計師",
+    "業務",
+    "經理",
+    "主管",
+    "創業",
+    "店長",
+    "店主",
+    "老闆",
+    "員工",
+    "助理",
+    "顧問",
+    "律師",
+    "會計",
+    "學生",
+    "家長",
+    "媽媽",
+    "爸爸",
+    "工程",
+    "行銷",
+    "業者",
+    "從業",
+    "職人",
+    "RD",
+    "PM",
+    "HR",
+    "QA",
+    "客服",
+    "廚師",
+    "司機",
+    "保全",
   ],
   location: [
-    "台北", "新北", "桃園", "台中", "台南", "高雄", "新竹", "基隆", "宜蘭",
-    "花蓮", "台東", "屏東", "嘉義", "雲林", "彰化", "苗栗", "南投",
-    "台灣", "北部", "中部", "南部", "東部", "市區", "鄉下", "永和", "板橋",
-    "海外", "美國", "日本", "香港", "中國", "大陸", "東南亞",
+    "台北",
+    "新北",
+    "桃園",
+    "台中",
+    "台南",
+    "高雄",
+    "新竹",
+    "基隆",
+    "宜蘭",
+    "花蓮",
+    "台東",
+    "屏東",
+    "嘉義",
+    "雲林",
+    "彰化",
+    "苗栗",
+    "南投",
+    "台灣",
+    "北部",
+    "中部",
+    "南部",
+    "東部",
+    "市區",
+    "鄉下",
+    "永和",
+    "板橋",
+    "海外",
+    "美國",
+    "日本",
+    "香港",
+    "中國",
+    "大陸",
+    "東南亞",
   ],
 };
 
@@ -65,7 +150,9 @@ export function hasContactableKeyword(contact: string): boolean {
 
 export function backgroundCategoriesHit(text: string): Array<"age" | "occupation" | "location"> {
   const hit: Array<"age" | "occupation" | "location"> = [];
-  (Object.keys(BACKGROUND_CATEGORY_KEYWORDS) as Array<keyof typeof BACKGROUND_CATEGORY_KEYWORDS>).forEach((k) => {
+  (
+    Object.keys(BACKGROUND_CATEGORY_KEYWORDS) as Array<keyof typeof BACKGROUND_CATEGORY_KEYWORDS>
+  ).forEach((k) => {
     if (BACKGROUND_CATEGORY_KEYWORDS[k].some((w) => text.includes(w))) hit.push(k);
   });
   return hit;
@@ -107,11 +194,7 @@ export function evaluateCardTwo(input: CardTwoInput): CardTwoChecks {
     (p) => hasContactableKeyword(p.contact) && p.relation.trim().length > 0,
   );
   const contactableExists: CheckStatus =
-    filledContacts.length === 0
-      ? "pending"
-      : contactablePerson
-        ? "pass"
-        : "warning";
+    filledContacts.length === 0 ? "pending" : contactablePerson ? "pass" : "warning";
 
   // specificBackground
   const cats = backgroundCategoriesHit(background);

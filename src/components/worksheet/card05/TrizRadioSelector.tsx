@@ -52,9 +52,7 @@ export function TrizRadioSelector({ value, onChange, highlight }: Props) {
             />
             <span className="min-w-0 flex-1">
               <span className="flex items-baseline gap-2">
-                <span className="font-mono text-[13px] font-semibold text-secondary">
-                  {o.id}.
-                </span>
+                <span className="font-mono text-[13px] font-semibold text-secondary">{o.id}.</span>
                 <span className="text-[15px] font-semibold text-text-primary leading-[1.4]">
                   {o.label}
                 </span>

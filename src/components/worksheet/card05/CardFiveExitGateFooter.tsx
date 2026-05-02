@@ -65,8 +65,8 @@ export function CardFiveExitGateFooter({
                   6 個都不像？拆得不夠細
                 </h3>
                 <p className="mt-1.5 text-[13.5px] leading-[1.6] text-text-secondary">
-                  過不了 → 退回卡片 3 再聊一次主人翁，把卡關句寫得更具體。
-                  卡 3-5 的資料會保留，修改卡 3 後請回來重新跑卡 5 的 AI prompt。
+                  過不了 → 退回卡片 3 再聊一次主人翁，把卡關句寫得更具體。 卡 3-5
+                  的資料會保留，修改卡 3 後請回來重新跑卡 5 的 AI prompt。
                 </p>
                 <button
                   type="button"

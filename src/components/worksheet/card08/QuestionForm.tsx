@@ -31,10 +31,7 @@ export function QuestionForm({ questions, onChange }: Props) {
         <p className="text-[13px] text-text-secondary leading-[1.55]">
           建議方向：上次發生 + 怎麼解 + 花多久。每題至少 {QUESTION_MIN} 字。
         </p>
-        <Sheet
-          open={drawerTarget !== null}
-          onOpenChange={(o) => !o && setDrawerTarget(null)}
-        >
+        <Sheet open={drawerTarget !== null} onOpenChange={(o) => !o && setDrawerTarget(null)}>
           <SheetTrigger asChild>
             <Button
               type="button"
@@ -51,7 +48,8 @@ export function QuestionForm({ questions, onChange }: Props) {
             <SheetHeader>
               <SheetTitle>從範例題庫挑一題</SheetTitle>
               <SheetDescription>
-                點選一題會填入第 {(drawerTarget ?? 0) + 1} 題。範例只是參考，建議改寫成你自己的問法。
+                點選一題會填入第 {(drawerTarget ?? 0) + 1}{" "}
+                題。範例只是參考，建議改寫成你自己的問法。
               </SheetDescription>
             </SheetHeader>
             <div className="mt-4 space-y-2">
@@ -101,10 +99,7 @@ export function QuestionForm({ questions, onChange }: Props) {
         return (
           <div key={i} className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label
-                htmlFor={`q-${i}`}
-                className="text-[14.5px] font-semibold text-text-primary"
-              >
+              <label htmlFor={`q-${i}`} className="text-[14.5px] font-semibold text-text-primary">
                 第 {i + 1} 題
               </label>
               {ok && (
@@ -127,10 +122,7 @@ export function QuestionForm({ questions, onChange }: Props) {
             </div>
             {hits.length > 0 && (
               <div className="flex items-start gap-2 rounded-md border-2 border-caution/40 bg-caution/5 p-2.5 text-[12.5px] text-text-primary">
-                <AlertCircle
-                  className="h-3.5 w-3.5 text-caution shrink-0 mt-0.5"
-                  aria-hidden
-                />
+                <AlertCircle className="h-3.5 w-3.5 text-caution shrink-0 mt-0.5" aria-hidden />
                 <div>
                   <p className="font-semibold">這題像在推銷（命中：{hits.join("、")}）。</p>
                   <p className="text-text-secondary mt-0.5">

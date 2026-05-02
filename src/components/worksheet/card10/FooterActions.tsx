@@ -45,11 +45,7 @@ export function FooterActions() {
   };
 
   const handleExportBeforeDelete = () => {
-    downloadBlob(
-      exportFilename(card, "md"),
-      "text/markdown",
-      buildMarkdown(card, mode),
-    );
+    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card, mode));
     toast.success("已下載備份，現在可安全刪除");
   };
 
@@ -69,11 +65,7 @@ export function FooterActions() {
   };
 
   const handleShareDownloadMd = () => {
-    downloadBlob(
-      exportFilename(card, "md"),
-      "text/markdown",
-      buildMarkdown(card, mode),
-    );
+    downloadBlob(exportFilename(card, "md"), "text/markdown", buildMarkdown(card, mode));
   };
 
   return (
@@ -121,9 +113,7 @@ export function FooterActions() {
             </p>
 
             <div className="rounded-md border border-border bg-accent-light p-3 space-y-2">
-              <p className="text-text-primary font-medium">
-                ⚠️ 分享預設不包含 5 維度評分
-              </p>
+              <p className="text-text-primary font-medium">⚠️ 分享預設不包含 5 維度評分</p>
               <p className="text-xs text-text-secondary">
                 生產模式輸出規則 R4.2 — 評分是教學工具，不該被用來比較。
               </p>

@@ -25,8 +25,7 @@ export function CardSixExitGateFooter({
   blockedMessage,
   onAdvance,
 }: Props) {
-  const canAdvance =
-    answersAllPassed && noSolutionPassed && rawResponseLong && !submitting;
+  const canAdvance = answersAllPassed && noSolutionPassed && rawResponseLong && !submitting;
 
   const tooltip = !rawResponseLong
     ? "請貼 AI 回覆原文（≥ 200 字）"

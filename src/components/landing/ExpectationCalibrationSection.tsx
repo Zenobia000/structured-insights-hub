@@ -23,10 +23,7 @@ const WILL_NOT_LEARN = [
 
 export function ExpectationCalibrationSection() {
   return (
-    <SectionFade
-      ariaLabelledBy="expectation-title"
-      className="bg-muted-bg border-b border-border"
-    >
+    <SectionFade ariaLabelledBy="expectation-title" className="bg-muted-bg border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2
@@ -40,19 +37,12 @@ export function ExpectationCalibrationSection() {
         <div className="grid md:grid-cols-2 gap-4 md:gap-6">
           {/* Will learn */}
           <div className="rounded-xl border border-verified/30 bg-surface p-6 sm:p-7">
-            <h3 className="text-[18px] font-semibold text-text-primary mb-5">
-              你會學到
-            </h3>
+            <h3 className="text-[18px] font-semibold text-text-primary mb-5">你會學到</h3>
             <ul className="space-y-3.5">
               {WILL_LEARN.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <CheckCircle2
-                    className="h-5 w-5 text-verified shrink-0 mt-0.5"
-                    aria-hidden
-                  />
-                  <span className="text-[15px] leading-[1.6] text-text-primary">
-                    {item}
-                  </span>
+                  <CheckCircle2 className="h-5 w-5 text-verified shrink-0 mt-0.5" aria-hidden />
+                  <span className="text-[15px] leading-[1.6] text-text-primary">{item}</span>
                 </li>
               ))}
             </ul>
@@ -60,19 +50,12 @@ export function ExpectationCalibrationSection() {
 
           {/* Will NOT learn — 灰色（不是紅色） */}
           <div className="rounded-xl border border-border bg-surface p-6 sm:p-7">
-            <h3 className="text-[18px] font-semibold text-text-primary mb-5">
-              你不會學到
-            </h3>
+            <h3 className="text-[18px] font-semibold text-text-primary mb-5">你不會學到</h3>
             <ul className="space-y-3.5">
               {WILL_NOT_LEARN.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <XCircle
-                    className="h-5 w-5 text-text-secondary shrink-0 mt-0.5"
-                    aria-hidden
-                  />
-                  <span className="text-[15px] leading-[1.6] text-text-secondary">
-                    {item}
-                  </span>
+                  <XCircle className="h-5 w-5 text-text-secondary shrink-0 mt-0.5" aria-hidden />
+                  <span className="text-[15px] leading-[1.6] text-text-secondary">{item}</span>
                 </li>
               ))}
             </ul>

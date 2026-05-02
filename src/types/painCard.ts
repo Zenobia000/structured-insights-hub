@@ -140,6 +140,11 @@ export type PainCard = {
   };
 
   // === Card 8: 真人訪談規劃 ===
+  // 三階段虛擬訪談（皆 optional，不擋卡 8 → 卡 9 推進）：
+  //   Stage 1: ai_simulated_response — AI 演主人翁回答 3 題
+  //   Stage 2: ai_audit_findings — UX researcher 審視 stage 1，找誘導/盲點
+  //   Stage 3: interview_guide_md — 整理出符合 UX 標準的訪綱（暖場/主軸/probe/結尾）
+  // 三階段全 copy-paste pattern（外部 ChatGPT），與 Iron Law #5 一致。
   interview_plan: {
     targets: Array<{
       persona: string;
@@ -150,6 +155,9 @@ export type PainCard = {
     questions: string[];
     interview_taboos_understood: boolean;
     ai_simulated_response: string | null;
+    ai_audit_findings: string | null;
+    interview_guide_md: string | null;
+    guide_generated_at: string | null;
   };
 
   // === Card 9: 真假判斷 ===

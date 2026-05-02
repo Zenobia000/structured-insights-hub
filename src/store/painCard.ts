@@ -174,6 +174,9 @@ function emptyPainCard(): PainCard {
       questions: [],
       interview_taboos_understood: false,
       ai_simulated_response: null,
+      ai_audit_findings: null,
+      interview_guide_md: null,
+      guide_generated_at: null,
     },
 
     verdict: {
@@ -370,9 +373,23 @@ export const usePainCardStore = create<PainCardStore>()(
       }),
       // 只持久化 card；hydrated 是 runtime flag、actions 是函式，都不該寫入 localStorage
       partialize: (state) => ({ card: state.card }),
-      version: 3,
-      // POC 模式：v1/v2 資料直接拋棄。新 key (painmap-worksheet-v2) 已切割舊資料；
-      // 若 zustand 偵測到舊 version 也直接重置而不嘗試遷移。
+      version: 4,
+      // v3 → v4：interview_plan 新增 ai_audit_findings / interview_guide_md / guide_generated_at
+      // 三個 nullable 欄位（卡 8 三階段虛擬訪談）。純 additive，舊資料補 null 即可。
+      // v1/v2 仍直接拋棄（POC 模式不向下遷移）。
+      migrate: (persistedState: unknown, version: number) => {
+        if (version < 3) return persistedState;
+        if (version < 4) {
+          const state = persistedState as { card?: { interview_plan?: Record<string, unknown> } };
+          if (state.card?.interview_plan) {
+            const ip = state.card.interview_plan;
+            ip.ai_audit_findings ??= null;
+            ip.interview_guide_md ??= null;
+            ip.guide_generated_at ??= null;
+          }
+        }
+        return persistedState;
+      },
       onRehydrateStorage: () => (state) => {
         if (state) state.hydrated = true;
       },

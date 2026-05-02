@@ -15,7 +15,7 @@ import { CandidatesPanel } from "@/components/worksheet/card08/CandidatesPanel";
 import { TargetsForm } from "@/components/worksheet/card08/TargetsForm";
 import { QuestionForm } from "@/components/worksheet/card08/QuestionForm";
 import { InterviewRulesTable } from "@/components/worksheet/card08/InterviewRulesTable";
-import { AiSimulationBlock } from "@/components/worksheet/card08/AiSimulationBlock";
+import { InterviewSimulationFlow } from "@/components/worksheet/card08/InterviewSimulationFlow";
 import { CardEightExitGateFooter } from "@/components/worksheet/card08/CardEightExitGateFooter";
 
 export const Route = createFileRoute("/learn/worksheet/08")({
@@ -102,6 +102,10 @@ function CardEightPage() {
   const setTaboos = (v: boolean) => updateField("interview_plan.interview_taboos_understood", v);
 
   const setAiResponse = (v: string) => updateField("interview_plan.ai_simulated_response", v);
+  const setAuditFindings = (v: string) => updateField("interview_plan.ai_audit_findings", v);
+  const setInterviewGuide = (v: string) => updateField("interview_plan.interview_guide_md", v);
+  const markGuideGenerated = () =>
+    updateField("interview_plan.guide_generated_at", new Date().toISOString());
 
   // chip pick → fill first empty persona
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
@@ -159,7 +163,6 @@ function CardEightPage() {
   // autosave indicator
   const savedAgo = useSavedAgo(card.updated_at);
 
-  const stuckFormula = card.stuck_formula.ai_polished?.trim() ?? "";
   const q8Raw = card.ai_evidence.eight_answers.q8_interview_targets;
 
   // 補滿 targets / questions 在初次 render 之前
@@ -271,13 +274,13 @@ function CardEightPage() {
           />
         </section>
 
-        {/* Section 6: AI simulation (optional) */}
-        <AiSimulationBlock
-          persona={targetsForUi[0]?.persona ?? ""}
-          stuckFormula={stuckFormula}
-          questions={questionsForUi}
-          response={plan.ai_simulated_response}
-          onResponseChange={setAiResponse}
+        {/* Section 6: 三階段虛擬訪談 → 訪綱產出（全 optional） */}
+        <InterviewSimulationFlow
+          card={card}
+          onSimulationChange={setAiResponse}
+          onAuditChange={setAuditFindings}
+          onGuideChange={setInterviewGuide}
+          onGuideGenerated={markGuideGenerated}
         />
 
         <p className="text-[12px] text-text-muted" aria-live="polite">

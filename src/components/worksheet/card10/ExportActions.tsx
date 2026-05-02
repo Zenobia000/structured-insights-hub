@@ -2,12 +2,27 @@
  * ExportActions — Markdown / JSON / PDF 三種匯出 (Grok dark)
  */
 import { useState } from "react";
-import { FileJson, FileText, FileType2, Loader2, Lock, Download } from "lucide-react";
+import {
+  ClipboardList,
+  Download,
+  FileJson,
+  FileText,
+  FileType2,
+  Loader2,
+  Lock,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { usePainCardStore } from "@/store/painCard";
-import { buildMarkdown, downloadBlob, exportFilename, exportPdf } from "@/lib/cardTenExport";
+import {
+  buildMarkdown,
+  downloadBlob,
+  exportFilename,
+  exportInterviewGuide,
+  exportPdf,
+  interviewGuideFilename,
+} from "@/lib/cardTenExport";
 
 export function ExportActions() {
   const card = usePainCardStore((s) => s.card);
@@ -18,6 +33,8 @@ export function ExportActions() {
     updateField("exported.exported_at", new Date().toISOString());
     updateField("exported.formats", Array.from(new Set([...card.exported.formats, fmt])));
   };
+
+  const guideReady = (card.interview_plan.interview_guide_md?.trim().length ?? 0) >= 200;
 
   const handleMarkdown = () => {
     const filename = exportFilename(card, "md");
@@ -44,6 +61,17 @@ export function ExportActions() {
       console.error(err);
     } finally {
       setPdfLoading(false);
+    }
+  };
+
+  const handleInterviewGuide = () => {
+    try {
+      exportInterviewGuide(card);
+      toast.success(`已下載 ${interviewGuideFilename(card)}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "訪綱匯出失敗";
+      toast.error(msg);
+      console.error(err);
     }
   };
 
@@ -91,6 +119,35 @@ export function ExportActions() {
       <p className="font-mono text-[11px] text-text-tertiary">
         Filename pattern: paincard-{"{slug}"}-{"{YYYY-MM-DD}"}.{"{ext}"}
       </p>
+
+      {/* 訪綱單獨匯出（卡 8 stage 3 完成才出現） */}
+      {guideReady && (
+        <aside className="rounded-lg border border-status-success/30 bg-status-success-bg/30 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-start gap-3 min-w-0">
+              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-status-success-bg text-status-success">
+                <ClipboardList className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-base font-semibold tracking-[-0.01em] text-text-primary">
+                  訪談大綱（單獨匯出）
+                </h3>
+                <p className="mt-1 text-[13px] leading-[1.6] text-text-secondary">
+                  你在卡 8 整理好的訪綱可以單獨下載一份，列印帶去面對面訪談用，不夾雜其他卡片內容。
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleInterviewGuide}
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md bg-status-success px-4 text-[13px] font-medium text-text-inverse transition-colors hover:bg-status-success/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-success/40"
+            >
+              <Download className="h-3.5 w-3.5" />
+              下載訪綱 .md
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* 隱私聲明 — 強制顯示，不可關閉 */}
       <aside className="rounded-lg border border-border-hairline bg-canvas-raised p-5">

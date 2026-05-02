@@ -37,6 +37,12 @@ export function exportFilename(card: PainCard, ext: "md" | "json" | "pdf"): stri
   return `paincard-${slug}-${date}.${ext}`;
 }
 
+export function interviewGuideFilename(card: PainCard): string {
+  const slug = slugify(card.complaint.verbatim.slice(0, 20));
+  const date = new Date().toISOString().slice(0, 10);
+  return `paincard-interview-guide-${slug}-${date}.md`;
+}
+
 export function sacrificedLabel(card: PainCard): string {
   if (card.contradiction.sacrificed === "a") return `A 端（${card.contradiction.side_a || "—"}）`;
   if (card.contradiction.sacrificed === "b") return `B 端（${card.contradiction.side_b || "—"}）`;
@@ -142,7 +148,40 @@ export function buildMarkdown(card: PainCard): string {
   lines.push(`- 最沒把握：${card.verdict.least_confident || "（未填）"}`, ``);
 
   lines.push(`## 下一步`, ``, nextActionText, ``);
+
+  // 訪談大綱（卡 8 stage 3 產出，存在才附）
+  const guide = card.interview_plan.interview_guide_md?.trim();
+  if (guide) {
+    lines.push(`---`, ``, `## 訪談大綱（你帶走的劇本）`, ``, guide, ``);
+  }
+
   return lines.join("\n");
+}
+
+/**
+ * 單獨匯出訪綱為 .md（不含 PainID Card 其他欄位）
+ * 使用情境：印出來面對面訪談時，只需要訪綱不需要前面的整理
+ */
+export function exportInterviewGuide(card: PainCard): void {
+  const guide = card.interview_plan.interview_guide_md?.trim();
+  if (!guide) {
+    throw new Error("尚未產出訪綱（卡 8 stage 3 未完成）");
+  }
+  const persona = card.interview_plan.targets[0]?.persona?.trim() || "受訪者";
+  const created = (card.interview_plan.guide_generated_at ?? card.updated_at).slice(0, 10);
+  const header = [
+    `<!-- PainMap Worksheet · 訪談大綱 -->`,
+    `<!-- persona: ${persona} -->`,
+    `<!-- generated: ${created} -->`,
+    ``,
+    guide,
+    ``,
+    `---`,
+    ``,
+    `*此訪綱由 PainMap Worksheet 卡 8 三階段虛擬訪談產出，請拿去找真人訪談。AI 模擬不能取代真實對話。*`,
+    ``,
+  ].join("\n");
+  downloadBlob(interviewGuideFilename(card), "text/markdown", header);
 }
 
 /**

@@ -348,6 +348,9 @@ function CardTwoPage() {
               checks={checks}
               commitment={commitment}
               onCommitmentChange={setCommitment}
+              backgroundStatus={backgroundStatus}
+              backgroundHint={bgVerdict === "warn" ? bgReason ?? undefined : undefined}
+              backgroundAnalyzing={bgAnalyzing && bgVerdict === null}
             />
             <p className="mt-3 text-[11px] leading-[1.5] text-text-muted">
               偵測到的可聯絡關鍵字：

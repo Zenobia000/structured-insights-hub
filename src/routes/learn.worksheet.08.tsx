@@ -351,6 +351,7 @@ function CardEightPage() {
         noContactAtAll={noContactAtAll}
         onAdvance={handleAdvance}
         onBackToCard2={handleBackToCard2}
+        onJumpToMissingContact={jumpToMissingContact}
       />
     </div>
   );

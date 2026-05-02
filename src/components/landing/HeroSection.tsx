@@ -45,10 +45,6 @@ export function HeroSection() {
               className="mt-6 font-display text-[44px] sm:text-6xl lg:text-[80px] xl:text-[96px] font-bold leading-[0.96] tracking-[-0.04em] text-text-primary animate-grok-fade-up"
               style={{ animationDelay: "120ms" }}
             >
-              一句抱怨，
-              <br />
-              <span className="text-text-secondary">可以是一張</span>
-              <br />
               <span className="bg-gradient-to-r from-text-primary via-accent-electric to-text-primary bg-clip-text text-transparent">
                 痛點 ID card
               </span>

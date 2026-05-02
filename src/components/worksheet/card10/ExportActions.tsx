@@ -64,14 +64,18 @@ export function ExportActions() {
     }
   };
 
-  const handleInterviewGuide = () => {
+  const [guideLoading, setGuideLoading] = useState(false);
+  const handleInterviewGuide = async () => {
+    setGuideLoading(true);
     try {
-      exportInterviewGuide(card);
-      toast.success(`已下載 ${interviewGuideFilename(card)}`);
+      await exportInterviewGuide(card);
+      toast.success("已開啟列印視窗，請選擇「另存為 PDF」");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "訪綱匯出失敗";
       toast.error(msg);
       console.error(err);
+    } finally {
+      setGuideLoading(false);
     }
   };
 

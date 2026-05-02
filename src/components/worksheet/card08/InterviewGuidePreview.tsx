@@ -64,7 +64,7 @@ export function InterviewGuidePreview({ content, card }: Props) {
             onClick={handleExport}
             className="h-8 bg-status-success text-text-inverse hover:bg-status-success/90"
           >
-            <Download className="h-3.5 w-3.5 mr-1" /> 下載 .md
+            <Download className="h-3.5 w-3.5 mr-1" /> 下載 PDF
           </Button>
         </div>
       </header>

@@ -190,56 +190,271 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
 <meta charset="utf-8" />
 <title>${escapeHtml(filename)}</title>
 <style>
-  @page { size: A4; margin: 18mm 16mm; }
+  /* ---------- Page setup ---------- */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+  }
+  @page :first { margin-top: 22mm; }
+
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+
+  /* ---------- Typography base ----------
+     Sans 用於正文（中文最佳閱讀）；Serif 給 blockquote 引述塊增加儀式感 */
+  :root {
+    --ink-900: #0f172a;   /* 主標題 */
+    --ink-800: #1e293b;   /* 次標題 */
+    --ink-700: #334155;   /* 內文加粗 */
+    --ink-600: #475569;   /* 內文 */
+    --ink-500: #64748b;   /* 次要說明 */
+    --ink-400: #94a3b8;   /* meta / footer */
+    --line:    #e2e8f0;   /* 線條 */
+    --line-2:  #cbd5e1;   /* 表格線 */
+    --tint:    #f8fafc;   /* 表頭 / 引述底 */
+    --accent:  #0f766e;   /* 強調色（teal-700, 列印友善）*/
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC",
-      "Microsoft JhengHei", "Heiti TC", "Segoe UI", Roboto, sans-serif;
-    color: #111;
-    font-size: 12pt;
+    font-family: "Helvetica Neue", "Segoe UI", -apple-system, BlinkMacSystemFont,
+      "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    color: var(--ink-700);
+    font-size: 11pt;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "palt" 1;
+  }
+
+  /* ---------- Header ---------- */
+  header.doc-head {
+    border-bottom: 2px solid var(--ink-900);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+  }
+  header.doc-head .eyebrow {
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  header.doc-head h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--ink-900);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    line-height: 1.25;
+  }
+  header.doc-head .meta {
+    font-size: 9.5pt;
+    color: var(--ink-500);
+    letter-spacing: 0.02em;
+  }
+  header.doc-head .meta b {
+    color: var(--ink-700);
+    font-weight: 600;
+  }
+
+  /* ---------- Headings inside markdown body ---------- */
+  main h1, main h2, main h3, main h4, main h5, main h6 {
+    color: var(--ink-900);
+    font-weight: 700;
+    line-height: 1.4;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  main h1 {
+    font-size: 16pt;
+    margin: 1.6em 0 0.5em;
+    padding-bottom: 4px;
+    border-bottom: 1.5px solid var(--ink-900);
+  }
+  main h2 {
+    font-size: 13.5pt;
+    margin: 1.5em 0 0.45em;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent);
+  }
+  main h3 {
+    font-size: 11.5pt;
+    margin: 1.2em 0 0.35em;
+    color: var(--ink-800);
+  }
+  main h4 {
+    font-size: 10.5pt;
+    margin: 1em 0 0.3em;
+    color: var(--ink-700);
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Paragraphs & inline ---------- */
+  main p {
+    margin: 0.55em 0;
+    orphans: 3;
+    widows: 3;
+  }
+  main strong, main b {
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  main em, main i {
+    color: var(--ink-700);
+    font-style: italic;
+  }
+
+  /* ---------- Lists ---------- */
+  main ul, main ol {
+    padding-left: 1.5em;
+    margin: 0.6em 0;
+  }
+  main ul { list-style: none; padding-left: 0; }
+  main ul > li {
+    position: relative;
+    padding-left: 1.2em;
+    margin: 0.35em 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  main ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0.25em;
+    top: 0.75em;
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  main ol { list-style: decimal; }
+  main ol > li {
+    margin: 0.4em 0;
+    padding-left: 0.3em;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  main ol > li::marker {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  main li > ul, main li > ol { margin: 0.25em 0; }
+
+  /* ---------- Blockquote (適合引述訪談語錄 / 提示) ---------- */
+  main blockquote {
+    margin: 1em 0;
+    padding: 10px 16px;
+    background: var(--tint);
+    border-left: 3px solid var(--accent);
+    color: var(--ink-700);
+    font-family: "Georgia", "Songti TC", "PMingLiU", serif;
+    font-size: 10.5pt;
     line-height: 1.7;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
-  header {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+  main blockquote p { margin: 0.3em 0; }
+
+  /* ---------- Code ---------- */
+  main code {
+    font-family: "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+    background: var(--tint);
+    color: var(--ink-800);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--line);
   }
-  header h1 { font-size: 18pt; margin: 0 0 6px; }
-  header .meta { font-size: 10pt; color: #666; }
-  h1, h2, h3, h4 { line-height: 1.35; margin-top: 1.4em; margin-bottom: 0.5em; }
-  h1 { font-size: 16pt; }
-  h2 { font-size: 14pt; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-  h3 { font-size: 12.5pt; }
-  p { margin: 0.6em 0; }
-  ul, ol { padding-left: 1.6em; margin: 0.6em 0; }
-  li { margin: 0.25em 0; }
-  blockquote {
-    border-left: 3px solid #ccc;
-    color: #444;
-    margin: 0.8em 0;
-    padding: 0.2em 0.9em;
-    background: #fafafa;
+  main pre {
+    background: var(--tint);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    border-radius: 4px;
+    overflow: auto;
+    font-size: 9.5pt;
+    line-height: 1.55;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
-  code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 10.5pt; background: #f3f3f3; padding: 1px 4px; border-radius: 3px; }
-  pre { background: #f6f6f6; padding: 10px; border-radius: 4px; overflow: auto; font-size: 10.5pt; }
-  table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 11pt; }
-  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
-  th { background: #f3f3f3; }
-  hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0; }
-  footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #eee; font-size: 9.5pt; color: #888; }
+  main pre code { border: 0; padding: 0; background: transparent; }
+
+  /* ---------- Tables ---------- */
+  main table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 10pt;
+    page-break-inside: auto;
+  }
+  main thead { display: table-header-group; }   /* 跨頁時表頭重複 */
+  main tfoot { display: table-footer-group; }
+  main tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  main th, main td {
+    border: 1px solid var(--line-2);
+    padding: 7px 10px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  main th {
+    background: var(--ink-900);
+    color: #fff;
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: 0.03em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  main tbody tr:nth-child(even) td {
+    background: var(--tint);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---------- Misc ---------- */
+  main hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 1.6em 0;
+  }
+  main a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); }
+
+  /* ---------- Footer ---------- */
+  footer.doc-foot {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 8.5pt;
+    color: var(--ink-400);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Print-specific ---------- */
   @media print {
-    a { color: inherit; text-decoration: none; }
+    body { font-size: 10.5pt; }
+    a { color: inherit; border-bottom: 0; }
+    /* 避免重要區塊被切：已在各元素加 break-inside: avoid */
+    /* 確保底色印得出來（Chrome 預設關閉背景圖列印） */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   }
 </style>
 </head>
 <body>
-  <header>
+  <header class="doc-head">
+    <div class="eyebrow">PainMap · Interview Guide</div>
     <h1>訪談大綱</h1>
-    <div class="meta">受訪者：${escapeHtml(persona)} · 產生日期：${escapeHtml(created)}</div>
+    <div class="meta">
+      <b>受訪者</b>：${escapeHtml(persona)}　·　<b>產生日期</b>：${escapeHtml(created)}
+    </div>
   </header>
   <main>${bodyHtml}</main>
-  <footer>
+  <footer class="doc-foot">
     此訪綱由 PainMap Worksheet 卡 8 三階段虛擬訪談產出，請拿去找真人訪談。AI 模擬不能取代真實對話。
   </footer>
   <script>
@@ -247,7 +462,7 @@ export async function exportInterviewGuide(card: PainCard): Promise<void> {
       setTimeout(function () {
         window.focus();
         window.print();
-      }, 150);
+      }, 200);
     });
   </script>
 </body>

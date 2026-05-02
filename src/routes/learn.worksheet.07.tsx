@@ -16,6 +16,7 @@ import {
   type GuessKey,
 } from "@/lib/cardSevenValidators";
 import { ContextSummary } from "@/components/worksheet/card07/ContextSummary";
+import { MarkdownView } from "@/components/worksheet/MarkdownView";
 import { PhaseAGuessForm } from "@/components/worksheet/card07/PhaseAGuessForm";
 import { PhaseBLockedPreview } from "@/components/worksheet/card07/PhaseBLockedPreview";
 import { CheckpointList } from "@/components/worksheet/card07/CheckpointList";
@@ -314,9 +315,9 @@ function CardSevenPage() {
                 AI 第一輪回覆（從卡 6 帶入）
               </h3>
               {rawAi ? (
-                <pre className="font-mono text-[12.5px] leading-[1.6] bg-muted-bg p-4 max-h-96 overflow-auto whitespace-pre-wrap text-text-primary rounded-md border border-border">
-                  {rawAi}
-                </pre>
+                <div className="bg-muted-bg p-4 max-h-96 overflow-auto rounded-md border border-border">
+                  <MarkdownView>{rawAi}</MarkdownView>
+                </div>
               ) : (
                 <p className="text-[13px] text-text-secondary italic">（卡 6 尚未貼上 AI 回覆）</p>
               )}
@@ -349,6 +350,14 @@ function CardSevenPage() {
               <p className="text-[11.5px] text-text-muted">
                 {sg.pain_judgment_table.trim().length} 字（最少 {TABLE_MIN}）
               </p>
+              {sg.pain_judgment_table.trim().length > 0 && (
+                <div className="mt-3">
+                  <p className="text-[12px] font-semibold text-text-secondary mb-1.5">預覽（Markdown 渲染）</p>
+                  <div className="bg-muted-bg p-4 max-h-96 overflow-auto rounded-md border border-border">
+                    <MarkdownView>{sg.pain_judgment_table}</MarkdownView>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Deltas */}

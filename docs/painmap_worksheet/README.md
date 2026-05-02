@@ -1,4 +1,4 @@
-# 📋 PainMap Worksheet — 痛點發想填空簿（網頁版）
+# PainMap Worksheet — 痛點發想填空簿（網頁版）
 
 > **本資料夾是什麼？**
 > 將 `docs/workshop/painpoint_beginner_worksheet.md`（線下紙本 9 卡填空簿）轉化為網頁應用的**完整設計規格**。
@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 產品定位
+## 產品定位
 
 **PainMap Worksheet = PainMap 進階版的「初學者教學模式」**
 
@@ -16,18 +16,18 @@
 | **進階** | PainMap App（既有） | Collector / Decomposer / Atlas | `docs/web_design/pages/painmap/` |
 | **商業驗證** | First-Dollar Sprint | 72 小時手作 + 預售 | `docs/product/first_principles_sprint_manual.md` |
 
-## 📐 Iron Laws（鐵律）
+## Iron Laws（鐵律）
 
 1. **共用 PainMap brand system**（不重做設計系統）
 2. **不違反 brand 禁令**：分數、星等、排行榜、徽章、FOMO 永久禁用；資料層完全沒有分數欄位
 3. **Octalysis 只取白帽**：#1 Epic Meaning / #2 Accomplishment / #3 Creativity / #5 Social；黑帽 #6/#7/#8 永久封鎖
-4. **9 張卡片是同一個資料物件**（PainCard v2.0）的 9 個欄位，不是 9 個獨立資料
+4. **9 張卡片是同一個資料物件**（PainCard）的 9 個欄位，不是 9 個獨立資料
 5. **MVP 範圍**：LocalStorage + 複製 prompt 到外部 ChatGPT；不做雲端帳號、不串站內 LLM API
-6. **單一蘇格拉底流程**：沒有教學 / 生產雙模式；所有反思以開放式書寫呈現，不打分數
+6. **單一蘇格拉底流程**：所有反思以開放式書寫呈現，不打分數
 
 ---
 
-## 📁 文件結構
+## 文件結構
 
 ```
 docs/painmap_worksheet/
@@ -36,7 +36,7 @@ docs/painmap_worksheet/
 ├── product/                            ← A. 產品策略層
 │   ├── PRD.md                         ← 產品需求文件
 │   ├── user_journey.md                ← 9 卡使用者流程
-│   ├── data_model.md                  ← ★ Pain Card schema（單一真相源）
+│   ├── data_model.md                  ← Pain Card schema（單一真相源）
 │   ├── motivation_design.md           ← Octalysis 動機設計總綱
 │   └── stage1_to_stage2_handoff.md    ← 與 PainMap 進階版銜接規格
 │
@@ -59,7 +59,7 @@ docs/painmap_worksheet/
 │   └── components/                    ← 共用元件規格
 │       ├── card_progress_stepper.md   ← 9 步進度條
 │       ├── ai_prompt_copy_block.md    ← AI prompt 複製區塊
-│       ├── exit_gate_check.md         ← 過關條件檢核
+│       ├── exit_gate_check.md         ← 反思條件檢核
 │       └── verdict_export.md          ← 身份證匯出元件
 │
 ├── assembly/                           ← C. 組裝層 (給 Lovable / Claude Code)
@@ -71,7 +71,7 @@ docs/painmap_worksheet/
 │   └── ai_proxy_spec.md               ← AI 整合規格（複製 vs 站內）
 │
 ├── references/                         ← E. 參考層
-│   ├── pain_card_schema.md            ← Pain Card schema 詳版（v2.0）
+│   ├── pain_card_schema.md            ← Pain Card schema 詳版
 │   ├── ai_prompt_library.md           ← 6 段內建 AI prompts（卡 5 純自陳，無 prompt）
 │   ├── exit_gates_matrix.md           ← 9 卡反思條件
 │   ├── octalysis_white_hat_principles.md  ← 白帽應用規則
@@ -84,12 +84,12 @@ docs/painmap_worksheet/
 └── tests/                              ← G. 測試層
     ├── e2e_scenarios.md               ← 端對端測試劇本
     ├── ai_prompt_test_cases.md        ← AI prompt 測試
-    └── exit_gate_test_cases.md        ← 過關條件測試
+    └── exit_gate_test_cases.md        ← 反思條件測試
 ```
 
 ---
 
-## 🚀 快速上手
+## 快速上手
 
 ### 路徑 A：我要理解整體設計（PM / 設計師）
 1. 讀 [`product/PRD.md`](product/PRD.md) — 產品需求總覽
@@ -116,21 +116,12 @@ docs/painmap_worksheet/
 
 ---
 
-## 🔗 相關文件
+## 相關文件
 
 | 連結 | 說明 |
 | :--- | :--- |
-| [`docs/workshop/painpoint_beginner_worksheet.md`](../workshop/painpoint_beginner_worksheet.md) | 線下紙本原版（v1.0, 2026-05-01）— 內容真相源 |
+| [`docs/workshop/painpoint_beginner_worksheet.md`](../workshop/painpoint_beginner_worksheet.md) | 線下紙本原版 — 內容真相源 |
 | [`docs/web_design/global/painmap_brand_system.md`](../web_design/global/painmap_brand_system.md) | 共用品牌設計系統 |
 | [`docs/web_design/pages/painmap/`](../web_design/pages/painmap/) | PainMap 進階版頁面規格（IA 銜接對象） |
 | [`docs/product/painmap/painmap_pain_thinking_system.md`](../product/painmap/painmap_pain_thinking_system.md) | 完整理論方法論 |
-| [`.claude/skills/sunnydata-pain-thinking/SKILL.md`](../../.claude/skills/sunnydata-pain-thinking/SKILL.md) | 配套 Claude Code skill（v2 階段一） |
-
----
-
-## 📝 變更紀錄
-
-| 版本 | 日期 | 變更 | 負責人 |
-| :--- | :--- | :--- | :--- |
-| v2.0 | 2026-05-02 | Socratic 大一統重構：移除 `verdict.scores` / `total_score` / 教學-生產雙模式 / TRIZ 6 矛盾分類；新增 `contradiction.sacrificed_reason`；刪除 `guides/teaching_vs_production_mode.md`、`references/triz_contradictions.md` | Sunny |
-| v1.0 | 2026-05-01 | 首版發布；43 個 spec 文件建立 | Sunny |
+| [`.claude/skills/sunnydata-pain-thinking/SKILL.md`](../../.claude/skills/sunnydata-pain-thinking/SKILL.md) | 配套 Claude Code skill |

@@ -1,6 +1,5 @@
 # Exit Gate Test Cases — 9 卡過關條件測試矩陣
 
-> **版本**：v1.0 — 2026-05-01
 > **配套文件**：`references/exit_gates_matrix.md`、`product/data_model.md`、`references/pain_card_schema.md`
 > **測試對象**：9 張卡片的 exit gate 規則（L1 欄位驗證 + L2 內容反偵測 + L3 跨欄位一致性）
 > **測試框架**：Vitest（單元）+ Playwright（互動）
@@ -325,14 +324,13 @@ export function expectFriendlyMessage(text: string) {
 
 `exit_gates_matrix.md § 卡 3` G3.1 - G3.5
 
-### TC 3.1 ✅ confirmed === true + user_draft 非空
+### TC 3.1 ✅ confirmed === true + ai_polished 非空
 
 **Given**:
 
 ```json
 {
   "stuck_formula": {
-    "user_draft": "我每次要寫 30 則家長回報，都會卡在資料散在 7 次小考",
     "ai_polished": "我每次要在週末寫 30 則家長回報訊息...",
     "ai_clarifying_questions": ["...", "..."],
     "confirmed": true
@@ -347,12 +345,12 @@ export function expectFriendlyMessage(text: string) {
 | Gate result | `passed` |
 | `current_step` | 3 → 4 |
 
-### TC 3.2 ⚠️ user_draft 含「卡在效率不好」（空話）— SOFT WARNING
+### TC 3.2 ⚠️ ai_polished 含「卡在效率不好」（空話）— SOFT WARNING
 
 **Given**:
 
 ```json
-{ "user_draft": "我每次要做事情，都會卡在效率不好", "confirmed": true }
+{ "ai_polished": "我每次要做事情，都會卡在效率不好", "confirmed": true }
 ```
 
 **Then**:
@@ -370,7 +368,7 @@ export function expectFriendlyMessage(text: string) {
 **Given**:
 
 ```json
-{ "user_draft": "...", "confirmed": false }
+{ "ai_polished": "...", "confirmed": false }
 ```
 
 **Then**:
@@ -381,12 +379,12 @@ export function expectFriendlyMessage(text: string) {
 | 提示文案 | 「請確認此版本（勾選『我確認此版本』checkbox）」 |
 | Focus | 自動跳到 confirmed checkbox |
 
-### TC 3.4 ❌ user_draft 為空
+### TC 3.4 ❌ ai_polished 為空
 
 **Given**:
 
 ```json
-{ "user_draft": "", "confirmed": true }
+{ "ai_polished": "", "confirmed": true }
 ```
 
 **Then**:
@@ -394,14 +392,14 @@ export function expectFriendlyMessage(text: string) {
 | 檢查 | 期望值 |
 | :--- | :--- |
 | Gate result | `blocked`（G3.1 觸發）|
-| 提示文案 | 「user_draft 必填 — 用「我每次要 ___，都會卡在 ___」句型寫一句」 |
+| 提示文案 | 「ai_polished 必填 — 用「我每次要 ___，都會卡在 ___」句型寫一句」 |
 
-### TC 3.5 ⚠️ user_draft 不含「我每次要 / 卡在」句型
+### TC 3.5 ⚠️ ai_polished 不含「我每次要 / 卡在」句型
 
 **Given**:
 
 ```json
-{ "user_draft": "寫信很麻煩", "confirmed": true }
+{ "ai_polished": "寫信很麻煩", "confirmed": true }
 ```
 
 **Then**:
@@ -537,24 +535,25 @@ export function expectFriendlyMessage(text: string) {
 
 ---
 
-## 5. 卡 5 ｜ TRIZ 矛盾
+## 5. 卡 5 ｜ 兩件事不能同時要
 
 ### 規則來源
 
 `exit_gates_matrix.md § 卡 5` G5.1 - G5.5
 
-### TC 5.1 ✅ triz_id 已選 + side_a/b 具體
+> 卡 5 是純粹由使用者用自己的話陳述取捨：寫出 A 端、B 端、選哪邊被犧牲、補一句為什麼會犧牲。
+
+### TC 5.1 ✅ 4 欄完整 + side_a/b 具體
 
 **Given**:
 
 ```json
 {
   "contradiction": {
-    "triz_id": 2,
-    "triz_label": "想客製化但又想規模化",
     "side_a": "家長要看見「我的孩子」被個別關照（具體事件、語氣有溫度）",
     "side_b": "老師一週只有 2-3 小時可寫 30 則（每則 < 6 分鐘）",
-    "sacrificed": "a"
+    "sacrificed": "a",
+    "sacrificed_reason": "時間先到，所以個別溫度被擠壓成模板化句子"
   }
 }
 ```
@@ -565,12 +564,12 @@ export function expectFriendlyMessage(text: string) {
 | :--- | :--- |
 | Gate result | `passed` |
 
-### TC 5.2 ❌ triz_id === null
+### TC 5.2 ❌ side_a 為空
 
 **Given**:
 
 ```json
-{ "triz_id": null, "side_a": "...", "side_b": "...", "sacrificed": "a" }
+{ "side_a": "", "side_b": "...", "sacrificed": "a", "sacrificed_reason": "..." }
 ```
 
 **Then**:
@@ -578,27 +577,15 @@ export function expectFriendlyMessage(text: string) {
 | 檢查 | 期望值 |
 | :--- | :--- |
 | Gate result | `blocked`（G5.1 觸發）|
-| 提示文案 | 「請從 6 個矛盾中選 1 個。如果 6 個都不像，回卡 3 把句子拆得更具體」 |
-| Failure routing | 提供 `[回卡 3]` 選項 |
+| 提示文案 | 「A 端必填 — 主人翁同時想要的第一件事是什麼？用他的話寫一句」 |
+| Focus | 自動跳到 side_a input |
 
-### TC 5.3 UI 強制單選（不可達 invalid state）
-
-**Given**: 使用者試圖選 2 個矛盾
-
-**Then**:
-
-| 檢查 | 期望值 |
-| :--- | :--- |
-| UI 控件類型 | `radio button`（不是 checkbox）|
-| 點選第 2 個 | 自動取消第 1 個（單選邏輯）|
-| LocalStorage | `triz_id` 始終為 1 個值，不可能存兩個 |
-
-### TC 5.4 ❌ side_a 太短（< 8 字）
+### TC 5.3 ❌ side_a 太短（< 10 字）
 
 **Given**:
 
 ```json
-{ "triz_id": 2, "side_a": "品質好", "side_b": "...具體...", ... }
+{ "side_a": "品質好", "side_b": "...具體...", "sacrificed": "a", "sacrificed_reason": "..." }
 ```
 
 **Then**:
@@ -606,14 +593,14 @@ export function expectFriendlyMessage(text: string) {
 | 檢查 | 期望值 |
 | :--- | :--- |
 | Gate result | `blocked`（G5.2 觸發）|
-| 提示文案 | 「A 端需要 ≥ 8 字 + 具體場景。「品質好」太抽象，請用主人翁的話描述」 |
+| 提示文案 | 「A 端需要 ≥ 10 字 + 具體場景。「品質好」太抽象，請用主人翁的話描述」 |
 
-### TC 5.5 ⚠️ side_a 為「品質好」「速度快」這類抽象詞
+### TC 5.4 ⚠️ side_a 為「品質好」「速度快」這類抽象詞
 
 **Given**:
 
 ```json
-{ "side_a": "想要品質好的回報" }
+{ "side_a": "想要品質好的回報文字 (一字大於 10 字 但仍抽象)" }
 ```
 
 **Then**:
@@ -624,12 +611,12 @@ export function expectFriendlyMessage(text: string) {
 | 過關按鈕 | `enabled` |
 | Caution panel | 「A 端「品質好」太抽象，建議含具體場景或量化（例：『家長要看見「我的孩子」被個別關照』）」 |
 
-### TC 5.6 ❌ sacrificed 未選
+### TC 5.5 ❌ sacrificed 未選
 
 **Given**:
 
 ```json
-{ "triz_id": 2, "side_a": "...", "side_b": "...", "sacrificed": null }
+{ "side_a": "...", "side_b": "...", "sacrificed": null, "sacrificed_reason": "..." }
 ```
 
 **Then**:
@@ -639,18 +626,48 @@ export function expectFriendlyMessage(text: string) {
 | Gate result | `blocked`（G5.4 觸發）|
 | 提示文案 | 「請選通常會犧牲哪一邊：A 或 B」 |
 
-### TC 5.7 失敗路由：退回卡 3
+### TC 5.6 ❌ sacrificed_reason 為空
 
-**When**: AI 回應「6 個都不像，請我退回卡 3」
+**Given**:
+
+```json
+{ "side_a": "...", "side_b": "...", "sacrificed": "a", "sacrificed_reason": "" }
+```
 
 **Then**:
 
 | 檢查 | 期望值 |
 | :--- | :--- |
-| 自動跳轉 | `/learn/worksheet/03` |
-| `current_step` | 5 → 3 |
-| 卡 4 資料 | 保留 |
-| 提示文案 | 「AI 認為這個卡關還沒拆乾淨，回到卡 3 把句子說得更具體吧」 |
+| Gate result | `blocked`（G5.3 觸發）|
+| 提示文案 | 「sacrificed_reason 必填 — 用一句話寫為什麼那邊會被犧牲。這是讓取捨真實存在的關鍵」 |
+
+### TC 5.7 ❌ sacrificed_reason 太短（< 10 字）
+
+**Given**:
+
+```json
+{ "sacrificed_reason": "沒辦法" }
+```
+
+**Then**:
+
+| 檢查 | 期望值 |
+| :--- | :--- |
+| Gate result | `blocked`（G5.3 觸發）|
+| 字數提示 | 「目前 3 字，至少需要 10 字」 |
+| 提示文案 | 「再多寫一點：什麼條件先到了，導致那邊被擠壓掉？」 |
+
+### TC 5.8 UI 強制單選（不可達 invalid state）
+
+**Given**: 使用者試圖把 sacrificed 同時選 a 與 b
+
+**Then**:
+
+| 檢查 | 期望值 |
+| :--- | :--- |
+| UI 控件類型 | `radio button`（不是 checkbox）|
+| 點選第 2 個 | 自動取消第 1 個（單選邏輯）|
+| LocalStorage | `sacrificed` 始終為 `"a"` 或 `"b"`，不可能是陣列 |
 
 ---
 
@@ -1105,23 +1122,19 @@ export function expectFriendlyMessage(text: string) {
 
 ### 規則來源
 
-`exit_gates_matrix.md § 卡 9` G9.1 - G9.8
+`exit_gates_matrix.md § 卡 9` G9.1 - G9.6
 
-### TC 9.1 ✅ 5 scores + judgment + reason ≥ 100 字 + next_action
+> 卡 9 是蘇格拉底式設計：使用者的書寫本身就是判斷。
+>
+> 卡片頂端 5 個提示問題（最有把握的證據是？最可能假的是？頻率夠不夠？三人之間有沒有矛盾？接下來最該做什麼？）作為純 UI 反思引導，**不存進 PainCard**，只用來幫助使用者把 `reason_100w` 寫得更紮實。
+
+### TC 9.1 ✅ judgment + reason_100w ≥ 100 字 + most_confident_evidence + least_confident + next_action
 
 **Given**:
 
 ```json
 {
   "verdict": {
-    "scores": {
-      "people_specificity": 5,
-      "frequency": 5,
-      "intensity": 4,
-      "workaround_dissatisfaction": 5,
-      "evidence_credibility": 4
-    },
-    "total_score": 23,
     "judgment": "true_pain",
     "reason_100w": "親眼觀察 5.5 小時、有 3 個有名字的真人、現有 workaround...（≥ 100 字）...",
     "most_confident_evidence": "親眼觀察林老師從 21:00 寫到 02:30 的具體行為",
@@ -1151,7 +1164,7 @@ export function expectFriendlyMessage(text: string) {
 
 | 檢查 | 期望值 |
 | :--- | :--- |
-| Gate result | `blocked`（G9.3 觸發）|
+| Gate result | `blocked`（G9.2 觸發）|
 | 字數提示 | 「目前 22 字，至少需要 100 字」 |
 | 提示文案 | 「再補一些細節，這是這份填空簿的唯一交付物 — 你的書面判斷理由」 |
 
@@ -1160,22 +1173,7 @@ export function expectFriendlyMessage(text: string) {
 **Given**:
 
 ```json
-{ "judgment": null, "scores": {...全填}, ... }
-```
-
-**Then**:
-
-| 檢查 | 期望值 |
-| :--- | :--- |
-| Gate result | `blocked`（G9.2 觸發）|
-| 提示文案 | 「請選真痛點 / 假痛點 / 待訪談 三選一」 |
-
-### TC 9.4 ❌ scores 任一未填
-
-**Given**:
-
-```json
-{ "scores": { "people_specificity": 5, "frequency": null, ... } }
+{ "judgment": null, "reason_100w": "...", ... }
 ```
 
 **Then**:
@@ -1183,29 +1181,37 @@ export function expectFriendlyMessage(text: string) {
 | 檢查 | 期望值 |
 | :--- | :--- |
 | Gate result | `blocked`（G9.1 觸發）|
-| 提示文案 | 「frequency 維度沒打分。請給 1-5 分」 |
-| UI 標記 | 該分數條 highlight |
+| 提示文案 | 「請選真痛點 / 假痛點 / 待訪談 三選一」 |
 
-### TC 9.5 ⚠️ judgment === 'true_pain' 但 evidence_credibility < 3
+### TC 9.4 ❌ most_confident_evidence 為空
 
 **Given**:
 
 ```json
-{
-  "scores": { ..., "evidence_credibility": 2 },
-  "judgment": "true_pain",
-  "reason_100w": "..." // 100+ 字
-}
+{ "most_confident_evidence": "" }
 ```
 
 **Then**:
 
 | 檢查 | 期望值 |
 | :--- | :--- |
-| Gate result | `warning`（G9.7 SOFT WARNING）|
-| 過關按鈕 | `enabled` |
-| Caution panel | 「證據可信度只有 2/5，但你判斷為真痛點。建議改為 pending_interview，先訪談 2-3 人再判」 |
-| 兩個按鈕 | `[改為 pending_interview] [我堅持，繼續]` |
+| Gate result | `blocked`（G9.3 觸發）|
+| 提示文案 | 「最有把握的證據必填 — 你判斷的最強支撐是什麼？」 |
+
+### TC 9.5 ❌ least_confident 為空
+
+**Given**:
+
+```json
+{ "least_confident": "" }
+```
+
+**Then**:
+
+| 檢查 | 期望值 |
+| :--- | :--- |
+| Gate result | `blocked`（G9.4 觸發）|
+| 提示文案 | 「最沒把握的部分必填 — 寫下你還拿不準的那一塊（這是誠實，不是失分）」 |
 
 ### TC 9.6 ❌ next_action === null
 
@@ -1219,25 +1225,10 @@ export function expectFriendlyMessage(text: string) {
 
 | 檢查 | 期望值 |
 | :--- | :--- |
-| Gate result | `blocked`（G9.6 觸發）|
+| Gate result | `blocked`（G9.5 觸發）|
 | 提示文案 | 「請選下一步：訪談 / 補證據 / 換題目」 |
 
-### TC 9.7 ❌ most_confident_evidence 為空
-
-**Given**:
-
-```json
-{ "most_confident_evidence": "" }
-```
-
-**Then**:
-
-| 檢查 | 期望值 |
-| :--- | :--- |
-| Gate result | `blocked`（G9.4 觸發）|
-| 提示文案 | 「最有把握的證據必填 — 你判斷的最強支撐是什麼？」 |
-
-### TC 9.8 ❌ AI 按鈕不存在於卡 9
+### TC 9.7 ❌ AI 按鈕不存在於卡 9
 
 **Given**: 使用者打開 /learn/worksheet/09
 
@@ -1249,22 +1240,18 @@ export function expectFriendlyMessage(text: string) {
 | 頁面 DOM | 不存在 `aria-label*="AI"` 元素 |
 | 即使透過 console 注入 | 後端 API `/api/ai/run-prompt?card_step=9` 拒絕 |
 
-### TC 9.9 教學模式 vs 生產模式 total_score 顯示
+### TC 9.8 5 個 Socratic 提示作為純 UI
 
-**Given**:
+**Given**: 使用者打開 /learn/worksheet/09
 
-```json
-{ "total_score": 23, "scores": {...} }
-```
+**Then**:
 
-**Then**（依 settings.display_mode）:
-
-| 模式 | UI 行為 |
+| 檢查 | 期望值 |
 | :--- | :--- |
-| `teaching` | 顯示 `23 / 25` + 5 條分數條 + teaching_note「分數只是工具，不是答案」 |
-| `production` | 不顯示分數，只顯示 ✓ Verified Green「真痛點」 status badge |
-| LocalStorage | 兩模式皆保留 `verdict.scores` 與 `total_score` |
-| 對外分享連結 | 兩模式皆過濾分數（R4.2）|
+| 頁面顯示 5 個提示問題 | 「最有把握的證據是？」「最可能假的是？」「頻率夠不夠？」「三人之間有沒有矛盾？」「接下來最該做什麼？」 |
+| 提示問題下方 | **不**附 input/textarea 欄位 |
+| LocalStorage | **不**寫入這 5 題的答案（純引導文案）|
+| 用途 | 幫助使用者把 `reason_100w` 寫得更紮實 |
 
 ---
 
@@ -1508,39 +1495,7 @@ export function expectFriendlyMessage(text: string) {
 
 ---
 
-## 13. 教學模式 vs 生產模式閘門差異
-
-對應 `exit_gates_matrix.md § 4.2`。
-
-### TC MODE.1 教學模式：失敗訊息詳細
-
-**Given**: `display_mode === 'teaching'`，卡 2 觸發 G2.6（合成 persona）
-
-**Then**:
-
-| 檢查 | 期望值 |
-| :--- | :--- |
-| Caution panel 文案 | 完整版（含「為什麼這樣設計」教學說明）：「找不到 3 個真人，代表這個圈子你還不熟。**這是訓練設計上的關鍵卡點 — worksheet 第 122 行明白擋。** 先去這群人聚集的地方混 1-2 週再回來」 |
-| 補強 prompt | 顯示 worksheet 原文教學 |
-
-### TC MODE.2 生產模式：失敗訊息精簡
-
-**Given**: `display_mode === 'production'`，卡 2 觸發 G2.6
-
-**Then**:
-
-| 檢查 | 期望值 |
-| :--- | :--- |
-| Caution panel 文案 | 精簡版：「找不到 3 個真名 — 請填真名或回卡 1 找真人」 |
-| 補強 prompt | 直接觸發（不顯示教學說明）|
-
-### TC MODE.3 卡 9 total_score 顯示差異
-
-對應 `TC 9.9`。
-
----
-
-## 14. 複合測試矩陣
+## 13. 複合測試矩陣
 
 ### TC MATRIX.1 全部 hard gate 不可繞過
 
@@ -1568,7 +1523,6 @@ describe('全部 soft warning 可放行', () => {
     { card: 4, fixture: 'card-4-short-dissatisfaction' },  // G4.4
     { card: 5, fixture: 'card-5-abstract-side' },          // G5.5
     { card: 8, fixture: 'card-8-no-q8-overlap' },          // G8.6
-    { card: 9, fixture: 'card-9-true-pain-low-evidence' }, // G9.7
   ];
   for (const tc of softWarnings) {
     test(`卡 ${tc.card} soft warning ${tc.fixture} 可放行`, async () => {
@@ -1596,9 +1550,9 @@ test('全部失敗訊息符合 brand voice', async () => {
 
 ---
 
-## 15. 測試執行策略
+## 14. 測試執行策略
 
-### 15.1 測試頻率
+### 14.1 測試頻率
 
 | 測試類別 | 觸發 | 預估時間 |
 | :--- | :--- | :--- |
@@ -1607,25 +1561,17 @@ test('全部失敗訊息符合 brand voice', async () => {
 | Fuzz testing | nightly | 30-60 分鐘 |
 | Race condition | weekly | 5 分鐘 |
 
-### 15.2 測試覆蓋率目標
+### 14.2 測試覆蓋率目標
 
 - 9 卡 × 每張卡 ≥ 5 個 TC = ≥ 45 個正向 / 失敗 TC
-- 失敗路由全覆蓋（10 條規則）
+- 失敗路由全覆蓋（4 條規則）
 - Fuzz testing 6 個極端 case
 - Race condition 4 個並發 case
-- **總計 ≥ 65 個 TC**
+- **總計 ≥ 60 個 TC**
 
-### 15.3 失敗處理
+### 14.3 失敗處理
 
 - Hard gate 失敗 → 立即修
 - Soft warning 文案不符 brand voice → 文案 PR 處理
 - Fuzz test 失敗 → 加 input validation
 - Race condition 失敗 → 加 storage event listener / debounce
-
----
-
-## 16. 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 1.0 | 2026-05-01 | 首版；對應 worksheet v1.0、exit_gates_matrix.md v1.0、data_model.md v1.0 |

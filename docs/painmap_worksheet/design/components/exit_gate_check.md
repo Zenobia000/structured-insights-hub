@@ -1,9 +1,8 @@
 # Reflection Hint Footer 元件規格
 
-> v2.1 更名：「Exit Gate Check」→「Reflection Hint Footer」。
 > 每張卡片底部的「繼續到下一張」按鈕區塊。
 > 責任：以中性反思提示提醒使用者「這一題是否寫到位」，**不評等、不擋路**——只建議。
-> 對應 `references/exit_gates_matrix.md` 的完整反思提示規則（同步改名為 `reflection_hints_matrix.md` 中的中性版）。
+> 對應 `references/reflection_hints_matrix.md` 的完整反思提示規則。
 
 ---
 
@@ -26,9 +25,9 @@
 
 ## 2. 結構
 
-### 2.1 視覺 Layout（v2.1 三態：pending / thinking / ok）
+### 2.1 視覺 Layout（三態：pending / thinking / ok）
 
-> **v2.1 重要設計變更：** 移除「pass / fail」紅綠色語意；改用蘇格拉底式三態。所有圖示中性（bullet / 思考雲 / 中性勾），不用 ✗ 紅色。
+> 採用蘇格拉底式三態，所有圖示中性（bullet / 思考雲 / 中性勾），不用紅色 ✗ 或綠色 ✓。
 
 #### `pending` 狀態（還可以再想想）
 
@@ -85,7 +84,7 @@
 
 ### 2.2 共用元件 `ReflectionHint`
 
-v2.1 抽出共用元件 `src/components/worksheet/ReflectionHint.tsx`，取代原先 9 張卡片各自宣告的 `ConditionItem`。
+共用元件位於 `src/components/worksheet/ReflectionHint.tsx`，9 張卡片共用。
 
 ```typescript
 type ReflectionHintProps = {
@@ -116,7 +115,7 @@ type ReflectionHintProps = {
 
 ---
 
-## 3. 三種狀態（v2.1 中性化）
+## 3. 三種狀態
 
 ### 3.1 `pending` — 還可以再想想
 
@@ -128,7 +127,7 @@ type ReflectionHintProps = {
 | next_button | **永遠 enabled**，但採用 secondary 樣式（不是 primary CTA） |
 | 觸發條件 | `validateReflection(card)` 回傳 `kind: "hint"` |
 
-> **v2.1 關鍵變更：** 不再有 `disabled` 按鈕。蘇格拉底工具不擋路；它只問問題。使用者寫得不夠仍能前進——卡片**建議**回頭，不**強迫**回頭。
+> **設計原則：** 沒有 `disabled` 按鈕。蘇格拉底工具不擋路；它只問問題。使用者寫得不夠仍能前進——卡片**建議**回頭，不**強迫**回頭。
 
 ### 3.2 `thinking` — 偵測到值得二想的訊號
 
@@ -162,9 +161,9 @@ type ReflectionHintProps = {
 
 ## 4. 反思檢核 Validation Logic
 
-### 4.1 通用介面（v2.1 蘇格拉底化）
+### 4.1 通用介面
 
-> **v2.1 關鍵：** 回傳值統一為 `{ kind: "ok" | "hint" | "thinking", message?: string }`，**永不**回傳 `passed: false` 或 `fail`。蘇格拉底工具不評等。
+> 回傳值統一為 `{ kind: "ok" | "hint" | "thinking", message?: string }`，**永不**回傳 `passed: false` 或 `fail`。蘇格拉底工具不評等。
 
 ```typescript
 type ReflectionResult = {
@@ -190,9 +189,9 @@ function validateReflection(
 ): ReflectionResult { /* ... */ }
 ```
 
-### 4.2 各卡片的 Validation 邏輯（摘要，v2.1 中性化）
+### 4.2 各卡片的 Validation 邏輯（摘要）
 
-> 完整邏輯詳見 `references/exit_gates_matrix.md`。本元件依此邏輯執行檢查。所有 `errors` 已重新命名為 `hints`，所有「未通過 / 失敗」措辭改成「還可以再想想」。
+> 完整邏輯詳見 `references/reflection_hints_matrix.md`。本元件依此邏輯執行檢查。
 
 #### 卡 1：抱怨原句
 
@@ -269,11 +268,11 @@ function validateCard2(card: PainCard): ReflectionResult {
 
 #### 卡 3-9：依此類推
 
-完整 9 個 validation function 詳見 `references/exit_gates_matrix.md`（v2.1 已同步改名為「reflection hints matrix」並中性化措辭）。
+完整 9 個 validation function 詳見 `references/reflection_hints_matrix.md`。
 
 ---
 
-## 5. 蘇格拉底反思提示文案（v2.1 中性化）
+## 5. 蘇格拉底反思提示文案
 
 ### 5.1 通用文案模板
 
@@ -354,20 +353,20 @@ const REFLECTION_HINT_TEMPLATES: Record<string, ReflectionHintItem> = {
 - ❌ 「跳過此關將扣分」
 - ❌ 倒數計時器 / 進度過期警告
 
-### 6.2 評判 / 比較禁令（v2.1 強化）
+### 6.2 評判 / 比較禁令
 
-- ❌ 「未完成扣分」UI（v2.1 整個系統沒有 score 可扣，本來就不存在）
+- ❌ 「未完成扣分」UI（系統不存在 score 可扣）
 - ❌ 「你低於平均水準」
-- ❌ 「失敗 3 次將鎖定」（沒有失敗次數一說）
-- ❌ 任何形式的 0-25 分、5 維度評分、Pain Quality Score（v2.1 已徹底刪除）
+- ❌ 「失敗 3 次將鎖定」（沒有失敗次數）
+- ❌ 任何形式的 0-25 分、5 維度評分、Pain Quality Score
 - ❌ 紅色 ✗ 標示（用 Text Secondary 灰色 bullet `◦` 或中性 `⊙`）
 - ❌ 綠色 ✓ pass 勾（用中性 bullet `•` 取代）
 - ❌ 「過關 / 未過關」措辭
 
-### 6.3 強制路徑禁令（v2.1 強化）
+### 6.3 強制路徑禁令
 
 - ❌ 強制路由（不給「先存檔離開」選項）
-- ❌ 任何 disabled 主按鈕（v2.1 next_button 永遠 enabled——蘇格拉底工具不擋路）
+- ❌ 任何 disabled 主按鈕（next_button 永遠 enabled——蘇格拉底工具不擋路）
 - ❌ 反思不到位時 modal 攔截
 - ❌ 「您必須先完成卡 X 才能查看」這種命令式文案
 - ❌ 「退回卡 X」措辭（改用「回去把卡 X 想清楚再來」）
@@ -388,11 +387,11 @@ const REFLECTION_HINT_TEMPLATES: Record<string, ReflectionHintItem> = {
 - PainCard 變更時（透過 Zustand subscribe）重新執行驗證
 - Reflection 結果存入元件 state，觸發 UI 更新
 
-### 7.2 next_button 點擊（v2.1：永遠 enabled）
+### 7.2 next_button 點擊（永遠 enabled）
 
 ```typescript
 async function handleNextClick(): Promise<void> {
-  // v2.1：next_button 永遠 enabled。不檢查 reflection 結果——使用者寫得不夠仍能前進。
+  // next_button 永遠 enabled。不檢查 reflection 結果——使用者寫得不夠仍能前進。
   // 反思提示已經在 UI 上顯示，由使用者自己決定是否要回頭。
 
   // 寫入 PainCard
@@ -416,11 +415,9 @@ async function handleNextClick(): Promise<void> {
 - 「先存檔離開」：路由到 `/learn/worksheet`（入口頁）
 - 「回卡 X 想想看」：路由到對應卡片，預填既有資料（編輯模式）；文案中性，不用「補」、「退回」措辭
 
-### 7.4 thinking 狀態的提醒（不再有兩階段確認）
+### 7.4 thinking 狀態的提醒
 
-`thinking` 狀態下不需要 modal 攔截，也不需要「仍要繼續」確認 dialog。`socratic_hint` 區塊已經把訊息傳達給使用者；使用者決定要不要點 retreat_link 還是 next_button。
-
-> **v2.1 設計變更：** 移除原 `warning` 狀態的兩階段確認 dialog。蘇格拉底工具不打斷使用者；它只放下提示牌。
+`thinking` 狀態下不使用 modal 攔截，也不顯示「仍要繼續」確認 dialog。`socratic_hint` 區塊已經把訊息傳達給使用者；使用者決定要不要點 retreat_link 還是 next_button。蘇格拉底工具不打斷使用者；它只放下提示牌。
 
 ---
 
@@ -451,8 +448,6 @@ type ReflectionFooterProps = {
 };
 ```
 
-> **舊 API 重新命名：** `ExitGateCheckProps` → `ReflectionFooterProps`、`onPass` → `onAdvance`，避免 pass/fail 語意。
-
 ### 卡 9 的特殊處理
 
 當 `cardNumber === 9` 時：
@@ -461,7 +456,7 @@ type ReflectionFooterProps = {
 
 ---
 
-## 9. 文案模板（v2.1 中性化）
+## 9. 文案模板
 
 ### 9.1 `ok` 狀態文案
 
@@ -491,7 +486,7 @@ type ReflectionFooterProps = {
 | next_button | "繼續到下一張 →"（amber secondary 樣式） |
 | retreat_link | "重新跑一次卡 X" |
 
-> **禁用文案（v2.1）：** 「過關」、「通過」、「未通過」、「失敗」、「退回」、「警告」、「擋住」、「仍要繼續」（暗示有阻擋）。
+> **禁用文案：** 「過關」、「通過」、「未通過」、「失敗」、「退回」、「警告」、「擋住」、「仍要繼續」（暗示有阻擋）。
 
 ---
 
@@ -527,7 +522,7 @@ type ReflectionFooterProps = {
 ### 10.2 鍵盤操作
 
 - Tab 進入順序：retreat_link → next_button
-- next_button **永遠 enabled**（v2.1：蘇格拉底工具不擋路）
+- next_button **永遠 enabled**（蘇格拉底工具不擋路）
 - Enter 觸發 next_button
 
 ### 10.3 螢幕閱讀器體驗
@@ -538,7 +533,7 @@ type ReflectionFooterProps = {
 
 ---
 
-## 11. Acceptance Criteria（v2.1）
+## 11. Acceptance Criteria
 
 - [ ] 三種狀態 (`pending` / `thinking` / `ok`) 視覺正確區分，使用共用 `ReflectionHint` 元件
 - [ ] reflection list 顯示所有反思檢核，視覺中性（無 ✗ 紅、無 ✓ 綠）
@@ -555,12 +550,3 @@ type ReflectionFooterProps = {
 - [ ] 鍵盤可達所有按鈕
 - [ ] aria-live / role="status" 正確朗讀狀態變化（不用 role="alert"）
 - [ ] 文案完全符合 brand voice（沒有 FOMO / 比較 / 評判 / pass-fail）
-
----
-
-## 12. 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 1.0 | 2026-05-01 | 首版；定義三態、validation 邏輯、失敗路由文案、反模式禁令 |
-| 2.1 | 2026-05-02 | 蘇格拉底大一統：(1) 元件改名 ExitGateCheck → ReflectionHintFooter；(2) 三態改為 pending / thinking / ok（取代 locked / warning / ready）；(3) next_button 永遠 enabled，移除 disabled 與兩階段確認；(4) `validateExitGate` → `validateReflection`，回傳 `kind: "ok" \| "hint" \| "thinking"` 取代 `passed: boolean`；(5) UI 移除紅 ✗ / 綠 ✓，改用中性 bullet；(6) 文案中性化（「過關 / 退回」→「想想看 / 回去把卡 X 想清楚再來」）；(7) 新增共用元件 `ReflectionHint.tsx` |

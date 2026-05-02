@@ -1,11 +1,10 @@
-# PainMap Worksheet — Card 9 (真假判斷｜極簡版) Integrated Prompt
+# PainMap Worksheet — Card 9 (真假判斷) Integrated Prompt
 
 > 自我包含整合 prompt — 直接貼入 Lovable / Claude Code 即可生成卡 9 完整實作。
 > 對應 page spec：`docs/painmap_worksheet/design/pages/09_card_verdict.md`
-> 對應資料模型：`docs/painmap_worksheet/product/data_model.md` v2.0 § Card 9
-> 組裝日期：2026-05-02 ｜ Worksheet v2.0
+> 對應資料模型：`docs/painmap_worksheet/product/data_model.md` § Card 9
 >
-> **v2.0 重大變更**：徹底刪除 5 維度評分（0-25 分）、刪除教學 / 生產模式切換、刪除 mode toggle / banner、刪除 ScoresForm / ScoresSummary。卡 9 只剩寫作：5 個 Socratic 反思問句純螢幕提示（**不寫進資料**）+ judgment + reason_100w (≥100) + most_confident_evidence + least_confident + next_action。
+> **核心設計**：5 個 Socratic 反思問句純螢幕提示（**不寫進資料**）+ judgment + reason_100w (≥100) + most_confident_evidence + least_confident + next_action。
 >
 > **AI 在這張卡完全永久禁用**（worksheet 鐵律：判斷必須人為書面）。
 
@@ -39,14 +38,13 @@ H1 28px / H2 22px / H3 18px / Body LG 17px / Body MD 15px / Body SM 13px / Capti
 
 ### 技術棧
 
-React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorage key：`painmap-worksheet-v2`（**單一 key，無 settings.display_mode**）。
+React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorage key：`painmap-worksheet-v2`。
 
 ### 絕對禁令（PainMap Brand）
 
-- **禁止：任何分數 UI（N/25、N/100、N 星、A-F 等級、雷達圖）**（v2.0 強化）
-- **禁止：教學 vs 生產模式切換 / banner / URL ?mode= 參數**（v2.0 移除）
+- **禁止：任何分數 UI（N/25、N/100、N 星、A-F 等級、雷達圖）**
 - 禁止：排行榜、徽章、倒數計時
-- 禁用詞：「等級 A / B / C」「優秀 / 良好 / 普通 / 差」「Pain Quality」「最佳痛點」「成功率 / 可行性 X%」「AI 推薦」「AI 判斷這是真的」「你的判斷準確度」「升級為真痛點 / 降級為假痛點」「闖關」「streak」「教學模式」「生產模式」「5 維度」「總分」
+- 禁用詞：「等級 A / B / C」「優秀 / 良好 / 普通 / 差」「最佳痛點」「成功率 / 可行性 X%」「AI 推薦」「AI 判斷這是真的」「你的判斷準確度」「升級為真痛點 / 降級為假痛點」「闖關」「streak」「總分」
 - 禁止 Inline styles / `console.log`
 - WCAG AA / 語意化 HTML / focus ring Teal
 
@@ -61,17 +59,16 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorag
 1. **AI 完全永久禁用**（worksheet 鐵律：判斷必須人為書面，包含所有判斷層欄位）
 2. **書面優先**：reason_100w 必須 ≥ 100 字（**強制 minLength**）
 3. **5 個 Socratic 反思問句純 UI**（不寫進資料，不可變成 textarea）
-4. **無模式切換**（v2.0：worksheet 系統內不存在「教學模式 / 生產模式」之分）
-5. **無分數**（v2.0：schema 內已無 `verdict.scores` / `verdict.total_score`）
+4. **無分數**（schema 內無 `verdict.scores` / `verdict.total_score`）
 
 ---
 
-## === CURRENT TASK: BUILD CARD 9 — 真假判斷（極簡版） ===
+## === CURRENT TASK: BUILD CARD 9 — 真假判斷 ===
 
 ### [PAGE META]
 
-- **page_name**: Card 9 - Verdict (Socratic Minimal)
-- **route_path**: `/learn/worksheet/09?id={paincard_uuid}`（**無 `&mode=` 參數**）
+- **page_name**: Card 9 - Verdict
+- **route_path**: `/learn/worksheet/09?id={paincard_uuid}`
 - **card_step**: 9（最後一張 worksheet 卡片）
 - **page_type**: worksheet_card_critical
 - **primary_goal**: 引導使用者完成書面真假判斷（≥ 100 字）+ 最有把握 / 最沒把握 + 下一步行動
@@ -88,8 +85,6 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorag
 3. **socratic_reflection_panel** — 5 個 Socratic 反思問句（**純 UI 提示，不寫資料**）
 4. **judgment_form** — 真假判斷單選 + ≥ 100 字書面理由 + most/least confident + next_action
 5. **reflection_footer** — 必填狀態 + 「查看你的痛點身份證」CTA
-
-> ❌ 移除：`mode_indicator`、`scores_form`、`scores_summary`、`teaching_warning`、`total_score_display`、`score_band_hint`、`status_change_preview`
 
 ---
 
@@ -113,7 +108,7 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorag
   - title: "這份填空簿的唯一交付物"
   - body: 「你不需要做產品、不需要架網站、不需要收錢。你只需要交出這個書面判斷。」
 
-#### Section 3: socratic_reflection_panel（v2.0 新區塊，**純 UI 提示**）
+#### Section 3: socratic_reflection_panel（**純 UI 提示**）
 
 - **layout**: 全寬白底，padding 24px，最大寬 800px，背景 BG Muted `#F1F3F5`
 - `section_title` (H2): "在寫 100 字理由前，先想想這 5 個問題"
@@ -125,12 +120,12 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorag
   4. 「他現在解法最讓他不爽的點，能用他的話寫出來嗎？」
   5. 「最有把握的證據 vs 最薄弱的環節分別是什麼？」
 
-> ⚠️ 鐵律：這 5 個問句**純螢幕顯示**，**不**對應任何 textarea / radio / data field。它們是「給你想想」的反思提示，不是欄位。
-> 設計決策：使用者選擇最極簡——5 個維度只當作螢幕上的提示文字（pure UI），不寫進資料。資料層只有下面 judgment_form 的 5 個欄位。
+> ⚠️ 鐵律：這 5 個問句**純螢幕顯示**，**不**對應任何 textarea / radio / data field。它們是「給你想想」的反思提示，不是欄位。資料層只有下面 judgment_form 的 5 個欄位。
 
 #### Section 4: judgment_form（**核心區塊**）
 
 - **layout**: 全寬白底容器，padding 32px，最大寬 800px，**border-left 4px Accent #E8913A**
+
 - `section_title` (H2): "你的書面判斷"
 
 ##### `judgment_radio` (RadioGroup, 3 個選項，**必須單選**)
@@ -186,7 +181,7 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod。LocalStorag
 - `cta_next` (Button Primary Large): "查看你的痛點身份證 →" → `/learn/worksheet/result`
 - `cta_back` (Button Ghost, optional): "← 回卡 8"
 
-> ❌ 移除：`status_change_preview`「PainCard.status 即將變為...」（過度技術化）；保留資料層自動寫入但不顯示給使用者。
+> 資料層自動寫入 PainCard.status，但不顯示「PainCard.status 即將變為...」這類技術細節給使用者。
 
 ---
 
@@ -232,8 +227,8 @@ verdict.judgment === 'fake_pain' →
 
 - **uses_api**: false（MVP）
 - **localstorage_keys**:
-  - `painmap-worksheet-v2`（**單一 key，無 settings.display_mode**）
-- **data_paths_written** (v2.0)：
+  - `painmap-worksheet-v2`
+- **data_paths_written**：
   - `PainCard.verdict.judgment` (`'true_pain' | 'fake_pain' | 'pending_interview'`)
   - `PainCard.verdict.reason_100w` (≥ 100 字)
   - `PainCard.verdict.most_confident_evidence` (≥ 15 字)
@@ -241,7 +236,7 @@ verdict.judgment === 'fake_pain' →
   - `PainCard.verdict.next_action` (`'interview' | 'more_evidence' | 'change_topic'`)
   - `PainCard.status` (依 judgment 自動寫入)
   - `PainCard.current_step` → 10
-- **無 score 欄位**（schema 內 `verdict.scores` / `verdict.total_score` 已移除）
+- **無 score 欄位**（schema 內無 `verdict.scores` / `verdict.total_score`）
 - **Socratic 反思問句不寫資料**（純 UI）
 
 ---
@@ -300,16 +295,13 @@ verdict.judgment === 'fake_pain' →
 - judgment 是 single-decision，沒有「AI 建議」混淆
 - LocalStorage 確保資料主權
 
-#### 反模式檢查清單（Card 9 最容易犯，**v2.0 強化**）
+#### 反模式檢查清單（Card 9 最容易犯）
 
-- ❌ **任何 5 維度評分 UI**（v2.0：schema 內已無 score 欄位，砍光）
-- ❌ **0-25 分顯示 / 雷達圖 / 進度條**
-- ❌ **教學 / 生產模式切換 banner**
-- ❌ **URL ?mode= 參數**
-- ❌ 把 0-25 分轉換為 A-F 等級
-- ❌ 「Pain Quality 排行榜」
-- ❌ 推送通知「你的 Pain Quality 提升了 +3」
-- ❌ 「分享你的 Pain Quality Score 到社群」按鈕
+- ❌ **任何分數 UI / 雷達圖 / 進度條 0-25**（schema 內無 score 欄位）
+- ❌ **任何分數轉 A-F 等級的 UI**
+- ❌ 「痛點品質排行榜」
+- ❌ 推送通知「你的判斷得分提升了」
+- ❌ 「分享你的得分到社群」按鈕
 - ❌ 把 judgment 結果做成「成就徽章」
 - ❌ 跨 PainCard 比較
 - ❌ AI 自動寫 reason_100w
@@ -332,23 +324,22 @@ verdict.judgment === 'fake_pain' →
 ### Step 1：結構確認
 
 - 5 個 sections + 用途
-- PainCard schema 對應（v2.0）：`verdict.{judgment, reason_100w, most_confident_evidence, least_confident, next_action}`
+- PainCard schema 對應：`verdict.{judgment, reason_100w, most_confident_evidence, least_confident, next_action}`
 - 資料流：URL `?id` → 讀 LocalStorage → 渲染 socratic_reflection_panel + judgment_form → 必填狀態檢查 → PATCH status + current_step
-- **無 mode 邏輯**
 
 ### Step 2：設計決策說明
 
 說明 3 個關鍵設計決策：
-1. **為什麼移除 5 維度評分？** — 分數會誤用為「綠燈」，於是要加 disclaimer 解釋「分數不是答案」。蘇格拉底式工具不打分數，只問問題。卡 9 改為 5 個 Socratic 純 UI 提示 + 書面判斷 = 訓練判斷力本身。
+1. **為什麼不打分？** — 分數會誤用為「綠燈」，於是要加 disclaimer 解釋「分數不是答案」。蘇格拉底式工具不打分數，只問問題。卡 9 用 5 個 Socratic 純 UI 提示 + 書面判斷 = 訓練判斷力本身。
 2. **為什麼 5 個反思問句不寫資料？** — 寫進去就會變成 5 個 textarea，5 個 textarea 又會被加上 minLength，又會變成另一套打分。最極簡 = 純 UI，使用者想完就跳到下方寫判斷。
-3. **為什麼移除教學 / 生產模式切換？** — 雙模式為了隱藏分數而存在；分數本不該存在；模式也不該存在。一刀砍三層自我矛盾。
+3. **為什麼 AI 在這張卡完全禁用？** — 判斷是這套訓練的唯一交付物。AI 介入即剝奪判斷主權，違反「判斷必須人為書面」鐵律。
 
 ### Step 3：實作方案（Option A）
 
 - `Card9VerdictPage.tsx`
 - `StepperContext` / `CardIntro` / `AiDisabledBanner` / `SocraticReflectionPanel` / `JudgmentForm` / `ReflectionFooter`
 - `useReasonCharCounter` hook
-- Zod schema for verdict（v2.0：含 minLength 100 強制；無 scores 欄位）
+- Zod schema for verdict（含 minLength 100 強制；無 scores 欄位）
 - RWD Tailwind
 
 ### 品質檢查清單（部署前必過）
@@ -364,30 +355,22 @@ verdict.judgment === 'fake_pain' →
 - [ ] 過關後 PainCard.current_step 寫入 10
 - [ ] reason_100w textarea 有 aria-describedby 連結到 char_counter
 
-#### v2.0 反模式驗收（**必過全部不出現**）
-- [ ] **無任何 5 維度評分 UI / SegmentedScale / total_score / radar chart / progress bar 0-25**
+#### 反模式驗收（**必過全部不出現**）
+- [ ] **無任何分數 UI / SegmentedScale / total_score / radar chart / progress bar 0-25**
 - [ ] **無 verdict.scores / verdict.total_score 欄位寫入**
-- [ ] **無 mode_indicator / scores_form / scores_summary 元件**
-- [ ] **無 URL `?mode=teaching|production` 參數**
-- [ ] **無「教學模式」「生產模式」「總分」「分數」字眼**
-- [ ] **無 score_band_hint「20-25 / 15-19 / 0-14」三種建議**
-- [ ] 是否出現 0-25 分轉 A-F 等級的 UI？→ 砍掉
-- [ ] 是否有 Pain Quality Score 排行榜？→ 砍掉
-- [ ] 是否有 5 維度雷達圖 / 進度條？→ 砍掉
+- [ ] **無「總分」「分數」字眼**
+- [ ] 是否出現分數轉 A-F 等級的 UI？→ 砍掉
+- [ ] 是否有痛點品質排行榜？→ 砍掉
+- [ ] 是否有雷達圖 / 進度條？→ 砍掉
 - [ ] 是否有「分享你的得分」按鈕？→ 砍掉
 - [ ] 是否有 judgment 徽章（金 / 銀 / 銅）？→ 砍掉
 - [ ] 是否有 AI 輔助寫 reason 按鈕？→ 砍掉（**Card 9 鐵律**）
 - [ ] 是否有跨 PainCard 分數比較？→ 砍掉
 - [ ] 是否有 streak / 過期警告？→ 砍掉
 
-#### 禁用詞掃描（v2.0 強化）
-- [ ] 全頁面零出現「等級 A / B / C」「優秀 / 良好 / 普通 / 差」「Pain Quality」「最佳痛點」「成功率 / 可行性」「AI 推薦你選真痛點」「AI 判斷這是真的」「分享你的得分」「升級為真痛點 / 降級為假痛點」「闖關」「streak」「教學模式」「生產模式」「5 維度」「總分」「N / 25」「N / 100」「過關條件」「退回」
+#### 禁用詞掃描
+- [ ] 全頁面零出現「等級 A / B / C」「優秀 / 良好 / 普通 / 差」「最佳痛點」「成功率 / 可行性」「AI 推薦你選真痛點」「AI 判斷這是真的」「分享你的得分」「升級為真痛點 / 降級為假痛點」「闖關」「streak」「總分」「N / 25」「N / 100」「過關條件」「退回」
 
 #### 資料層
-- [ ] LocalStorage key 為 `painmap-worksheet-v2`（無 settings.display_mode）
+- [ ] LocalStorage key 為 `painmap-worksheet-v2`
 - [ ] verdict object 內無 `scores` / `total_score` 欄位
-- [ ] 公開分享連結使用同一份 schema（無模式之分）
-
----
-
-**版本資訊**：Worksheet v2.0 ｜ Brand v1.0 ｜ 2026-05-02

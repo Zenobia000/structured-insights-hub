@@ -1,6 +1,5 @@
 # E2E Scenarios — PainMap Worksheet 端對端測試劇本
 
-> **版本**：v1.0 — 2026-05-01
 > **配套文件**：`product/data_model.md`、`references/exit_gates_matrix.md`、`design/pages/00-10_*.md`、`api/ai_proxy_spec.md`
 > **測試對象**：MVP 階段（LocalStorage + 外部 ChatGPT 複製模式）
 > **測試框架建議**：Playwright + 中文 locale（`zh-TW`）+ Vitest（單元）
@@ -31,7 +30,7 @@ tests/e2e/
 │   ├── ai-responses/
 │   │   ├── card-3-stuck-formula.txt    # 卡 3 AI 校對範例回覆
 │   │   ├── card-4-workaround-list.txt  # 卡 4 AI 5 個 workaround
-│   │   ├── card-5-triz-pick.txt        # 卡 5 AI 矛盾選擇
+│   │   ├── card-5-tradeoff.txt         # 卡 5 AI 兩端取捨候選
 │   │   ├── card-6-evidence-good.txt    # 卡 6 8 題正常回覆
 │   │   ├── card-6-evidence-solution-mode.txt  # 卡 6 含「建議製作 App」
 │   │   ├── card-7-judgment-table.txt   # 卡 7 痛點判斷表
@@ -45,11 +44,10 @@ tests/e2e/
 ├── scenario-03-pending-interview.spec.ts
 ├── scenario-04-card2-fail-route.spec.ts
 ├── scenario-05-card6-solution-mode.spec.ts
-├── scenario-06-mode-switching.spec.ts
-├── scenario-07-cross-session.spec.ts
-├── scenario-08-export-formats.spec.ts
-├── scenario-09-a11y-keyboard.spec.ts
-└── scenario-10-blackhat-octalysis.spec.ts
+├── scenario-06-cross-session.spec.ts
+├── scenario-07-export-formats.spec.ts
+├── scenario-08-a11y-keyboard.spec.ts
+└── scenario-09-blackhat-octalysis.spec.ts
 ```
 
 ### 0.3 共用 helpers（pseudo-code）
@@ -173,11 +171,11 @@ Scenario: 真痛點完整流程
   And  我被導向 /learn/worksheet/03
 
   # === 卡 3: 卡關公式（AI 校對）===
-  When 我在 user_draft 填入「我每次要寫 30 則家長回報，都會卡在資料散在 7 次小考」
-  And  我點擊「📋 複製 prompt 到 ChatGPT」
+  When 我點擊「📋 複製 prompt 到 ChatGPT」
   Then 剪貼簿包含內建 prompt + 卡 1+2 變數已插值
   When 我（模擬外部跑 AI）將 ai-responses/card-3-stuck-formula.txt 貼到 raw_response
-  And  我手動填入 ai_polished + 3 個 ai_clarifying_questions
+  And  我手動填入 ai_polished（用「我每次要 ___，都會卡在 ___」句型）
+  And  我填入 3 個 ai_clarifying_answers（回答 AI 的 3 個追問）
   And  我勾選「我確認此版本」（confirmed = true）
   And  我點擊「下一張卡 →」
   Then LocalStorage 中 stuck_formula.confirmed === true
@@ -194,12 +192,15 @@ Scenario: 真痛點完整流程
   Then LocalStorage 中 workaround.user_dissatisfactions.length >= 3
   And  我被導向 /learn/worksheet/05
 
-  # === 卡 5: TRIZ 矛盾 ===
-  When 我點擊「請 AI 從 6 種矛盾中挑 1 個」並貼回 AI 建議
-  And  我選擇 triz_id=2（想客製化但又想規模化）
-  And  我填入 side_a, side_b, sacrificed='a'
+  # === 卡 5: 兩件事不能同時要 ===
+  When 我填入 side_a="家長要看見「我的孩子」被個別關照（具體事件、語氣有溫度）"
+  And  我填入 side_b="老師一週只有 2-3 小時可寫 30 則（每則 < 6 分鐘）"
+  And  我選擇 sacrificed='a'
+  And  我填入 sacrificed_reason="時間先到，所以個別溫度被擠壓成模板化句子"
   And  我點擊「下一張卡 →」
-  Then LocalStorage 中 contradiction.triz_id === 2
+  Then LocalStorage 中 contradiction.side_a.length >= 10
+  And  LocalStorage 中 contradiction.sacrificed === 'a'
+  And  LocalStorage 中 contradiction.sacrificed_reason.length >= 10
   And  我被導向 /learn/worksheet/06
 
   # === 卡 6: AI 證據蒐集（最重要）===
@@ -240,14 +241,14 @@ Scenario: 真痛點完整流程
 
   # === 卡 9: 真假判斷（AI 完全禁用）===
   Then 頁面上「不」存在任何 AI 按鈕（aria-label 不含 "AI"）
-  When 我打 5 維度分數（people_specificity=5, frequency=5, intensity=4, workaround_dissatisfaction=5, evidence_credibility=4）
-  Then total_score === 23 顯示為「23 / 25（教學模式才顯示）」
+  And  頁面頂端顯示 5 個 Socratic 提示問題（純 UI，無 input）
   When 我選擇 judgment="true_pain"
   And  我填入 reason_100w（≥ 100 字 — 用 fixture 林老師範例）
   And  我填入 most_confident_evidence + least_confident
   And  我選擇 next_action="interview"
   And  我點擊「產出痛點身份證 →」
   Then LocalStorage 中 PainCard.status === 'structured'
+  And  PainCard.verdict.reason_100w.length >= 100
   And  PainCard.current_step === 10
   And  我被導向 /learn/worksheet/result
 
@@ -261,7 +262,6 @@ Scenario: 真痛點完整流程
   When 我點擊「下載 .md」
   Then 瀏覽器下載檔名為 paincard-{slug}-2026-04-15.md（slug = verbatim 前 20 字）
   And  Markdown 內容包含 9 卡精華
-  And  教學模式下 Markdown 包含 Pain Quality 區塊（5 維度 + total_score 23/25）
   And  LocalStorage 中 PainCard.exported.formats 包含 'markdown'
 
   When 我點擊「進入 PainMap App →」
@@ -303,14 +303,12 @@ Scenario: 真痛點完整流程
 
 ```gherkin
 Scenario: 假痛點流程
-  Given LocalStorage 已注入 PainCard.current_step=9 + 卡 1-8 全填
-  When  我打開 /learn/worksheet/09
-  And   我打分 5 維度全 1-2 分（intensity=2, evidence_credibility=1...）
-  Then  total_score === 7 顯示「7 / 25（教學模式）」
-  And   分數帶提示文案「≤14 換題」（worksheet 第 538 行）
+  Given LocalStorage 已注入 PainCard.current_step=9 + 卡 1-8 全填（證據偏弱版本）
 
-  When  我選擇 judgment="fake_pain"
+  When  我打開 /learn/worksheet/09
+  And   我選擇 judgment="fake_pain"
   And   我填入 reason_100w="親眼觀察後發現他其實沒在花時間解這個問題..."（≥ 100 字）
+  And   我填入 most_confident_evidence + least_confident
   And   我選擇 next_action="change_topic"
   And   我點擊「產出痛點身份證 →」
   Then  LocalStorage 中 PainCard.status === 'archived_fake'
@@ -347,9 +345,10 @@ Scenario: 假痛點流程
 
 ```gherkin
 Scenario: 待訪談流程
-  Given 已填到卡 9，分數中等（total_score = 16）
+  Given 已填到卡 9，證據力中等
   When  我選擇 judgment="pending_interview"
   And   我填入 reason_100w（≥ 100 字，包含「樣本不足，需訪談 2-3 人才能判斷」）
+  And   我填入 most_confident_evidence + least_confident
   And   我選擇 next_action="interview"
   And   我點擊「產出痛點身份證 →」
   Then  LocalStorage 中 PainCard.status === 'pending_interview'
@@ -479,49 +478,7 @@ Scenario: 反 solution mode — 不可誤判中性句
 
 ---
 
-### Scenario 6: 教學模式 vs 生產模式切換
-
-**目的**：驗證卡 9 在 teaching 模式顯示分數條 + 0-25 總分；切到 production 模式後僅顯示 ✓ checkmark。
-
-```gherkin
-Scenario: 教學 / 生產模式切換
-  Given 我已完成卡 9 打分（total_score = 23）
-  And   localStorage['painmap_worksheet:settings.display_mode'] === 'teaching'
-
-  When  我打開 /learn/worksheet/09
-  Then  field_pain_quality 區塊可見
-  And   顯示 5 條分數條（人群具體度 5/5、頻率 5/5、強度 4/5、workaround 不滿 5/5、證據 4/5）
-  And   顯示 total_score「23 / 25」
-  And   teaching_note 顯示「分數只是工具，不是答案。」
-
-  When  我打開 /settings 並切換 display_mode 為 'production'
-  And   我返回 /learn/worksheet/09
-  Then  field_pain_quality 區塊隱藏
-  And   不顯示任何 X/5 或 X/25 數字
-  And   僅顯示 status_badge ✓「真痛點」（Verified Green）
-  And   LocalStorage 中 verdict.scores 資料**仍保留**（只是 UI 不顯示）
-
-  When  我打開 /learn/worksheet/result（卡 10）
-  Then  pain_id_card 中 field_pain_quality 區塊隱藏
-  And   匯出 Markdown 時 Pain Quality 區塊整段不輸出
-
-  When  我打開分享 modal
-  Then  「分享連結是否包含分數」checkbox 預設未勾選（生產模式 R4.2）
-  And   privacy_warning 顯示「分享連結預設不包含 5 維度評分」
-```
-
-#### Verify
-
-| 檢查項 | 期望值 |
-| :--- | :--- |
-| Teaching 模式 LocalStorage | `verdict.scores.*` 保留 + UI 顯示 |
-| Production 模式 LocalStorage | `verdict.scores.*` 保留 + UI 隱藏 |
-| 切換不丟資料 | LocalStorage 不被清空 |
-| 匯出 Markdown 內容 | Production: 無 Pain Quality 段落；Teaching: 有 |
-
----
-
-### Scenario 7: 跨 session 持續性
+### Scenario 6: 跨 session 持續性
 
 **目的**：填到卡 5 → 關閉 tab → 重新打開 landing → 點 resume → 恢復到卡 5。
 
@@ -541,7 +498,7 @@ Scenario: 跨 session 恢復
   When  我點擊「繼續上次的進度」
   Then  系統讀取 current_card_id
   And   我被導向 /learn/worksheet/05?id={uuid}
-  And   卡 5 已填欄位（triz_id, side_a, side_b）正確復原
+  And   卡 5 已填欄位（side_a, side_b, sacrificed, sacrificed_reason）正確復原
   And   stepper 顯示卡 1-4 ✓ + 卡 5 active
 
   # 同樣場景但選擇捨棄
@@ -564,14 +521,13 @@ Scenario: 跨 session 恢復
 
 ---
 
-### Scenario 8: 匯出三格式驗證
+### Scenario 7: 匯出三格式驗證
 
-**目的**：驗證 Markdown / JSON / PDF 三格式檔名 + 內容 + 模式差異。
+**目的**：驗證 Markdown / JSON / PDF 三格式檔名 + 內容。
 
 ```gherkin
 Scenario: 三格式匯出
   Given 我已完成 PainCard（structured，林老師案例）
-  And   display_mode === 'teaching'
 
   # === Markdown ===
   When  我點擊「下載 .md」
@@ -584,11 +540,10 @@ Scenario: 三格式匯出
         - "**主人翁**: 林老師"
         - "**判定**: 真痛點"
         - "## 場景" + 完整 verbatim
-        - "## 兩件事不能同時要" + triz_label
+        - "## 兩件事不能同時要" + side_a / side_b / sacrificed / sacrificed_reason
         - "## AI 找到的關鍵證據"
         - "## 我自己猜 vs AI 答的差異"
-        - "## 我的判斷" + reason_100w
-        - "## Pain Quality（5 維度反思，僅教學模式）"  # 教學模式才有
+        - "## 我的判斷" + reason_100w + most_confident_evidence + least_confident + next_action
   And   PainCard.exported.formats 已 push 'markdown'
   And   PainCard.exported.exported_at 為 ISO8601
 
@@ -596,7 +551,7 @@ Scenario: 三格式匯出
   When  我點擊「下載 .json」
   Then  下載檔名 paincard-我每週六晚上要寫-2026-04-15.json
   And   內容是有效的 JSON
-  And   parsed JSON 完整等於 PainCard 物件（含 verdict.scores、total_score）
+  And   parsed JSON 完整等於 PainCard 物件
   And   JSON Schema 驗證通過（references/pain_card_schema.md）
 
   # === PDF ===
@@ -606,24 +561,14 @@ Scenario: 三格式匯出
   And   檔名 paincard-我每週六晚上要寫-2026-04-15.pdf
   And   PDF 為 A4 一頁
   And   字體為 Noto Sans TC
-  And   PDF 內容包含 9 卡精華（教學模式有 Pain Quality）
-
-  # === 切到生產模式 ===
-  When  我切換 display_mode 為 'production'
-  And   我重新點擊「下載 .md」
-  Then  下載的 Markdown「不」包含 "## Pain Quality" 段落
-  And   不出現 "5 維度" "23/25" "scores" 字串
+  And   PDF 內容包含 9 卡精華
 
   # === 分享連結（不是檔案下載）===
   When  我點擊「分享身份證」並選「複製可分享連結」
   Then  share_field_selector 預設只勾 "verdict.judgment + reason_100w"
-  And   分數 checkbox 預設未勾
-  And   privacy_warning 顯示「分享連結預設不包含 5 維度評分」
 
   When  我複製連結並用無痕視窗打開
-  Then  分享頁面不顯示 verdict.scores
-  And   不顯示 total_score
-  And   只顯示 judgment + reason_100w + 我選擇分享的欄位
+  Then  分享頁面只顯示 judgment + reason_100w + 我選擇分享的欄位
 ```
 
 #### Verify — 匯出反模式
@@ -639,7 +584,7 @@ Scenario: 匯出不需要登入
 
 ---
 
-### Scenario 9: A11y 鍵盤瀏覽
+### Scenario 8: A11y 鍵盤瀏覽
 
 **目的**：驗證所有可互動元素 keyboard accessible，無鍵盤陷阱。
 
@@ -666,10 +611,9 @@ Scenario: 鍵盤完整 tab 走完 landing
 
   # === 卡 9 進階測試 ===
   Given 我打開 /learn/worksheet/09
-  When  我用 Tab 走 5 個分數 slider
-  Then  每個 slider 可用 ← → 方向鍵調整
-  And   調整時 aria-valuenow 即時更新
-  And   螢幕閱讀器讀出「人群具體度，目前 5 分，1 到 5」
+  When  我用 Tab 走判斷三選一 radio group
+  Then  radio 之間可用 ← → 方向鍵切換
+  And   螢幕閱讀器讀出「真痛點，3 個選項中的第 1 個」
 
   # === 鍵盤陷阱檢測 ===
   Given 我在卡 10 中開啟 delete_confirm_modal
@@ -702,7 +646,7 @@ test('卡 1 通過 WCAG AA', async ({ page }) => {
 
 ---
 
-### Scenario 10: 黑帽 Octalysis 違規偵測
+### Scenario 9: 黑帽 Octalysis 違規偵測
 
 **目的**：整站爬蟲檢查 — 無分數百分比 / 無倒數計時 / 無 streak / 無排行榜 / 無 FOMO 文案。**這是 brand 安全網**。
 
@@ -799,8 +743,8 @@ jobs:
 
 | 測試類別 | 觸發 | 預估時間 |
 | :--- | :--- | :--- |
-| Smoke（Scenario 1 + 10）| 每個 PR | 2-3 分鐘 |
-| Full E2E（10 個 scenarios）| `main` 合併後 | 10-15 分鐘 |
+| Smoke（Scenario 1 + 9）| 每個 PR | 2-3 分鐘 |
+| Full E2E（9 個 scenarios）| `main` 合併後 | 10-15 分鐘 |
 | 跨瀏覽器（chromium/webkit/firefox）| nightly | 30-45 分鐘 |
 | A11y 完整掃描 | 週末 | 5 分鐘 |
 | 視覺回歸（screenshot diff）| 設計變更 PR | 5 分鐘 |
@@ -823,10 +767,3 @@ jobs:
 - 失敗截圖 / video 自動附在 report
 - 趨勢監控：通過率、平均執行時間、flaky rate
 
----
-
-## 4. 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 1.0 | 2026-05-01 | 首版；對應 worksheet v1.0、data_model.md v1.0 |

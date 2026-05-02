@@ -1,6 +1,6 @@
 # Page-Level Spec: Card 5 — 兩件事不能同時要（取捨自陳）
 
-> Worksheet 第五張卡片。對應「卡片 5 ｜ 找出兩件事不能同時要」。**v2.0 重構：徹底移除 TRIZ 6 矛盾分類學**。使用者用自己的話寫 side_a / side_b、選 sacrificed、自陳 sacrificed_reason。蘇格拉底原則：問題取代評分，使用者自陳取代從 6 種挑 1 個。
+> Worksheet 第五張卡片。對應「卡片 5 ｜ 找出兩件事不能同時要」。使用者用自己的話寫 side_a / side_b、選 sacrificed、自陳 sacrificed_reason。蘇格拉底原則：問題取代評分，使用者親筆書寫即反思。
 
 ---
 
@@ -10,7 +10,7 @@
 - **route_path**: `/learn/worksheet/05?id={paincard_uuid}`
 - **page_type**: worksheet_card (input form, 純使用者書寫)
 - **primary_goal**: 引導使用者用自己的話寫出 `contradiction.side_a`（≥10 字）+ `side_b`（≥10 字）+ 選 `sacrificed` (a/b) + 自陳 `sacrificed_reason`（≥1 句）
-- **secondary_goal**: 訓練「真痛點背後通常是兩件事不能同時要」的取捨思維 — **不依賴預設分類學**
+- **secondary_goal**: 訓練「真痛點背後通常是兩件事不能同時要」的取捨思維 — 由使用者親筆拆解，不依賴預設分類學
 - **target_users**: 已通過卡 4 反思的使用者
 - **entry_point**: 卡 4 完成後 PATCH 跳轉 / LocalStorage 恢復 `current_step === 5`
 - **expected_time_on_page**: 5-10 分鐘（純書寫，無 AI prompt）
@@ -25,7 +25,7 @@
 >
 > 「他想要 ___，但又同時想要 ___。如果他能放掉其中一邊，他不會卡在這裡——所以他**放不下哪邊**？為什麼？」
 
-這個提示取代過去的「從 6 種挑 1 個」結構。使用者必須自己拆出這兩件事，而不是從預設清單裡認領。
+使用者必須自己拆出這兩件事，不從預設清單裡認領。寫作即反思。
 
 ---
 
@@ -180,9 +180,7 @@
 
 - **AI 介入狀態**：❌ **AI 完全不參與**
 - **AI 角色**：無
-- **理由**：v2.0 重構後，這張卡是純使用者自陳。沒有「從 6 種挑 1 個」需要 AI 提案。使用者寫作即反思——AI 介入會稀釋訓練效果。
-
-> **v1 → v2 變更**：v1 有 AI prompt 「請 AI 從 6 種挑 1 個」，v2 完全移除。trizOptions、SixContradictionsPreview、TrizRadioSelector 全部刪除。
+- **理由**：這張卡是純使用者自陳。使用者親筆寫作即反思——AI 介入會稀釋訓練效果。
 
 ---
 
@@ -206,7 +204,7 @@
 | :--- | :--- |
 | ❌ 「抽卡」式 UI / 隨機顯示選項 | 違反 #7 Unpredictability 黑帽 |
 | ❌ AI 自動寫入 side_a / side_b | 違反「使用者自陳」核心訓練 |
-| ❌ 預設下拉選單給「常見矛盾」| v2.0 鐵律：沒有預設分類學 |
+| ❌ 預設下拉選單給「常見矛盾」| 鐵律：沒有預設分類學 |
 | ❌ 「神秘第 7 種」「複合矛盾」彩蛋 | 違反「使用者完全自陳」原則 |
 | ❌ 倒數計時器 | 違反 anti-anxiety |
 
@@ -228,7 +226,7 @@
 | 建議 | 場景 |
 | :--- | :--- |
 | 「兩件事不能同時要」 | worksheet 大白話 |
-| 「取捨」「自陳」 | v2.0 蘇格拉底用語 |
+| 「取捨」「自陳」 | 蘇格拉底用語 |
 | 「想想看」 | 反思提示 |
 
 ### 語調

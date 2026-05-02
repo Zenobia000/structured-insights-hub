@@ -3,24 +3,13 @@ name: sunnydata-pain-thinking
 description: Use when exploring or validating whether a pain point is real (not whether it can make money). Stage 1 only — runs the 9-step pain discovery flow with SECI lenses and first-principles/Socratic engines. Output is a user-authored written verdict (true/fake/pending-interview) with a 100-word reason and a next action — no numeric scoring, no mode toggle. Money, payment, manual delivery, and BCG DRI belong to Stage 2 (sprint manual) and are NOT triggered by this skill.
 ---
 
-# Pain Thinking — 階段一痛點發想（v2.1 蘇格拉底大一統）
+# Pain Thinking — 階段一痛點發想
 
 > **Authoritative source:** `docs/design/painmap_pain_thinking_system.md`
 > **Companion lecture:** `docs/workshop/painpoint_systematic_thinking_lecture.md`
 > **Beginner worksheet:** `docs/workshop/painpoint_beginner_worksheet.md`
 > **Engine docs:** `docs/product/first_principles_playbook.md`, `docs/product/socratic_first_principles_rnd_workflow.md`
 > **Stage 2 hand-off:** `docs/product/first_principles_sprint_manual.md` (commercial validation, NOT loaded by this skill)
-
-## v2.1 變更摘要（2026-05-02）
-
-v2 引入「兩階段」骨架（痛點發想 vs 商業驗證）解決最嚴重的混淆。v2.1 進一步把階段一本身**蘇格拉底大一統**：
-
-- **刪除** 0–25 Pain Quality Score（5 維度 × 1–5 分）— 寫作本身就是反思，不需要分數鏡子。
-- **刪除** Teaching mode / Production mode 雙模式切換 — 沒有分數要藏，自然不需要兩種模式。
-- **刪除** TRIZ 六矛盾分類學 — 卡 5 改成「使用者用自己的話寫 trade-off」。
-- **保留** 9 步骨架、anti-IdeaCheck 立場、S1/S2 詰問、物理量 #1 / #2、verdict 書面交付。
-
-判斷力由「動筆寫」而非「打分數」訓練；UI 與 prompt 只用反思提示，從不評等。
 
 ## When to use
 
@@ -47,7 +36,7 @@ Load this skill whenever:
 2. Stage 1 outputs a WRITTEN TRUE/FAKE/PENDING verdict — NOT a payment, NOT a score.
 3. NO step skipping. A step's exit reflection unanswered → cannot advance.
 4. NO money talk in Stage 1. If money comes up, it belongs in Stage 2.
-5. NO numeric scoring at any point. If a number appears, you've imported the wrong tool.
+5. NO numeric scoring at any point. Judgment is trained by writing, not by grading.
 ```
 
 ## Architecture: Two Stages × Lenses × Engines
@@ -70,12 +59,12 @@ Stage 2 (NOT in this skill): COMMERCIAL VALIDATION — money
 
 | # | Quantity | Check | Step | Stage |
 | :-- | :--- | :--- | :--- | :--- |
-| 1 | Specific people | Can you call 3 named individuals right now? | Step 2 | 1 ✓ |
-| 2 | Pain w/ time/cost investment | Does the workaround have a name? | Step 2 | 1 ✓ |
+| 1 | Specific people | Can you call 3 named individuals right now? | Step 2 | 1 |
+| 2 | Pain w/ time/cost investment | Does the workaround have a name? | Step 2 | 1 |
 | 3 | Manual deliverable | Can you do it tonight without code? | — | 2 (NOT here) |
 | 4 | Payment rail | Do you have a shareable payment link now? | — | 2 (NOT here) |
 
-**v2 wording fix:** #2 is "pain w/ time/cost investment" not "paying pain" — avoids implying you need a paying customer at the discovery stage.
+#2 is "pain w/ time/cost investment" — workaround has a name, time/emotion/money cost is being spent. Avoids implying you need a paying customer at the discovery stage.
 
 ## Socratic Templates
 
@@ -104,7 +93,7 @@ When you load this skill, immediately create these 9 todos:
 
 Mark each todo `in_progress` on entry, `completed` only when the user has produced the written reflection for that step.
 
-> **Card 5 surfaces the user's irreducible trade-off in their own words; no taxonomic labels.** If the user reaches for "TRIZ contradiction #2" or any other framework label, redirect them to write what each side wants and which side is being given up — in their own sentences.
+> **Card 5 surfaces the user's irreducible trade-off in their own words; no taxonomic labels.** If the user reaches for a framework label like "TRIZ contradiction #2", redirect them to write what each side wants and which side is being given up — in their own sentences.
 
 ### Step reflection gates (the prompts, not pass/fail)
 
@@ -160,7 +149,7 @@ Mark each todo `in_progress` on entry, `completed` only when the user has produc
 不確定的標 [推測]。不要對任何結論加裝飾性評論。不要打分數。
 ```
 
-> Old prompts asked AI to score 5 dimensions on 1–5 — that line is removed. The AI is here to surface evidence, not to grade you.
+The AI is here to surface evidence, not to grade you.
 
 ## Step 7 Self-Guess Discipline
 
@@ -210,7 +199,7 @@ S2 壓力測試：
 | **Stage-skip** | "Let me design the manual delivery now" before Step 9 verdict | Stage 1 must complete with written verdict before Stage 2 begins |
 | **Money in Stage 1** | "What's my pricing?" / "Where do I put the payment link?" | Block — that's Stage 2. Continue with current step. |
 | **Step-skip** | "This needs Reshape" before Step 6/7 evidence | DRI is Stage 2. Force written reflection at every Stage 1 step |
-| **Score creep** | Anyone produces a 0–25 number, a 5-dimension grade, or a "pain quality score" | Stop. Delete the number. Replace with the Socratic question that exposed the gap. |
+| **Score creep** | Anyone produces a numeric grade or "pain quality score" | Stop. Delete the number. Replace with the Socratic question that exposed the gap. |
 | **Taxonomy fixation** | Forcing the trade-off into a TRIZ contradiction or any other label | Step 4 is user-authored prose only. If a label appears, ask the user to write what each side wants instead. |
 | **AI-flattery** | Asking AI "is this a real pain?" | Step 9 verdict must be human-written; AI may red-team but not generate the verdict |
 | **Synthetic persona** | Skipping real interviews via AI personas | Step 1 hard reflection: real named person; Step 8 must come from Step 2 list |
@@ -253,18 +242,12 @@ After running this skill end-to-end on a pain, verify:
 - [ ] Physical quantities #1, #2 each checked (NOT #3, #4 — those are Stage 2)
 - [ ] Step 4 trade-off is in the user's own prose (no TRIZ labels, no "contradiction type")
 - [ ] Step 9 has written true/fake/pending verdict + 100-word reason + named next action
-- [ ] No numeric score (0–25, 1–5 dimensions, "pain quality") appears anywhere
+- [ ] No numeric score appears anywhere
 - [ ] No "let's build it" / "set up payment" suggested in Stage 1
 - [ ] No pass/fail / exit-gate framing in any UI or prompt copy
 
 If any item fails, the diagnosis is incomplete — do not claim the pain is validated.
 
-## Why no scores, no modes, no taxonomy (v2.1 design rationale)
+## Why writing replaces grading (design principle)
 
-v1 mixed pain discovery with commercial validation. v2 split them. v2.1 went further inside Stage 1:
-
-- **Score removed** because writing a 100-word reason already forces every dimension a 5-point grid was approximating — and the number invited "24/25, ship it" misuse no disclaimer ever fixed.
-- **Mode toggle removed** because the only thing the toggle protected was the score; once the score is gone, "teaching mode" and "production mode" describe the same artifact.
-- **Taxonomy removed from card 5** because borrowing TRIZ's six contradictions added authority without adding clarity. Asking the user "what does each side want, and which side gets dropped" surfaces the same trade-off in language the interview target can recognize.
-
-The skill now trains judgment by making the user write — observation → decomposition → evidence → judgment — with Socratic questions, not graded outputs. That is the entire point of Stage 1.
+Stage 1 trains judgment by making the user write — observation → decomposition → evidence → judgment — with Socratic questions, not graded outputs. A 100-word written reason forces every dimension a numeric grid would only approximate, and it can't be misread as a green light. Card 5 asks the user "what does each side want, and which side gets dropped" in their own words, surfacing the trade-off in language the interview target can recognize. That is the entire point of Stage 1.

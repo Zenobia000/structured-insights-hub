@@ -154,7 +154,7 @@ React 18 + TypeScript + Tailwind CSS。State 用 Zustand；Forms 用 React Hook 
     - 做產品、寫程式、架網站
     - 收錢、定價、商業模式
     - AI 模型訓練、prompt engineering 細節
-    - 創新理論、TRIZ 完整體系（只用其中 6 種矛盾）
+    - 創新理論、矛盾分類法的完整體系
     - 怎麼把痛點變成第一筆收入（那是階段二的事）
   - `footer_note` (Body SM): "這份只訓練：從一句抱怨判斷真痛點還是假痛點。"
 

@@ -1,16 +1,10 @@
-# PainMap Worksheet — Pain ID Export (Capstone) Integrated Prompt v2.0
+# PainMap Worksheet — Pain ID Export (Capstone) Integrated Prompt
 
 > 自我包含整合 prompt — 直接貼入 Lovable / Claude Code 即可生成痛點身份證匯出頁完整實作。
 > 對應 page spec：`docs/painmap_worksheet/design/pages/10_pain_id_export.md`
-> 對應資料模型：`docs/painmap_worksheet/product/data_model.md` v2.0 § Card 10
-> 組裝日期：2026-05-02 ｜ Worksheet v2.0
+> 對應資料模型：`docs/painmap_worksheet/product/data_model.md` § Card 10
 >
-> **v2.0 重大變更**：
-> - 單一匯出格式（無教學 / 生產模式切換）
-> - 移除 Pain Quality Block（schema 內已無 score 欄位）
-> - 匯出範本內含 `contradiction.sacrificed_reason` 新欄位
-> - 移除「include_scores 選項」「分享連結預設過濾分數」相關邏輯
-> - 卡 5 區塊不再顯示 triz_label，改顯示 sacrificed_reason
+> **核心設計**：單一匯出格式；身份證內容為 8 個欄位區塊（含 `contradiction.sacrificed_reason`），無分數、無分類學標籤。
 
 ---
 
@@ -42,15 +36,14 @@ H1 28px / H2 22px / H3 18px / Body LG 17px / Body MD 15px / Body SM 13px / Capti
 
 ### 技術棧
 
-React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或 React-PDF for PDF 匯出）。LocalStorage key：`painmap-worksheet-v2`（**單一 key，無 settings.display_mode**）。
+React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或 React-PDF for PDF 匯出）。LocalStorage key：`painmap-worksheet-v2`。
 
 ### 絕對禁令（PainMap Brand）
 
-- **禁止：分數（schema 內已無 score 欄位）**（v2.0 強化）
-- **禁止：分類學標籤 TRIZ / triz_label**（v2.0：schema 內已無此欄位）
-- **禁止：教學 / 生產模式切換、include_scores 選項**（v2.0 移除）
+- **禁止：任何分數 UI**（schema 內無 score 欄位）
+- **禁止：分類學標籤**（schema 內無此類欄位）
 - 禁止：星等、A-F 等級、排行榜、徽章、倒數計時
-- 禁用詞：「恭喜完成」「達成成就」「闖關成功」「Level Up」「升級」「進階」（動詞）「你的痛點得分」「立即匯出」「快速分享」「需要登入才能匯出」「Pro 解鎖更多匯出格式」「分享後可獲得 X 點」「你是第 N 位完成」「Pain Quality」「教學模式」「生產模式」「5 維度」「總分」「TRIZ」
+- 禁用詞：「恭喜完成」「達成成就」「闖關成功」「Level Up」「升級」「進階」（動詞）「你的痛點得分」「立即匯出」「快速分享」「需要登入才能匯出」「Pro 解鎖更多匯出格式」「分享後可獲得 X 點」「你是第 N 位完成」「總分」
 - **Card 10 嚴重反模式**：強制登入匯出、Pro 鎖定匯出格式、人為稀缺
 - 禁止 Inline styles / `console.log`
 - WCAG AA / 語意化 HTML / focus ring Teal
@@ -65,9 +58,9 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 
 1. **資料主權**：所有資料只在使用者本機 LocalStorage，**不需要登入即可匯出**
 2. **書面優先**：產出可帶離本網站的書面 PainCard（Markdown / JSON / PDF）
-3. **單一匯出格式**：無 mode 切換，無 include_scores 選項（schema 內已無分數）
+3. **單一匯出格式**：無切換選項
 4. **失敗回退**：PainCard 不完整 → redirect 對應卡片頁
-5. **新欄位**：匯出範本必須包含 `contradiction.sacrificed_reason`（v2.0 新增）
+5. **匯出範本必須包含 `contradiction.sacrificed_reason`**
 
 ---
 
@@ -76,7 +69,7 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 ### [PAGE META]
 
 - **page_name**: Pain ID Export
-- **route_path**: `/learn/worksheet/result?id={paincard_uuid}`（**無 `&mode=` 參數**）
+- **route_path**: `/learn/worksheet/result?id={paincard_uuid}`
 - **card_step**: 10（capstone，全部完成）
 - **page_type**: capstone_export
 - **primary_goal**: 把 9 卡精華組合成「痛點身份證」視覺呈現 + 提供 Markdown / JSON / PDF 匯出 + 引導使用者依 verdict 走向對應下一步
@@ -95,8 +88,6 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 5. **next_step_cta** — 依 verdict.judgment 動態（真 / 假 / 待訪談 三變體）
 6. **stage_handoff_panel** — 階段一 vs 階段二銜接
 7. **footer_actions** — 「重新填一張」「查看舊身份證」「分享」「刪除本機資料」
-
-> ❌ 移除：`mode_indicator` / `useDisplayMode` hook / `field_pain_quality` 區塊 / `include_scores` 選項 / 分享連結「預設不勾選分享 5 維度評分」邏輯
 
 ---
 
@@ -133,21 +124,19 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
   - top_decoration: HorizontalRule 「═══════════════════════════════════」
   - card_label (H2): 「痛點身份證」（置中）
   - bottom_decoration: 同上
-- **card_body**：8 個欄位區塊垂直堆疊（v2.0：無 `pain_quality` 區塊）：
+- **card_body**：8 個欄位區塊垂直堆疊：
 
 | 欄位 | label | content_source |
 | :--- | :--- | :--- |
 | protagonist | 主人翁 | `people.list[0]` → "{name}（{relation}）" |
 | scene | 場景 | `complaint.verbatim`（≤ 200 字截斷）+ "卡關公式：{stuck_formula.ai_polished 或 user_draft}" |
 | workaround | 他現在怎麼解 | `workaround.tool_name` + `user_dissatisfactions` 前 3 項 |
-| **contradiction** | 兩件事不能同時要 | **A 端**：`contradiction.side_a`<br>**B 端**：`contradiction.side_b`<br>**通常犧牲**：`contradiction.sacrificed`（顯示為 A 端 / B 端）<br>**為什麼會被犧牲**：`contradiction.sacrificed_reason`（**v2.0 新欄位**）<br>（**無 triz_label**）|
+| **contradiction** | 兩件事不能同時要 | **A 端**：`contradiction.side_a`<br>**B 端**：`contradiction.side_b`<br>**通常犧牲**：`contradiction.sacrificed`（顯示為 A 端 / B 端）<br>**為什麼會被犧牲**：`contradiction.sacrificed_reason` |
 | ai_evidence | AI 找到的關鍵證據 | `self_guess.pain_judgment_table` 前 5 行 + 「展開完整判斷表 ▼」 + extra: "AI 工具：{ai_evidence.ai_tool}" |
 | self_guess_delta | 我自己猜 vs AI 答的差異 | `self_guess.deltas.{biggest_diff, ai_added, guess_unsupported}` |
 | interview | 我會優先訪談 | `interview_plan.targets[0]` + `questions[0..2]` |
 | verdict | 我的判斷 | judgment_badge（true_pain ✓ / fake_pain ✗ / pending_interview ?）+ reason_100w 完整 + most_confident + least_confident |
 | next_action | 下一步 | 動態文字依 `verdict.next_action`：interview → "訪談卡 8 的對象" / more_evidence → "回卡 6 找更多證據" / change_topic → "換題目重新填一輪" |
-
-> ❌ 移除：`pain_quality` 區塊（5 維度小列表 + total_score + teaching_note）
 
 - **card_footer**：
   - signature_line: "═══════════════════════════════════"
@@ -166,8 +155,6 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 | PDF | 📑 | 列印、面對面討論 | `.pdf` |
 
 每個按鈕為 Button Secondary，hover 顯示 PopoverPreview（前 20 行預覽）。
-
-> ❌ 移除：`include_scores` checkbox（schema 內無分數可選擇包含與否）
 
 - `filename_format` (Caption Muted): "檔名：paincard-{slug}-{YYYY-MM-DD}.{ext}"
 - `privacy_statement` (PrivacyCallout, **必填**, icon=🔒)：
@@ -256,8 +243,6 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
   - 預設勾選：`verdict.judgment` + `verdict.reason_100w`
   - 可選勾選：`contradiction`（含 sacrificed_reason）、`stuck_formula`、`workaround`
 
-> ❌ 移除：`privacy_warning`「分享連結預設不包含 5 維度評分」（schema 內已無分數）
-
 ##### `delete_confirm_modal` (DeleteConfirmModal, conditional)
 
 - title (H2): "真的刪除這份痛點身份證？"
@@ -273,14 +258,14 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 #### 主要互動流程
 
 1. 頁面載入 → 從 LocalStorage `painmap-worksheet-v2` 讀取 PainCard
-2. 渲染完整 pain_id_card（依 PainCard 8 個欄位填入，**無 pain_quality 區塊**）
+2. 渲染完整 pain_id_card（依 PainCard 8 個欄位填入）
 3. 使用者點 export 按鈕 → 觸發對應格式生成
 4. 下載完成 → toast 通知 + 寫入 `PainCard.exported.formats` (push) + `exported_at`
 5. 使用者點 next_step_cta primary 按鈕 → 依 verdict 路由
 
 #### 匯出格式詳細規格
 
-##### Markdown template（v2.0）
+##### Markdown template
 
 ```markdown
 # 痛點身份證
@@ -337,19 +322,13 @@ React 18 + TypeScript + Tailwind + Zustand + React Hook Form + Zod + jsPDF（或
 {next_action_label}
 ```
 
-> ❌ 移除：「## Pain Quality（5 維度反思，僅教學模式）」整段（schema 內無分數）
-> ❌ 移除：「類型：{contradiction.triz_label}」（schema 內無此欄位）
-> ✅ 新增：「**為什麼會被犧牲**：{contradiction.sacrificed_reason}」
-
 ##### JSON 格式
 
-直接輸出完整 PainCard 物件（v2.0 schema），檔名 `paincard-{slug}-{YYYY-MM-DD}.json`。
+直接輸出完整 PainCard 物件，檔名 `paincard-{slug}-{YYYY-MM-DD}.json`。
 
 ```typescript
-// buildShareableJson 簡化（v2.0）
 function buildShareableJson(card: PainCard): string {
   return JSON.stringify(card, null, 2);
-  // 不再有 production filter / mode 過濾
 }
 ```
 
@@ -358,7 +337,6 @@ function buildShareableJson(card: PainCard): string {
 - A4 一頁版（適合列印）
 - 字體：Noto Sans TC
 - 結構同 Markdown
-- **無 Pain Quality 區塊**
 - PDF 生成 5 秒內完成；超過 3 秒顯示 spinner
 
 #### RWD
@@ -375,8 +353,8 @@ function buildShareableJson(card: PainCard): string {
 
 - **uses_api**: false（MVP 全部 LocalStorage）
 - **localstorage_keys**:
-  - `painmap-worksheet-v2`（讀整個 PainCard，**無 settings.display_mode**）
-- **data_paths_read**: 全部 PainCard v2.0 欄位（無 scores / triz_id / triz_label）
+  - `painmap-worksheet-v2`（讀整個 PainCard）
+- **data_paths_read**: 全部 PainCard 欄位
 - **data_paths_written**:
   - `PainCard.exported.formats` (push 'markdown' / 'json' / 'pdf')
   - `PainCard.exported.exported_at` (ISO8601)
@@ -419,8 +397,8 @@ function buildShareableJson(card: PainCard): string {
 | 「這份身份證裡沒有錢」 | 全頁不顯示任何貨幣 / 收入 / 商業數字 |
 | 「階段一只訓練判斷力」 | stage_handoff_panel 明確區分階段 |
 | 「換題目，從卡 1 重新填」（假痛點） | variant_fake_pain primary_cta 直接連到卡 1 |
-| **「零分數」（v2.0）** | pain_id_card 不顯示任何分數 / 等級 / N/M 數字 |
-| **「零分類學」（v2.0）** | contradiction 區塊不顯示 triz_label，改顯示 sacrificed_reason |
+| **「零分數」** | pain_id_card 不顯示任何分數 / 等級 / N/M 數字 |
+| **「零分類學」** | contradiction 區塊顯示 sacrificed_reason，不貼任何分類標籤 |
 
 ---
 
@@ -450,7 +428,7 @@ function buildShareableJson(card: PainCard): string {
 
 - action_share 提供分享身份證功能（白帽社交，不是炫耀）
 
-#### 反模式檢查清單（Card 10 最容易犯，**v2.0 強化**）
+#### 反模式檢查清單（Card 10 最容易犯）
 
 - ❌ 慶祝動畫（紙花、煙火、勝利音效）
 - ❌ 「成就解鎖」徽章 / 點數
@@ -461,9 +439,8 @@ function buildShareableJson(card: PainCard): string {
 - ❌ **「Pro 才能匯出 PDF」**（功能勒索）
 - ❌ 「每月只能匯出 1 次」（人為稀缺）
 - ❌ 跨身份證比較
-- ❌ **任何「教學模式 / 生產模式」切換**（v2.0 移除）
-- ❌ **任何 Pain Quality 分數區塊**（v2.0 移除）
-- ❌ **任何 TRIZ / triz_label 顯示**（v2.0 移除）
+- ❌ **任何分數 UI**（schema 內無 score 欄位）
+- ❌ **任何分類學標籤顯示**
 
 ---
 
@@ -483,35 +460,33 @@ function buildShareableJson(card: PainCard): string {
 ### Step 1：結構確認
 
 - 7 個 sections + 用途
-- PainCard schema 對應（v2.0）：read 全部 v2.0 欄位（無 scores / triz_id / triz_label，含 sacrificed_reason）+ write `exported.{formats, exported_at, last_review_at}`
-- 資料流：URL `?id` → 讀 LocalStorage `painmap-worksheet-v2`（**無 display_mode**）→ 渲染 pain_id_card → 匯出觸發 → 寫回 exported metadata
+- PainCard schema 對應：read 全部欄位（含 sacrificed_reason）+ write `exported.{formats, exported_at, last_review_at}`
+- 資料流：URL `?id` → 讀 LocalStorage `painmap-worksheet-v2` → 渲染 pain_id_card → 匯出觸發 → 寫回 exported metadata
 
 ### Step 2：設計決策說明
 
 說明 3 個關鍵設計決策：
 1. **為什麼匯出絕對不需要登入？** — 資料主權是 brand 鐵律；強制登入匯出 = 最嚴重反模式；LocalStorage + jsPDF 全 client-side 即可實現
-2. **為什麼移除「教學 / 生產模式」切換？** — v2.0 worksheet 系統內已無 score 欄位，無「需要在生產模式隱藏」的東西；單一格式 = 更簡單、更誠實
-3. **為什麼匯出範本含 sacrificed_reason 但不含 Pain Quality 區塊？** — sacrificed_reason 是 v2.0 新欄位，是判斷力的精華；Pain Quality 是 v1.0 過渡產物，已從 schema 移除。匯出範本永遠跟 schema 一致。
+2. **為什麼單一匯出格式？** — schema 內無 score 欄位，沒有「需要切換隱藏」的東西；單一格式 = 更簡單、更誠實
+3. **為什麼匯出範本含 sacrificed_reason？** — sacrificed_reason 是判斷力的精華（為什麼那邊被犧牲）。匯出範本永遠跟 schema 一致。
 
 ### Step 3：實作方案（Option A）
 
 - `PainIdExportPage.tsx`
 - `StepperContext` / `CompletionHeader` / `PainIdCard` / `ExportActions` / `NextStepCta` / `StageHandoffPanel` / `FooterActions`
-- `useMarkdownExport` / `useJsonExport` / `usePdfExport` hooks（**無 mode 參數**）
+- `useMarkdownExport` / `useJsonExport` / `usePdfExport` hooks
 - `useNextStepRouter` hook
 - ShareModal / DeleteConfirmModal 元件
 - jsPDF 或 React-PDF 整合
 - RWD Tailwind
 
-> ❌ 移除：`useDisplayMode` hook、mode 相關 prop / 條件分支
-
 ### 品質檢查清單（部署前必過）
 
 #### 通用
 - [ ] 7 個 Section 依序渲染，stepper 顯示 9 卡 ✓ + 第 10 步 active
-- [ ] pain_id_card 完整顯示 8 個欄位（**無 pain_quality 區塊**）
-- [ ] contradiction 區塊正確顯示 side_a + side_b + sacrificed + **sacrificed_reason**（v2.0 新欄位）
-- [ ] **contradiction 區塊無 triz_label 顯示**
+- [ ] pain_id_card 完整顯示 8 個欄位
+- [ ] contradiction 區塊正確顯示 side_a + side_b + sacrificed + **sacrificed_reason**
+- [ ] **contradiction 區塊無分類學標籤顯示**
 - [ ] completion_header 不出現任何慶祝動畫 / 徽章 / 點數
 - [ ] privacy_statement 強制顯示，不可被關閉
 
@@ -520,9 +495,8 @@ function buildShareableJson(card: PainCard): string {
 - [ ] 點 JSON 按鈕 → 下載 `paincard-{slug}-{YYYY-MM-DD}.json`
 - [ ] 點 PDF 按鈕 → 5 秒內下載 `paincard-{slug}-{YYYY-MM-DD}.pdf`
 - [ ] **Markdown 範本內含 `## 兩件事不能同時要 → 為什麼會被犧牲：{sacrificed_reason}`**
-- [ ] **Markdown 範本不含「## Pain Quality（5 維度反思）」整段**
-- [ ] **Markdown 範本不含「類型：{triz_label}」**
-- [ ] JSON 輸出完整 v2.0 schema（含 sacrificed_reason，無 scores / triz_id / triz_label）
+- [ ] **Markdown 範本不含任何分數區塊或分類學標籤**
+- [ ] JSON 輸出完整 schema（含 sacrificed_reason）
 - [ ] 匯出後 PainCard.exported.formats 正確 push 對應格式
 - [ ] **不需要登入即可匯出**（嚴格驗收 — 違反此項即為嚴重 bug）
 
@@ -539,25 +513,20 @@ function buildShareableJson(card: PainCard): string {
 #### Footer Actions
 - [ ] 「重新填一張」→ 建立新 PainCard，舊的保留在 history
 - [ ] 「查看舊身份證」→ `/learn/worksheet/history`（M2 預留）
-- [ ] 「分享」→ 開啟 modal，使用者可選擇分享哪些欄位（**無「預設不勾選分數」邏輯**，因為無分數）
+- [ ] 「分享」→ 開啟 modal，使用者可選擇分享哪些欄位
 - [ ] 「刪除本機資料」→ 開啟確認 modal
 
-#### v2.0 反模式驗收（必須全部不出現）
-- [ ] **無 mode_indicator 元件 / 切換 link / banner**
-- [ ] **無 useDisplayMode hook**
-- [ ] **無 URL `?mode=teaching|production` 參數**
-- [ ] **無 include_scores 選項**
-- [ ] **無 pain_quality / Pain Quality 區塊**
-- [ ] **無 5 維度顯示 / 雷達圖 / total_score**
-- [ ] **無 triz_label / triz_id 顯示**
+#### 反模式驗收（必須全部不出現）
+- [ ] **無任何分數 UI / 雷達圖 / total_score 欄位**
+- [ ] **無分類學標籤顯示**
 - [ ] 慶祝動畫（紙花、煙火）
 - [ ] 成就徽章 / 點數系統
 - [ ] **強制登入匯出**
 - [ ] **Pro 鎖定匯出格式**
 - [ ] 「N 個人完成」社會比較
 
-#### 禁用詞掃描（v2.0 強化）
-- [ ] 全頁面零出現「恭喜完成」「達成成就」「闖關成功」「Level Up」「升級 / 進階」（動詞）「你的痛點得分」「立即匯出」「快速分享」「需要登入才能匯出」「Pro 解鎖更多匯出格式」「Pain Quality」「教學模式」「生產模式」「5 維度」「總分」「TRIZ」「triz_label」
+#### 禁用詞掃描
+- [ ] 全頁面零出現「恭喜完成」「達成成就」「闖關成功」「Level Up」「升級 / 進階」（動詞）「你的痛點得分」「立即匯出」「快速分享」「需要登入才能匯出」「Pro 解鎖更多匯出格式」「總分」
 
 #### 無障礙
 - [ ] pain_id_card 用語意化 `<article>` 標籤
@@ -569,7 +538,3 @@ function buildShareableJson(card: PainCard): string {
 - [ ] 三斷點佈局正確
 - [ ] Mobile 下 next_step_cta primary 為 sticky bottom
 - [ ] export 按鈕在 Mobile 垂直堆疊
-
----
-
-**版本資訊**：Worksheet v2.0 ｜ Brand v1.0 ｜ 2026-05-02

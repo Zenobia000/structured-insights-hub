@@ -301,7 +301,7 @@
 2. 渲染完整 pain_id_card（依 PainCard 9 個欄位填入）
 3. 使用者點 export 按鈕 → 觸發對應格式生成：
    - Markdown：用 template 字串組合 9 卡資料 + worksheet 框架（單一格式，無模式分支）
-   - JSON：直接 `JSON.stringify(PainCard, null, 2)`（無 score / triz 欄位需要過濾）
+   - JSON：直接 `JSON.stringify(PainCard, null, 2)`（不需任何欄位過濾）
    - PDF：使用 jsPDF 或 React-PDF 將 pain_id_card DOM 轉 PDF
 4. 下載完成 → toast 通知 + 寫入 `PainCard.exported.formats` + `PainCard.exported.exported_at`
 5. 使用者點 next_step_cta primary 按鈕 → 依 verdict 路由：
@@ -368,13 +368,13 @@
 {next_action_label}
 ```
 
-**單一輸出格式 — 沒有 mode-gated 過濾**。v2.0 重構後沒有分數欄位要隱藏。
+**單一輸出格式**：所有使用者匯出相同內容，無 mode-gated 過濾。
 
 #### JSON 格式
 
-直接輸出完整 PainCard 物件（無 verdict.scores、無 total_score、無 contradiction.triz_id/triz_label），檔名 `paincard-{slug}-{YYYY-MM-DD}.json`。
+直接輸出完整 PainCard 物件，檔名 `paincard-{slug}-{YYYY-MM-DD}.json`。
 
-實作：`buildShareableJson(card)` = `JSON.stringify(card, null, 2)`，沒有任何 production filter。
+實作：`buildShareableJson(card)` = `JSON.stringify(card, null, 2)`。
 
 #### PDF 格式
 
@@ -402,7 +402,7 @@
 
 - **uses_api**: false（MVP 階段全部 LocalStorage）
 - **localstorage_keys**:
-  - `painmap-worksheet-v2`（讀取整個 PainCard，v2.0 新 key）
+  - `painmap-worksheet-v2`（讀取整個 PainCard）
 - **data_paths_read**: 全部 PainCard 欄位（這頁是整合 view）
 - **data_paths_written**:
   - `PainCard.exported.formats` (push 'markdown' / 'json' / 'pdf')
@@ -542,8 +542,8 @@
 | 「Pro 解鎖更多匯出格式」 | 功能勒索 — 違反 brand |
 | 「分享後可獲得 X 點」 | 遊戲化禁令 |
 | 「你是第 N 位完成」 | 社會比較焦慮 |
-| 「Pain Quality」「品質分數」「總分」「教學/生產模式」 | v2.0 鐵律：完全移除 |
-| 「TRIZ 矛盾類型」 | v2.0 鐵律：完全移除 |
+| 「Pain Quality」「品質分數」「總分」「教學/生產模式」 | 鐵律：資料層不存在 |
+| 「TRIZ 矛盾類型」 | 鐵律：使用者親筆自陳，不用分類學 |
 
 ### 建議用語
 
@@ -582,9 +582,8 @@
 - 匯出後 PainCard.exported.formats 正確 push 對應格式
 - PainCard.exported.exported_at 正確寫入 ISO8601
 - **不需要登入即可匯出**（嚴格驗收 — 違反此項即為嚴重 bug）
-- **匯出格式單一**：無 mode-gated 內容過濾（v2.0 重構）
-- **匯出內容不含 verdict.scores、total_score、contradiction.triz_id/triz_label**（這些欄位在 v2.0 已移除）
-- **匯出內容包含 contradiction.sacrificed_reason**（v2.0 新欄位）
+- **匯出格式單一**：無 mode-gated 內容過濾
+- **匯出內容包含 contradiction.sacrificed_reason**
 
 ### Verdict 路由驗收
 

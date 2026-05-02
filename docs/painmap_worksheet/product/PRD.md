@@ -1,12 +1,9 @@
 # PainMap Worksheet — 產品需求文件 (PRD)
 
-> **版本**：v2.0 — 2026-05-02（Socratic 大一統重構）
 > **狀態**：M1 規格定稿（不寫程式碼，僅產出設計文件）
-> **真相源**：`docs/workshop/painpoint_beginner_worksheet.md` v1.0、`docs/painmap_worksheet/product/data_model.md` v2.0
-> **品牌守則**：`docs/web_design/global/painmap_brand_system.md` v1.0
+> **真相源**：`docs/workshop/painpoint_beginner_worksheet.md`、`docs/painmap_worksheet/product/data_model.md`
+> **品牌守則**：`docs/web_design/global/painmap_brand_system.md`
 > **姐妹文件**：`product/user_journey.md`、`product/motivation_design.md`、`product/stage1_to_stage2_handoff.md`
-
-> **v2.0 核心變更**：移除 0-25 分制 Pain Quality Score、教學/生產雙模式、TRIZ 6 矛盾分類學。9 卡壓回單一蘇格拉底流程：使用者寫作即反思，沒有分數、沒有模式切換、沒有預設標籤。詳見 `data_model.md` 的「v2.0 — Socratic 大一統」章節。
 
 ---
 
@@ -31,11 +28,11 @@
 - Worksheet 是**初階教學版**，承擔「不懂 AI、想找到值得做的事」的入門使用者
 - PainMap App 進階版（Pain Collector / Decomposer / Mapper / Atlas / Dashboard）承擔結構化痛點的長期管理
 - 兩者共用同一套 brand system（`painmap_brand_system.md`），但 IA 與資料模型獨立
-- Worksheet 不重做 brand system、不重複 worksheet v1.0 的卡片內容、不寫程式碼（M1 範圍）
+- Worksheet 不重做 brand system、不重複 worksheet 卡片內容、不寫程式碼（M1 範圍）
 
 ### 1.3 與「方法論真相源」的關係
 
-Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段一的網頁實作。所有設計決策必須與該文件一致：
+Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` 階段一的網頁實作。所有設計決策必須與該文件一致：
 
 - 階段一只訓練判斷力，不談錢、不做手作交付、不架收款連結
 - 階段一終點是書面「真痛點 / 假痛點 / 待訪談」判斷，不是付款
@@ -148,7 +145,7 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
     ↓ 反思提示
 [卡 9] 真假判斷           ← 你來判（5 個蘇格拉底提示，僅 UI；資料層只有 judgment + 100 字理由）
     ↓ 反思提示
-[卡 10] 痛點身份證        ← 整合匯出（單一格式，無模式切換）
+[卡 10] 痛點身份證        ← 整合匯出
 ```
 
 **反思提示 (Reflection Prompts) 取代過關條件**：每張卡片只「建議」使用者回頭把 X 想清楚再來，**不擋前進**。蘇格拉底工具不評等。
@@ -188,10 +185,10 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
 ### 5.1 P0（必須有，否則無法上線）
 
 - [ ] 入口頁 (`/learn/worksheet`)：說明這是什麼、誰適合用、預計時間
-- [ ] 9 張卡片頁面（`/learn/worksheet/01` 至 `/09`）：依 worksheet v1.0 內容實作
+- [ ] 9 張卡片頁面（`/learn/worksheet/01` 至 `/09`）：依 worksheet 內容實作
 - [ ] 痛點身份證頁面 (`/learn/worksheet/result`)：整合 9 卡產出
-- [ ] PainCard schema 完整實作（含 `current_step`、`status`、所有欄位；schema_version === '2.0'）
-- [ ] LocalStorage 持久化（key: `painmap-worksheet-v2`）
+- [ ] PainCard schema 完整實作（含 `current_step`、`status`、所有欄位）
+- [ ] LocalStorage 持久化（key: `painmap-worksheet`）
 - [ ] 蘇格拉底反思提示（reflection prompts）：欄位空白時建議回頭，**不擋前進**
 - [ ] 真實性護欄（anti-fake validators）：卡 1 禁分析語、卡 2 真實人名等，回傳 `{kind: "ok" | "hint"}` 不說 fail
 - [ ] 6 段內建 prompt（卡 3 / 4 / 6 / 7 第一輪 / 7 第二輪 / 8）一鍵複製（卡 5 改為使用者自陳，無 AI prompt）
@@ -268,10 +265,10 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
 
 ### 7.3 不該追的虛榮指標（Anti-Metrics）
 
-- ❌ 註冊用戶數（沒有帳號系統）
-- ❌ DAU / MAU（這是訓練工具不是日常 app）
-- ❌ 平均使用時長（時間長不一定好，可能代表卡關）
-- ❌ 痛點身份證分享數（社交分享不是核心目標）
+- 註冊用戶數（沒有帳號系統）
+- DAU / MAU（這是訓練工具不是日常 app）
+- 平均使用時長（時間長不一定好，可能代表卡關）
+- 痛點身份證分享數（社交分享不是核心目標）
 
 ---
 
@@ -336,7 +333,7 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
 ### 10.1 資料持久化
 
 - LocalStorage 為主，schema 見 `data_model.md`
-- key: `painmap-worksheet-v2`（v2.0 新 key，與 v1 切割；偵測舊 key 直接拋棄不 migrate）
+- key: `painmap-worksheet`
 - 不使用 IndexedDB（MVP 資料量小、Local 已足夠）
 - 不做雲端同步（M2+ 範圍）
 
@@ -351,7 +348,7 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
 - 繁體中文 (zh-Hant) 優先
 - 技術術語可保留英文（API、JSON、UUID、JTBD、SECI、Octalysis、CTA 等）
 - 文案禁用詞嚴格遵守 `painmap_brand_system.md` L86-100：禁用「點子」「idea」「評分」「打分」等
-- 移除「過關條件」「退回卡 X」「闖關」措辭，改用蘇格拉底式「想想看」「回去把 X 想清楚再來」
+- 反思措辭使用蘇格拉底式「想想看」「回去把 X 想清楚再來」，不用「過關 / 退回 / 闖關」
 
 ### 10.4 前端技術
 
@@ -385,15 +382,6 @@ Worksheet 是 `docs/product/painmap/painmap_pain_thinking_system.md` v2.0 階段
 | 卡片內容與紙本 worksheet 漂移 | HIGH | HIGH | 紙本 worksheet 為內容真相源，所有頁面 spec 必須引用 |
 | Octalysis 設計偷渡黑帽動機 | MEDIUM | CRITICAL | `motivation_design.md` 列禁令清單；PR review 必檢查 |
 | 使用者誤解「真痛點」== 「能賺錢」 | MEDIUM | HIGH | 卡 9 + 痛點身份證明確標示「這是判斷力訓練，不是商業判斷」|
-
----
-
-## 12. 變更紀錄
-
-| 版本 | 日期 | 變更 | 負責人 |
-| :--- | :--- | :--- | :--- |
-| v2.0 | 2026-05-02 | Socratic 大一統：移除 Pain Quality Score、教學/生產雙模式、TRIZ 6 矛盾分類；卡 5 改使用者自陳；卡 9 純書面判斷 | Sunny |
-| v1.0 | 2026-05-01 | 首版 PRD；對應 worksheet v1.0、data_model v1.0 | Sunny |
 
 ---
 

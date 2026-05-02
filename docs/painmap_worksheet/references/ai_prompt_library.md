@@ -1,13 +1,14 @@
-# AI Prompt Library — 7 段內建 Prompt 完整版（v2.0 蘇格拉底版）
+# AI Prompt Library — 7 段內建 Prompt 完整規格
 
-> **真相源**：`docs/workshop/painpoint_beginner_worksheet.md` v2.0、卡片 3、4、5、6、7、8。
+> **真相源**：`docs/workshop/painpoint_beginner_worksheet.md`、卡片 3、4、5、6、7、8。
 > **本檔角色**：彙整 worksheet 中所有「複製這段 prompt」的原文，補上觸發時機、變數插值、反 solution mode 防護字句、範例、失敗 fallback、兩種輸出方式（外部 ChatGPT vs 站內 LLM API）。
 > **嚴禁**：自行改寫 worksheet prompt 內容；自行新增不在 worksheet 裡的 prompt。
 >
-> **v2.0 變更摘要**（2026-05-02）：
-> - prompt 不再要求 AI 給「分數」「等級」「真假判斷」（之前也沒有，現在更嚴格）
-> - 卡 5 prompt 移除 TRIZ 6 矛盾分類，改為**蘇格拉底式取捨自陳**（AI 只協助使用者用自己的話寫出 side_a / side_b / sacrificed / sacrificed_reason，不再貼任何分類學標籤）
-> - 各卡 prompt 移除任何「過關 / 退回」措辭，全面改為中性反思語氣
+> **核心鐵律**：
+> - 任何 prompt 都不得要求 AI 給「分數」「等級」「真假判斷」「分類學編號 / 標籤」
+> - 卡 5 是蘇格拉底式取捨自陳：AI 只協助使用者用自己的話寫出 side_a / side_b / sacrificed / sacrificed_reason
+> - 卡 1 / 卡 2 / 卡 9 永久禁用 AI 輔助
+> - 所有 prompt 文案中性，不出現「過關 / 退回 / 失敗」
 
 ---
 
@@ -15,7 +16,7 @@
 
 1. **反 solution mode 防護字句必須出現**：每個 prompt 都帶有「請不要建議 App / SaaS / 解決方案」段落。AI 一旦進入「設計產品 / 想商業模式」就視同 prompt 失敗。
 2. **變數插值 placeholder 嚴格命名**：使用 `[貼上卡片 N 的 ___]` 格式，與 worksheet 對應一致；前端帶入時必須是純文字（不可帶入 HTML / Markdown 標題）。
-3. **不接受 AI 自行加分數 / 等級 / 標籤**：所有 prompt 都不要 AI 給「真假判斷」「分數」「推薦度」「TRIZ 編號」「分類學標籤」。AI 的角色是放大鏡，不是裁判。
+3. **不接受 AI 自行加分數 / 等級 / 標籤**：所有 prompt 都不要 AI 給「真假判斷」「分數」「推薦度」「分類學編號」「分類學標籤」。AI 的角色是放大鏡，不是裁判。
 4. **失敗 fallback 必須輕柔**：補強 prompt 不能羞辱使用者；失敗訊息以「結構化＋下一步」呈現，不出現「你錯了」「重來」「過不了」「退回」。
 5. **兩種輸出方式**：
    - **方式 A：複製到外部 ChatGPT / Claude / Perplexity / Gemini**（MVP 預設）
@@ -190,9 +191,9 @@
 
 ---
 
-## 3. 卡 5 ｜「取捨自陳協助」prompt（v2.0 蘇格拉底版）
+## 3. 卡 5 ｜「取捨自陳協助」prompt
 
-> **v2.0 重大變更**：移除 TRIZ 6 矛盾分類學。AI 不再從固定 6 種挑 1 個，也不再給編號或標籤。AI 的唯一角色是**協助使用者用自己的話**寫出兩端，並寫出**為什麼那邊會被犧牲**。
+> AI 的唯一角色是**協助使用者用自己的話**寫出兩端，並寫出**為什麼那邊會被犧牲**。AI 不給編號、不給分類學標籤、不從固定選項挑。
 
 ### 3.1 觸發時機
 
@@ -233,7 +234,7 @@
 
 ### 3.4 反 solution mode 防護字句
 
-> 規則第 1 條：「不要給編號、不要給分類學標籤」 — 不允許 AI 偷渡 TRIZ / 設計模式 / 商業書名詞
+> 規則第 1 條：「不要給編號、不要給分類學標籤」 — 不允許 AI 偷渡任何分類框架
 > 規則第 2 條：「不要建議解決方案、不要推薦工具」
 > 規則第 3 條：「不要替我下判斷說『他應該犧牲 X』」 — AI 只觀察現況，不給規範性建議
 > 規則第 5 條：提供退場機制（卡 3 沒拆乾淨時 AI 可中性建議使用者回頭重想）
@@ -647,7 +648,7 @@ A：每週 4-6 小時跑不掉。
 
 > 站內這 3 頁**禁止顯示 AI 按鈕**。即使有 LLM API 可用，也不開放這 3 頁呼叫。
 >
-> **卡 9 特別強化（v2.0）**：判斷層所有欄位（judgment、reason_100w、most_confident_evidence、least_confident、next_action）一律由使用者親自寫。任何「AI 幫你檢查 reason」「AI 推薦 next_action」之類的功能皆**永久禁用**，即使 M2+ 站內 LLM 上線也不開放。
+> **卡 9 特別強化**：判斷層所有欄位（judgment、reason_100w、most_confident_evidence、least_confident、next_action）一律由使用者親自寫。任何「AI 幫你檢查 reason」「AI 推薦 next_action」之類的功能皆**永久禁用**。
 
 ---
 
@@ -655,21 +656,12 @@ A：每週 4-6 小時跑不掉。
 
 新增或修改任何 prompt 時，逐項檢查：
 
-- [ ] 是否與 worksheet v2.0 卡 3-8 的 prompt 文字 100% 一致？
+- [ ] 是否與 worksheet 卡 3-8 的 prompt 文字 100% 一致？
 - [ ] 三道反 solution mode 防護字句是否齊全（卡 6 必須三句；其他卡至少一句）？
 - [ ] 是否包含 `[貼上卡片 N 的 ___]` placeholder，命名與 data_model.md 欄位對得上？
 - [ ] 是否提供失敗 fallback prompt？
 - [ ] 是否同時提供「外部複製」與「站內 API call」兩種使用方式？
 - [ ] 卡 1 / 卡 2 / 卡 9 是否仍維持「不開放 AI 按鈕」？
 - [ ] payload 範例是否標明 `expected_schema`，能對應到 PainCard 欄位？
-- [ ] **v2.0 新增**：是否確認沒有任何 prompt 要求 AI 給「分數」「等級」「TRIZ 編號」「分類學標籤」？
-- [ ] **v2.0 新增**：卡 5 prompt 是否完全不出現「6 種矛盾」「triz_id」「請挑 1 個編號」？
-
----
-
-## 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 1.0 | 2026-05-01 | 首版；對應 worksheet v1.0、data_model.md v1.0 |
-| 2.0 | 2026-05-02 | 蘇格拉底式大一統重構：卡 5 prompt 移除 TRIZ 6 矛盾分類，改為協助使用者用自己的話寫 side_a / side_b / sacrificed / sacrificed_reason；新增 `sacrificed_reason` 欄位；通篇 prompt 移除「過關 / 退回」措辭；卡 9 強化 AI 永久禁用範圍；新增「AI 不再給編號 / 等級 / 分類學標籤」鐵律 |
+- [ ] 是否確認沒有任何 prompt 要求 AI 給「分數」「等級」「分類學編號」「分類學標籤」？
+- [ ] 卡 5 prompt 是否完全不要求 AI 從固定選項挑一個？

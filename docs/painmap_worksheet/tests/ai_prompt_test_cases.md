@@ -1,8 +1,7 @@
-# AI Prompt Test Cases — 7 段內建 Prompt 品質測試
+# AI Prompt Test Cases — 內建 Prompt 品質測試
 
-> **版本**：v1.0 — 2026-05-01
 > **配套文件**：`references/ai_prompt_library.md`、`api/ai_proxy_spec.md`、`product/data_model.md`
-> **測試對象**：7 段內建 prompt（卡 3-8 + 卡 6 fallback 補強 prompt）
+> **測試對象**：內建 prompt（卡 3-8 + 卡 6 fallback 補強 prompt）
 > **核心目的**：驗證 AI 回覆品質一致性 + 反 solution mode 防護有效 + BYOK 安全
 > **核心鐵律**：**反 solution mode** — AI 任何時候都不可建議解決方案、不可推薦工具、只做痛點探索。違反此鐵律的回應視為不合格、必須擋下。
 
@@ -14,7 +13,7 @@
 
 | 維度 | 範圍 |
 | :--- | :--- |
-| Prompt 段數 | 7 段（卡 3 / 4 / 5 / 6 / 6-fallback / 7 / 8）|
+| Prompt 段數 | 卡 3 / 4 / 5 / 6 / 6-fallback / 7 / 8 |
 | AI 模型 | GPT-4o（OpenAI）/ Claude Sonnet 3.5（Anthropic）/ Gemini 1.5 Pro（Google）|
 | 重複次數 | 每組 prompt × 模型跑 5-10 次（temperature 影響採樣）|
 | 評估方式 | 規則式自動驗證（90%）+ 人工抽檢（10%）|
@@ -236,13 +235,15 @@ stuck_formula.ai_polished: |
 
 ---
 
-## 3. 卡 5 ｜「TRIZ 矛盾提案」prompt
+## 3. 卡 5 ｜「兩件事不能同時要」prompt
 
 ### 3.0 Prompt 來源
 
 `references/ai_prompt_library.md § 3.2`
 
-### 3.1 Test case 5.1: 只挑 1 個矛盾（不複選）
+> 卡 5 是純粹陳述取捨：使用者寫出 A 端、B 端、選哪邊被犧牲、補一句為什麼會犧牲。AI 的角色只是幫忙把 A/B 端用主人翁的話講清楚，並追問取捨是不是真的存在。
+
+### 3.1 Test case 5.1: 兩端用主人翁的話描述 + 含具體場景
 
 **Given**:
 
@@ -256,11 +257,13 @@ workaround.why_still_stuck: 「每個資料源都要重新翻找」
 
 | Assertion | 規則 |
 | :--- | :--- |
-| AI 挑出的 triz_id 恰好 1 個 | regex `/我選第\s*[1-6]\s*種/` 出現 1 次 | HARD |
-| 若 AI 試圖挑 2 個 → 視為違規 | 出現 `/第\s*\d+\s*[，與和及]\s*第\s*\d+\s*種/` | HARD |
-| 若 6 個都不像 → 必須回「不像，請我退回卡片 3」 | 此為 valid 輸出 | HARD |
+| 提案 side_a 字串長度 ≥ 10 字 + 含具體場景 | 不可為「品質好」這種抽象詞 | HARD |
+| 提案 side_b 字串長度 ≥ 10 字 + 含具體場景 | 同上 | HARD |
+| 兩端內容須與卡 1-4 上下文相關 | 例如包含「家長」「30 則」「2-3 小時」等 | SOFT |
+| AI 不替使用者「決定」哪邊犧牲 | sacrificed 由使用者選，AI 只能列出兩種可能 | HARD |
+| AI 為每種「哪邊犧牲」的可能各補一句 sacrificed_reason 候選 | 給使用者參考，但最終仍由使用者改寫 | SOFT |
 
-### 3.2 Test case 5.2: 用主人翁的話描述兩端
+### 3.2 Test case 5.2: AI 用主人翁的話描述取捨，不替使用者下結論
 
 **Given**: 同 Test case 5.1
 
@@ -268,12 +271,11 @@ workaround.why_still_stuck: 「每個資料源都要重新翻找」
 
 | Assertion | 規則 |
 | :--- | :--- |
-| side_a 字串長度 ≥ 8 字 + 含具體場景 | 不可為「品質好」這種抽象詞 | HARD |
-| side_b 字串長度 ≥ 8 字 + 含具體場景 | 同上 | HARD |
-| 兩端內容須與卡 1-4 上下文相關 | 例如包含「家長」「30 則」「2-3 小時」等 | SOFT |
-| 須說明 sacrificed 是 a 或 b | 出現「通常會犧牲：a」或「b」 | HARD |
+| 輸出不替使用者「決定」哪邊犧牲 | 不出現「應該犧牲 A」「建議選 B」這種斷言 | HARD |
+| 輸出聚焦在「兩件事為什麼不能同時要」的描述 | 含「同時要」「擠壓」「先到」「先犧牲」等取捨語彙 | SOFT |
+| 輸出用主人翁的話，不用抽象詞 | 不出現「品質」「速度」這種空洞抽象詞作為 side_a/b 主體 | SOFT |
 
-### 3.3 Test case 5.3: 6 個都不像 → AI 主動退回卡 3
+### 3.3 Test case 5.3: 取捨不真實 → AI 主動建議退回卡 3
 
 **Given**: 故意給「我覺得很煩」這種完全沒拆乾淨的卡關公式
 
@@ -281,19 +283,19 @@ workaround.why_still_stuck: 「每個資料源都要重新翻找」
 
 | Assertion | 規則 |
 | :--- | :--- |
-| AI 回應應為「不像，請我退回卡片 3」格式 | regex `/(不像|不適合|還沒拆).{0,20}(退回|回到|卡\s*3)/` | HARD |
-| AI 不應「硬選」一個矛盾 | 視為違規 | HARD |
-| 系統觸發後續行為：自動跳轉卡 3 | 站內前端側 routing | HARD |
+| AI 回應指出兩端不互斥或無法成立 | 含「這兩件事其實不衝突」「再去拆一次」之類措辭 | HARD |
+| AI 建議退回卡 3 | regex `/(回到|退回|建議.{0,5}回).{0,10}卡\s*3/` 觸發 | HARD |
+| AI 不硬編造一個假矛盾 | 視為違規 | HARD |
 
 ### 3.4 跨模型一致性
 
-| 模型 | 「6 個都不像」識別率 | 1 個單選違規率 |
+| 模型 | 兩端品質達標率 | 不替使用者下結論通過率 |
 | :--- | :--- | :--- |
-| GPT-4o | ≥ 80% | ≤ 5% |
-| Claude Sonnet | ≥ 90%（最會說「不像」）| ≤ 3% |
-| Gemini 1.5 Pro | ≥ 70% | ≤ 10% |
+| GPT-4o | ≥ 80% | ≥ 90% |
+| Claude Sonnet | ≥ 90% | ≥ 95% |
+| Gemini 1.5 Pro | ≥ 70% | ≥ 80%（偶爾替使用者選邊）|
 
-> Claude Sonnet 在「拒絕硬選」這類判斷上表現最佳。Gemini 偶爾會合併兩個矛盾。
+> Claude Sonnet 在「拒絕替使用者下結論」這類判斷上表現最佳。
 
 ---
 
@@ -303,7 +305,7 @@ workaround.why_still_stuck: 「每個資料源都要重新翻找」
 
 `references/ai_prompt_library.md § 4.2`
 
-> **這是 7 段 prompt 中最重要的一段。** 包含三道反 solution mode 防護字句必須完整出現。  
+> **這是內建 prompt 中最重要的一段。** 包含三道反 solution mode 防護字句必須完整出現。
 > 失敗成本最高（使用者會被 AI 帶偏進 solution mode）。
 
 ### 4.1 Test case 6.1: 8 題全有答（不漏題）
@@ -682,7 +684,7 @@ describe('Layer 1: false positive 檢測', () => {
 });
 ```
 
-> 關鍵：FORBIDDEN_PATTERNS 中所有 `.{0,N}` 的長度上限是反 false positive 的關鍵。  
+> 關鍵：FORBIDDEN_PATTERNS 中所有 `.{0,N}` 的長度上限是反 false positive 的關鍵。
 > 如果改成 `.*` 會誤判第 1、2 條中性句。
 
 ### 8.3 Test case ASM.3: Layer 2 LLM-judge（M2+）
@@ -849,7 +851,7 @@ test('變數插值不漏', () => {
 | :--- | :--- | :--- |
 | 卡 3 | ≥ 1 句 | 「不要建議解決方案」「不要推薦工具」 |
 | 卡 4 | ≥ 1 句 | 「不要建議我做新的工具」 |
-| 卡 5 | ≥ 1 句 | 「不要挑超過 1 個」（隱含限制過度提案）|
+| 卡 5 | ≥ 1 句 | 「不要替我選哪邊犧牲」（取捨由使用者決定）|
 | 卡 6 | **必須 3 句** | 完整三道防線（最關鍵）|
 | 卡 7 | ≥ 1 句 | 「判斷標準只看痛點強度與證據」 |
 | 卡 8 | ≥ 1 句 | 「不要假裝會付錢買 App」 |
@@ -920,13 +922,5 @@ test('卡 6 三道反 solution mode 防護字句完整', () => {
 
 ## 建議
 - Gemini 在卡 6 表現持續偏弱 → 不建議列為預設選項
-- 卡 5 「6 個都不像」識別 GPT-4o 比 Claude 低 → 加強 prompt
+- 卡 5 拒絕替使用者下結論的能力 GPT-4o 比 Claude 低 → 加強 prompt
 ```
-
----
-
-## 12. 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 1.0 | 2026-05-01 | 首版；對應 worksheet v1.0、ai_prompt_library.md v1.0、ai_proxy_spec.md v1.0 |

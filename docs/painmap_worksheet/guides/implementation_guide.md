@@ -1,15 +1,14 @@
 # PainMap Worksheet — 實作指南 (Implementation Guide)
 
-> **版本**：v1.0 — 2026-05-01
 > **適用對象**：前端 / 全端工程師、AI 輔助開發者
 > **真相源**：`product/data_model.md`、`api/api_spec.md`、`api/ai_proxy_spec.md`、`design/pages/*.md`、`design/components/*.md`、`assembly/pages/*_integrated.md`
-> **配套文件**：`quality_checklist.md`、`teaching_vs_production_mode.md`
+> **配套文件**：`quality_checklist.md`
 
 ---
 
 ## 0. 為什麼需要這份指南
 
-PainMap Worksheet 的 spec 已完整（43 個文件），但 spec 本身**不是實作 SOP**。工程師仍會問：從哪檔案動工？Phase 邊界是什麼？共用元件先做還是頁面先做？11 個頁面實作順序？哪些 MVP 必做、哪些 M2？怎麼用 `assembly/pages/*_integrated.md` 加速？
+PainMap Worksheet 的 spec 完整，但 spec 本身**不是實作 SOP**。工程師仍會問：從哪檔案動工？Phase 邊界是什麼？共用元件先做還是頁面先做？11 個頁面實作順序？哪些 MVP 必做、哪些 M2？怎麼用 `assembly/pages/*_integrated.md` 加速？
 
 這份指南是「明天就能用」的工程地圖。
 
@@ -18,17 +17,17 @@ PainMap Worksheet 的 spec 已完整（43 個文件），但 spec 本身**不是
 ## 1. 從 0 到 1：7 步驟實作流程
 
 ```
-Step 1. 環境設定          ← Phase 0
-Step 2. 注入 brand tokens  ← Phase 0
-Step 3. 共用元件先做       ← Phase 0
-Step 4. MVP 11 頁面骨架    ← Phase 1（先頭尾，後內部）
-Step 5. PainCard 持久化    ← Phase 1
-Step 6. 過關條件 + 失敗路由 ← Phase 1
-Step 7. 匯出三格式 + QA    ← Phase 1
+Step 1. 環境設定                ← Phase 0
+Step 2. 注入 brand tokens       ← Phase 0
+Step 3. 共用元件先做             ← Phase 0
+Step 4. MVP 11 頁面骨架          ← Phase 1（先頭尾，後內部）
+Step 5. PainCard 持久化          ← Phase 1
+Step 6. 反思提示 + 失敗路由      ← Phase 1
+Step 7. 匯出三格式 + QA          ← Phase 1
 Phase 2 / Phase 3 為後續迭代（M2、M2+）
 ```
 
-每一步有「進入條件」與「離開條件」，未通過不可進下一步（與 worksheet 9 卡 exit gate 哲學一致）。
+每一步有「進入條件」與「離開條件」，未通過不可進下一步（與 worksheet 9 卡的中性反思哲學一致）。
 
 ### Step 1. 環境設定（半天）
 
@@ -58,7 +57,7 @@ Phase 2 / Phase 3 為後續迭代（M2、M2+）
 
 依序實作：
 1. `CardProgressStepper.tsx`（顯示「3 / 9」事實，不顯示百分比 / 倒數）
-2. `ExitGateCheck.tsx`（checklist 形式，全勾才解鎖下一步）
+2. `ReflectionHintFooter.tsx`（中性提示 + CTA 啟用判定，必填齊備才解鎖下一步）
 3. `AIPromptCopyBlock.tsx`（變數插值 + clipboard + 貼回 textarea + R2.6 regex）
 4. `VerdictExport.tsx`（Markdown / JSON / PDF 三格式）
 
@@ -74,7 +73,7 @@ Phase 2 / Phase 3 為後續迭代（M2、M2+）
 | 2 | `09_card_verdict` | 終點頁定義整個流程交付物 |
 | 3 | `10_pain_id_export` | 匯出頁定義 PainCard 最終格式 |
 | 4-7 | `01-04` | 使用者自填卡，無 AI 整合，先打底 |
-| 8 | `05_card_contradiction` | TRIZ 矛盾單選 |
+| 8 | `05_card_contradiction` | 蘇格拉底式取捨自陳 |
 | 9-11 | `06-08` | AI 整合卡（複製 prompt 模式），最後做 |
 
 **離開條件**：每頁達到 `design/pages/{NN}_*.md` ACCEPTANCE 全通過。
@@ -84,20 +83,20 @@ Phase 2 / Phase 3 為後續迭代（M2、M2+）
 1. `lib/paincard/schema.ts` — zod schema（與 `data_model.md` 一致）
 2. `lib/paincard/storage.ts` — LocalStorage CRUD（key: `painmap_worksheet:cards`）
 3. `lib/paincard/store.ts` — zustand store（debounced auto-save ≥ 500ms）
-4. `lib/paincard/migrations.ts` — schema_version 升級（MVP 只用 1.0）
+4. `lib/paincard/schema_version.ts` — schema_version 控制
 5. mount 時讀 `current_card_id` 跳轉到對應卡
 
 **離開條件**：填到一半關掉再開回來，內容完整 + 自動跳到上次的卡。
 
-### Step 6. 過關條件 + 失敗路由（2 天）
+### Step 6. 反思提示 + CTA 啟用判定（2 天）
 
-1. `lib/paincard/exit_gates.ts` — 9 個 gate 函式（純函式）
-2. `lib/paincard/validation.ts` — R1-R4 驗證（`references/pain_card_schema.md`）
-3. `lib/paincard/failure_routing.ts` — 失敗回退（spec §6）
-4. ExitGateCheck 接到每張卡 footer
-5. 失敗訊息使用 `api_spec.md` §8 中文 brand voice
+1. `lib/paincard/cta_rules.ts` — 9 個 CTA 啟用判定函式（純函式）
+2. `lib/paincard/validation.ts` — R1-R3 驗證（`references/pain_card_schema.md`）
+3. `lib/paincard/failure_routing.ts` — 中性回頭建議（`references/exit_gates_matrix.md` §2）
+4. ReflectionHintFooter 接到每張卡 footer
+5. 提示文案使用 `api_spec.md` §7 中文 brand voice（中性、不焦慮）
 
-**離開條件**：9 個 gate 正確擋過 / 放行；失敗訊息賦權不焦慮。
+**離開條件**：9 個 CTA 啟用判定正確；提示文案賦權不焦慮，無「過關 / 退回」字眼。
 
 ### Step 7. 匯出三格式 + QA 收尾（2 天）
 
@@ -149,7 +148,7 @@ apps/painmap-worksheet/
 │   ├── ui/                              ← brand primitives
 │   └── worksheet/
 │       ├── CardProgressStepper.tsx
-│       ├── ExitGateCheck.tsx
+│       ├── ReflectionHintFooter.tsx
 │       ├── AIPromptCopyBlock.tsx
 │       ├── VerdictExport.tsx
 │       ├── PainCardEditor.tsx
@@ -158,8 +157,8 @@ apps/painmap-worksheet/
 │   ├── schema.ts                        ← zod
 │   ├── storage.ts                       ← LocalStorage CRUD
 │   ├── store.ts                         ← zustand
-│   ├── exit_gates.ts                    ← 9 個 gate
-│   ├── validation.ts                    ← R1-R4
+│   ├── cta_rules.ts                     ← 9 個 CTA 啟用判定
+│   ├── validation.ts                    ← R1-R3
 │   ├── failure_routing.ts
 │   ├── prompt_library.ts                ← 7 段內建 prompts
 │   ├── prompt_interpolator.ts           ← 變數插值
@@ -169,7 +168,7 @@ apps/painmap-worksheet/
 └── tests/
     ├── unit/                            ← Vitest
     ├── e2e/                             ← Playwright
-    └── fuzz/exit_gate_fuzz.spec.ts
+    └── fuzz/cta_rules_fuzz.spec.ts
 ```
 
 **命名**：元件 PascalCase / 工具 camelCase / 型別 `*.types.ts` / 路由全小寫。
@@ -184,12 +183,12 @@ apps/painmap-worksheet/
 這個元件會被 ≥ 3 個頁面用到嗎？
 ├─ 是 → 共用元件先做（Phase 0）
 └─ 否
-    └─ 包含過關條件 / 持久化邏輯嗎？
+    └─ 包含 CTA 啟用判定 / 持久化邏輯嗎？
         ├─ 是 → 共用元件先做
         └─ 否 → 跟頁面一起做
 ```
 
-**判定**：CardProgressStepper（11 頁都需要）→ 先做；ExitGateCheck（9 頁需要）→ 先做；AIPromptCopyBlock（6 頁需要）→ 先做；VerdictExport（只有卡 10 但邏輯重）→ 先做。
+**判定**：CardProgressStepper（11 頁都需要）→ 先做；ReflectionHintFooter（9 頁需要）→ 先做；AIPromptCopyBlock（6 頁需要）→ 先做；VerdictExport（只有卡 10 但邏輯重）→ 先做。
 
 ### 4.2 brand tokens 注入 checklist
 
@@ -206,10 +205,10 @@ apps/painmap-worksheet/
 ### 5.1 wave 順序
 
 ```
-Wave 1 (頭尾骨架):     00 → 09 → 10
-Wave 2 (使用者自填卡): 01 → 02 → 03 → 04
-Wave 3 (TRIZ 矛盾):     05
-Wave 4 (AI 整合卡):     06 → 07 → 08
+Wave 1 (頭尾骨架):       00 → 09 → 10
+Wave 2 (使用者自填卡):   01 → 02 → 03 → 04
+Wave 3 (蘇格拉底取捨):   05
+Wave 4 (AI 整合卡):       06 → 07 → 08
 ```
 
 每 wave 結束跑一次端對端測試（00 走到目前已做的最後一頁）。
@@ -241,7 +240,7 @@ Wave 4 (AI 整合卡):     06 → 07 → 08
 
 啟動條件：≥ 50% 使用者反映「複製貼上 ChatGPT 太麻煩」、預算允許 $5 USD/月/user（或 BYOK）。
 
-**鐵律**：system prompt 強制注入「教學模式 guard」（`ai_proxy_spec.md` §3.3）；三層 anti-solution 偵測（regex + LLM judge + 使用者回報）；站內 LLM 失效時複製模式必須仍可運作（fallback）。
+**鐵律**：system prompt 強制注入統一版本（`ai_proxy_spec.md` §3.3）；三層 anti-solution + anti-taxonomy 偵測（regex + LLM judge + 使用者回報）；站內 LLM 失效時複製模式必須仍可運作（fallback）。
 
 ---
 
@@ -265,15 +264,15 @@ function updateCard(data: any) { painCard.status = 'structured'; }
 - 元件檔 < 200 行；超過 → 拆 sub-components
 - 函式 < 50 行
 - 巢狀 ≤ 3 層（Linus rule）
-- 過關條件函式必須是純函式（pure function）
+- CTA 啟用判定函式必須是純函式（pure function）
 
 ```typescript
 // ✅ 純函式
-export function checkCardOneGate(card: PainCard): GateResult {
+export function isCardOneCtaEnabled(card: PainCard): CtaResult {
   const c = card.complaint;
   const fields = [c.verbatim, c.source_name, c.source_relation, c.datetime, c.scene];
   return {
-    passed: fields.every(f => f.trim().length > 0),
+    enabled: fields.every(f => f.trim().length > 0),
     missing_fields: fields.map((f, i) => ({ idx: i, empty: f.trim() === '' })),
   };
 }
@@ -281,8 +280,8 @@ export function checkCardOneGate(card: PainCard): GateResult {
 
 ### 7.3 錯誤處理
 
-- 所有 user-facing 錯誤訊息使用 `api_spec.md` §8 中文 brand voice
-- 不使用「失敗 / 錯誤 / 不及格」這類負面詞
+- 所有 user-facing 訊息使用 `api_spec.md` §7 中文 brand voice
+- 不使用「失敗 / 錯誤 / 不及格 / 過關 / 退回」這類字眼
 - LocalStorage 寫入失敗 fallback 到 in-memory state（不擋使用者）
 
 ---
@@ -293,23 +292,23 @@ export function checkCardOneGate(card: PainCard): GateResult {
 
 | 層級 | 工具 | 涵蓋範圍 | 覆蓋率 |
 | :--- | :--- | :--- | :--- |
-| 單元測試 | Vitest | gate 函式、validation、adapters、interpolator | 90%+ |
+| 單元測試 | Vitest | CTA 啟用判定、validation、adapters、interpolator | 90%+ |
 | 元件測試 | Testing Library | 共用元件、表單 | 80%+ |
 | E2E | Playwright | 9 卡完整走完、復原、匯出 | 主流程 100% |
 
-### 8.2 過關條件 fuzz testing
+### 8.2 CTA 啟用判定 fuzz testing
 
-過關條件是 worksheet 核心契約，必須對「邊界輸入」做大量測試：
+CTA 啟用判定是 worksheet 核心契約，必須對「邊界輸入」做大量測試：
 
 ```typescript
 import { fc } from 'fast-check';
-test('卡 1 過關條件 fuzz', () => {
+test('卡 1 CTA 啟用判定 fuzz', () => {
   fc.assert(fc.property(
     fc.record({ verbatim: fc.string(), source_name: fc.string(), /* ... */ }),
     (complaint) => {
-      const result = checkCardOneGate({ complaint } as PainCard);
+      const result = isCardOneCtaEnabled({ complaint } as PainCard);
       const anyEmpty = Object.values(complaint).some(v => v.trim() === '');
-      expect(result.passed).toBe(!anyEmpty);
+      expect(result.enabled).toBe(!anyEmpty);
     }
   ));
 });
@@ -319,7 +318,7 @@ test('卡 1 過關條件 fuzz', () => {
 
 對照 `tests/e2e_scenarios.md`：
 1. happy path：完整走完 9 卡 + 匯出 Markdown
-2. 失敗回退：卡 2 fail → 自動回卡 1
+2. 中性回頭建議：卡 2 必填未齊備 → CTA disabled，hint 出現「想想看」中性提示
 3. 跨 session 復原：填到卡 5 關掉，重開後跳到卡 5
 4. AI prompt 複製：clipboard 內容含正確變數插值
 5. anti-solution：貼回違規 AI 回應 → 系統警告
@@ -363,37 +362,27 @@ MVP 階段刻意**不接行為追蹤**。需要：
 
 PRD / data_model 變更時：
 1. 先改 `data_model.md`（唯一真相源）
-2. 升 `schema_version`（1.0 → 1.1 → ...）
+2. 升 `schema_version`（破壞性變更時 persist key 一併換名）
 3. 更新 `api_spec.md` 對應端點
 4. 更新所有 `design/pages/*.md` + `assembly/pages/*_integrated.md`
-5. 提供 migration（`lib/paincard/migrations.ts`）
-6. 跑 `quality_checklist.md` 重新驗收
+5. 跑 `quality_checklist.md` 重新驗收
 
 ### 10.2 PR review 必檢查
 
 - [ ] 沒有 brand 禁令偷渡（用 `quality_checklist.md` brand compliance）
 - [ ] 沒有黑帽 Octalysis（用 `anti_gamification_guardrails.md`）
 - [ ] schema 與 `data_model.md` 一致
-- [ ] 過關條件函式有對應單元測試
-- [ ] 失敗訊息使用 brand voice
-- [ ] 教學/生產模式分流正確（見 `teaching_vs_production_mode.md`）
+- [ ] CTA 啟用判定函式有對應單元測試
+- [ ] 提示訊息使用 brand voice，無「過關 / 退回」字眼
 
 ### 10.3 給未來貢獻者
 
 最大危險是「為了快速上線跳過某個 phase」。請記住：
 > **跳過 Phase 0 = brand tokens 不一致 → 11 頁面長得不像同個產品**
 > **跳過共用元件 → 9 個地方改一次按鈕樣式，必有遺漏**
-> **跳過 fuzz testing → 過關條件被使用者用奇葩輸入打爆**
+> **跳過 fuzz testing → CTA 啟用判定被使用者用奇葩輸入打爆**
 
 嚴格的 SOP 不是束縛，是保護。
-
----
-
-## 11. 變更紀錄
-
-| 版本 | 日期 | 變更 | 負責人 |
-| :--- | :--- | :--- | :--- |
-| v1.0 | 2026-05-01 | 首版；對應 spec v1.0、PRD v1.0、data_model v1.0 | Sunny |
 
 ---
 

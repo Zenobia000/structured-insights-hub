@@ -1,7 +1,7 @@
 # Page-Level Spec: Card 9 — 真假判斷（純書寫）
 
 > 對應 worksheet「卡片 9 ｜ 真假痛點判斷」。
-> **v2.0 重構：徹底移除 5 維度評分、0-25 總分、教學/生產雙模式**。卡 9 只剩書寫——5 個蘇格拉底反思提示（純 UI 文字，不存資料）+ judgment + 100 字理由 + most_confident + least_confident + next_action。
+> 卡 9 只有書寫——5 個蘇格拉底反思提示（純 UI 文字，不存資料）+ judgment + 100 字理由 + most_confident + least_confident + next_action。
 > AI 在這張卡是**完全禁用**的（worksheet 鐵律：判斷必須人為書面）。
 
 ---
@@ -18,25 +18,6 @@
 - **expected_time_on_page**: 20-40 分鐘（書面判斷 ≥ 100 字需要思考時間）
 - **prev_card**: `/learn/worksheet/08`（卡 8：訪談規劃）
 - **next_card**: `/learn/worksheet/result`（痛點身份證匯出）
-
----
-
-## [v2.0 重構摘要]
-
-### 拿掉了什麼
-
-| 移除項目 | 原因 |
-| :--- | :--- |
-| 5 維度 × 1-5 分評分 (`verdict.scores`) | 分數會異化為「綠燈」；使用者誤以為高分就跳過真人訪談 |
-| 0-25 總分 (`verdict.total_score`) | 同上 |
-| 教學模式 / 生產模式雙軌（`displayMode`） | 為了隱藏分數而存在的雙軌；分數拿掉後不需要 |
-| `bandHint`（20-25 / 15-19 / 0-14 三段建議）| 使用者寫作本身就是判斷，不需要分數帶解讀 |
-| `ScoresForm` / `ScoresSummary` 元件 | 沒有分數要顯示 |
-| URL `?mode=teaching/production` query 參數 | 沒有模式要切 |
-
-### 新加什麼
-
-只在 UI 層加了 5 個蘇格拉底自問句作為**純文字提示**——幫使用者寫 100 字理由前先思考。**這 5 個提示不是資料欄位**，不寫進 `PainCard`。
 
 ---
 
@@ -332,7 +313,7 @@ verdict.judgment === 'fake_pain' →
 - ❌ 跨 PainCard 比較「你之前的判斷準確嗎」
 - ❌ AI 自動寫 reason_100w
 - ❌ 「你的判斷準確嗎？AI 來幫你看看」（違反整套訓練）
-- ❌ 任何分數 / 等級 / 排名 UI（v2.0 鐵律：資料層完全沒有分數）
+- ❌ 任何分數 / 等級 / 排名 UI（鐵律：資料層完全沒有分數）
 
 詳見 `references/anti_gamification_guardrails.md`。
 
@@ -351,9 +332,9 @@ verdict.judgment === 'fake_pain' →
 
 | 禁止 | 理由 |
 | :--- | :--- |
-| 「Pain Quality Score」「品質分數」「總分」 | v2.0 鐵律：完全沒有分數 |
+| 「Pain Quality Score」「品質分數」「總分」 | 鐵律：資料層沒有分數 |
 | 「等級 A / B / C」「優秀 / 良好 / 普通 / 差」 | 學校式評判 — 違反 brand |
-| 「教學模式」「生產模式」「mode toggle」 | v2.0 鐵律：沒有雙模式 |
+| 「教學模式」「生產模式」「mode toggle」 | 鐵律：沒有雙模式 |
 | 「成功率」「可行性 X%」 | 全域禁令 |
 | 「AI 推薦你選真痛點」「AI 判斷這是真的」 | 違反 worksheet 鐵律 |
 | 「分享你的得分」「比比看誰得分高」 | 違反 brand + 反模式 |
@@ -393,24 +374,16 @@ verdict.judgment === 'fake_pain' →
 - 過關後 PainCard.current_step 寫入 10
 - 不出現禁用語（「等級」「成功率」「AI 推薦」「分數」等）
 
-### v2.0 移除驗收（必須全部不出現）
+### 反模式驗收（必須全部不出現）
 
-- ❌ 無 5 維度評分（people_specificity / frequency / intensity / workaround_dissatisfaction / evidence_credibility）
-- ❌ 無 0-25 總分顯示
-- ❌ 無 score_band_hint（20-25 / 15-19 / 0-14 三段建議）
-- ❌ 無 ScoresForm / ScoresSummary 元件
-- ❌ 無 mode_indicator / mode_toggle / mode switch_link
-- ❌ 無 URL `?mode=teaching` 或 `?mode=production` 參數
-- ❌ 無 teaching_warning AlertTriangle CalloutBox
-- ❌ 無「分數只是工具，不是答案」說明（因為沒有分數）
-- ❌ 5 維度反思雷達圖 / 進度條
-- ❌ 「成就徽章」（金 / 銀 / 銅）
+- ❌ 任何分數 UI（雷達圖、進度條、總分）
+- ❌ mode toggle / 教學或生產模式切換
 - ❌ AI 輔助寫 reason 按鈕
+- ❌ 「成就徽章」（金 / 銀 / 銅）
 
 ### 資料層驗收
 
 - `PainCard.verdict` 只有 5 個欄位：judgment、reason_100w、most_confident_evidence、least_confident、next_action
-- 沒有 `verdict.scores`、沒有 `verdict.total_score`
 - LocalStorage key 為 `painmap-worksheet-v2`
 
 ### RWD / 無障礙驗收

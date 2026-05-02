@@ -1,15 +1,8 @@
-# PainMap Worksheet — 使用者旅程地圖 (User Journey Map) v2.0
+# PainMap Worksheet — 使用者旅程地圖 (User Journey Map)
 
-> **版本**：v2.0 — 2026-05-02
-> **配套文件**：`PRD.md`、`data_model.md` v2.0、`motivation_design.md`、`stage1_to_stage2_handoff.md` v2.0
-> **內容真相源**：`docs/workshop/painpoint_beginner_worksheet.md` v2.0
-> **設計原則**：每張卡片都是 `PainCard` 物件的一個欄位，不是 9 份獨立資料。
->
-> **v2.0 變更摘要**：
-> - 卡 5 旅程改寫：使用者用自己的話寫 side_a / side_b / sacrificed / sacrificed_reason，不再從 6 矛盾挑 1 個
-> - 卡 9 旅程改寫：5 個 Socratic 反思問句純螢幕提示（不寫資料）+ 書面判斷
-> - 移除「教學模式分數」「生產模式 status only」相關旅程描述
-> - 文案中性化：「過關 / 退回」→「想想看 / 回去把卡 X 想清楚再來」
+> **配套文件**：`PRD.md`、`data_model.md`、`motivation_design.md`、`stage1_to_stage2_handoff.md`
+> **內容真相源**：`docs/workshop/painpoint_beginner_worksheet.md`
+> **設計原則**：每張卡片都是 `PainCard` 物件的一個欄位，不是 9 份獨立資料。文案中性化（「想想看 / 回去把卡 X 想清楚再來」），無「過關 / 退回」字眼。
 
 ---
 
@@ -174,23 +167,23 @@
 
 ---
 
-### Phase 5 — 兩件事不能同時要（卡 5｜v2.0 蘇格拉底版）
+### Phase 5 — 兩件事不能同時要（卡 5）
 
 | 階段 | 內容 |
 | :--- | :--- |
 | 路徑 | `/learn/worksheet/05` |
-| 對應欄位 | `contradiction.{side_a, side_b, sacrificed, sacrificed_reason}`（v2.0：無 triz_id / triz_label）|
+| 對應欄位 | `contradiction.{side_a, side_b, sacrificed, sacrificed_reason}` |
 | AI 介入 | ✅ AI 協助使用者用自己的話寫兩端 + 為什麼犧牲 |
 
-**User flow**（v2.0 改寫）
+**User flow**
 
 1. 進場：看到「兩件事不能同時要」蘇格拉底引導句（「他想要 ___，但又同時想要 ___，他放不下哪邊？為什麼？」）
-2. 點擊「複製 prompt 到 ChatGPT」→ AI 協助用主人翁的話寫 A、B 兩端 + 為什麼那邊會被犧牲（**不**從固定 6 種挑、**不**給編號）
+2. 點擊「複製 prompt 到 ChatGPT」→ AI 協助用主人翁的話寫 A、B 兩端 + 為什麼那邊會被犧牲（**不**給編號、**不**給分類學標籤）
 3. 貼回 AI 回應 → 點「解析」→ 自動帶入 4 欄位（同時跑 anti-taxonomy 檢查）
-4. 編輯 / 確認：填 `side_a` / `side_b` / `sacrificed` / **`sacrificed_reason`**（v2.0 新欄位）
+4. 編輯 / 確認：填 `side_a` / `side_b` / `sacrificed` / `sacrificed_reason`
 5. 點擊「下一張卡 →」
 
-**反思提示**（v2.0）
+**反思提示**
 
 - [ ] `side_a` / `side_b` 非空且具體（≥ 10 字）
 - [ ] `sacrificed` 已選（'a' or 'b'）
@@ -202,7 +195,7 @@
 
 **Aha moment 機率**：MEDIUM-HIGH — 寫「為什麼會被犧牲」常常是這套訓練最開竅的時刻
 
-**設計回應**：4 個 textarea / radio 並排，不使用 6 矛盾 quiz 式互動（避免分類學偽裝）
+**設計回應**：4 個 textarea / radio 並排，不使用 quiz 式互動（避免分類學偽裝）
 
 ---
 
@@ -312,15 +305,15 @@
 
 ---
 
-### Phase 9 — 真假判斷（卡 9｜v2.0 極簡版）
+### Phase 9 — 真假判斷（卡 9）
 
 | 階段 | 內容 |
 | :--- | :--- |
-| 路徑 | `/learn/worksheet/09`（**無 `?mode=` 參數**） |
-| 對應欄位 | `verdict.{judgment, reason_100w, most_confident_evidence, least_confident, next_action}`（v2.0：無 scores / total_score）|
+| 路徑 | `/learn/worksheet/09` |
+| 對應欄位 | `verdict.{judgment, reason_100w, most_confident_evidence, least_confident, next_action}` |
 | AI 介入 | ❌ 完全永久禁用（這是你的判斷）|
 
-**User flow**（v2.0 改寫）
+**User flow**
 
 1. 進場：看到「這張是終點」+ 警告「AI 不能幫你判斷」
 2. **Socratic 反思區**：閱讀 5 個 Socratic 反思問句（純螢幕提示，**不對應任何 textarea**）：
@@ -335,7 +328,7 @@
 6. 選 `next_action`（訪談 / 補證據 / 換題目）
 7. 點擊「產出痛點身份證 →」
 
-**反思提示**（v2.0）
+**反思提示**
 
 - [ ] `judgment` 已選
 - [ ] `reason_100w.length >= 100`
@@ -348,7 +341,7 @@
 
 **設計回應**：
 - 5 個 Socratic 反思問句**純螢幕顯示**，不寫進資料（避免 over-engineer 變成另一套 score）
-- **無分數 UI / 無模式切換 / 無分數帶解讀**（v2.0：schema 內已無分數）
+- **無分數 UI、無模式切換**（schema 內無分數欄位）
 - 即便判斷為「假痛點」，也給正向回饋：「你省下 3 個月走錯路的時間」
 
 ---
@@ -445,7 +438,7 @@
 | 2 | — | ❌ 無 | — |
 | 3 | Prompt #1 | 句型校對 prompt（自動填入卡 1+2） | 複製 → 外部跑 → 貼回 |
 | 4 | Prompt #2 | 5 個 workaround 提案 prompt（自動填入卡 3） | 複製 → 外部跑 → 貼回 → 拿去問主人翁 |
-| 5 | Prompt #3 | 取捨自陳協助 prompt（v2.0：協助使用者用自己的話寫 side_a / side_b / sacrificed_reason）| 複製 → 外部跑 → 貼回 |
+| 5 | Prompt #3 | 取捨自陳協助 prompt（協助使用者用自己的話寫 side_a / side_b / sacrificed_reason）| 複製 → 外部跑 → 貼回 |
 | 6 | Prompt #4 | 8 題證據蒐集 prompt（自動填入卡 1–5） | 複製 → 外部跑 → 貼回 raw_response |
 | 7 | Prompt #5 | 痛點判斷表整理 prompt | **必須先寫猜測再使用** |
 | 8 | Prompt #6 | 模擬訪談 prompt（可選） | 複製 → 外部跑 → 貼回（熱身用）|
@@ -543,15 +536,6 @@
 | 卡 10 匯出 | 匯出觸發率 | ≥ 70% |
 | 跨 session 復原 | 復原成功率 | ≥ 40% |
 | 失敗回退 | 回退使用率 | ≥ 60%（健康訊號）|
-
----
-
-## 8. 變更紀錄
-
-| 版本 | 日期 | 變更 | 負責人 |
-| :--- | :--- | :--- | :--- |
-| v1.0 | 2026-05-01 | 首版；對應 worksheet v1.0、data_model v1.0 | Sunny |
-| v2.0 | 2026-05-02 | 蘇格拉底式大一統重構：Phase 5 改寫為蘇格拉底式取捨自陳（無 triz_id）；Phase 9 改寫為極簡判斷頁（無 5 維度評分、無模式切換）；移除「教學模式 / 生產模式」「分數帶解讀」相關旅程描述；通篇文案中性化「過關 → 反思問題」「退回 → 回去把卡 X 想清楚再來」 | Sunny |
 
 ---
 

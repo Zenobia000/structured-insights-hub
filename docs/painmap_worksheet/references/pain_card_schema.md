@@ -5,13 +5,7 @@
 > - Validation Rules
 > - 範例資料
 >
-> 真相源：`product/data_model.md`（v2.0）
-
----
-
-## v2.0 — Socratic 大一統
-
-> 此 schema 對應 `data_model.md` v2.0。**已從 v1.0 移除**：`verdict.scores`、`verdict.total_score`、`Score` type、`contradiction.triz_id`、`contradiction.triz_label`、`TrizId` / `TrizLabel` types、教學/生產模式輸出限制。**新增**：`contradiction.sacrificed_reason`。
+> 真相源：`product/data_model.md`
 
 ---
 
@@ -20,7 +14,7 @@
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://painmap.com/schemas/paincard/v2.json",
+  "$id": "https://painmap.com/schemas/paincard.json",
   "title": "PainCard",
   "type": "object",
   "required": [
@@ -31,7 +25,7 @@
   ],
   "properties": {
     "id": { "type": "string", "format": "uuid" },
-    "schema_version": { "const": "2.0" },
+    "schema_version": { "const": "1.0" },
     "status": {
       "enum": ["draft", "in_progress", "structured", "pending_interview", "archived_fake"]
     },
@@ -107,23 +101,6 @@
 
 ---
 
-## v1 → v2 欄位對照
-
-| v1.0 欄位 | v2.0 狀態 | 說明 |
-| :--- | :--- | :--- |
-| `contradiction.triz_id` | **移除** | TRIZ 6 分類學整個拿掉 |
-| `contradiction.triz_label` | **移除** | 同上 |
-| `contradiction.sacrificed_reason` | **新增** | 使用者自陳「為什麼這邊被犧牲」（≥1 句）|
-| `verdict.scores` | **移除** | 5 維度 × 1-5 評分整塊拿掉 |
-| `verdict.total_score` | **移除** | 0-25 總分拿掉 |
-| `Score` type | **移除** | 沒有分數欄位就不需要 |
-| `TrizId` / `TrizLabel` types | **移除** | 沒有 TRIZ 就不需要 |
-| `schema_version` | `"1.0"` → `"2.0"` | bump |
-
-> **沒有 migration**：v2.0 偵測到舊 v1.0 資料時直接拋棄；persist key 從 `painmap-worksheet-v1` 改成 `painmap-worksheet-v2` 雙保險。
-
----
-
 ## Validation Rules（補充 JSON Schema 無法表達的規則）
 
 ### Rule 1: 連續性 (Sequential Reflection)
@@ -155,20 +132,18 @@
 | R3.1 | `interview_plan.targets[].persona` 應與 `ai_evidence.eight_answers.q8_interview_targets` 列出的 5 種人有交集 |
 | R3.2 | `verdict.judgment === 'true_pain'` 時，`interview_plan.targets.length >= 1` 且 `most_confident_evidence` 應引用具體卡片觀察 |
 
-> **v2.0 移除**：v1 的 R4「生產模式輸出限制」整段刪除——沒有分數欄位就不需要 production filter。對外 API / 公開分享連結直接輸出完整 PainCard。
-
 ---
 
 ## 範例資料
 
 ### 範例 1：林老師（補習班家長 LINE 案例）
 
-對應 worksheet 範例。完整 PainCard（v2.0）：
+對應 worksheet 範例。完整 PainCard：
 
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "schema_version": "2.0",
+  "schema_version": "1.0",
   "status": "structured",
   "created_at": "2026-04-15T21:00:00+08:00",
   "updated_at": "2026-04-15T23:30:00+08:00",
@@ -303,12 +278,3 @@
   }
 }
 ```
-
----
-
-## 變更紀錄
-
-| 版本 | 日期 | 變更 |
-| :--- | :--- | :--- |
-| 2.0 | 2026-05-02 | Socratic 大一統：移除 `verdict.scores`、`verdict.total_score`、`contradiction.triz_id`/`triz_label`、`Score`/`TrizId`/`TrizLabel` types、Rule 4 生產模式輸出限制；新增 `contradiction.sacrificed_reason` |
-| 1.0 | 2026-05-01 | 首版；對應 data_model.md v1.0 |

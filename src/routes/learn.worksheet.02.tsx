@@ -15,6 +15,7 @@ import {
   isForbiddenPersonName,
   type Person,
 } from "@/lib/cardTwoValidators";
+import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 
 export const Route = createFileRoute("/learn/worksheet/02")({
@@ -31,16 +32,6 @@ export const Route = createFileRoute("/learn/worksheet/02")({
   }),
   component: CardTwoPage,
 });
-
-function relativeTime(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso).getTime();
-  const diffSec = Math.max(0, Math.floor((Date.now() - d) / 1000));
-  if (diffSec < 5) return "剛剛";
-  if (diffSec < 60) return `${diffSec} 秒前`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
-  return new Date(iso).toLocaleString("zh-TW", { hour: "2-digit", minute: "2-digit" });
-}
 
 function CardTwoPage() {
   const navigate = useNavigate();
@@ -79,13 +70,7 @@ function CardTwoPage() {
   const [failureCount, setFailureCount] = useState(0);
 
   // autosave indicator
-  const [savedAgo, setSavedAgo] = useState("");
-  useEffect(() => {
-    if (!card.updated_at) return;
-    setSavedAgo(relativeTime(card.updated_at));
-    const t = setInterval(() => setSavedAgo(relativeTime(card.updated_at)), 15_000);
-    return () => clearInterval(t);
-  }, [card.updated_at]);
+  const savedAgo = useSavedAgo(card.updated_at);
 
   const setPersonField = (i: number, field: keyof Person, value: string) => {
     const next = people.map((p, idx) => (idx === i ? { ...p, [field]: value } : p));

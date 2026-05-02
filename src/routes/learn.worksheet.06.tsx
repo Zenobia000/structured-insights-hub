@@ -12,6 +12,7 @@ import {
   getToolById,
   type EightAnswersInput,
 } from "@/lib/cardSixHelpers";
+import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 import type { AiTool } from "@/types/painCard";
 import { Button } from "@/components/ui/button";
@@ -29,16 +30,6 @@ export const Route = createFileRoute("/learn/worksheet/06")({
   }),
   component: CardSixPage,
 });
-
-function relativeTime(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso).getTime();
-  const diffSec = Math.max(0, Math.floor((Date.now() - d) / 1000));
-  if (diffSec < 5) return "剛剛";
-  if (diffSec < 60) return `${diffSec} 秒前`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
-  return new Date(iso).toLocaleString("zh-TW", { hour: "2-digit", minute: "2-digit" });
-}
 
 function CardSixPage() {
   const navigate = useNavigate();
@@ -135,13 +126,7 @@ function CardSixPage() {
   const [submitting, setSubmitting] = useState(false);
 
   // autosave
-  const [savedAgo, setSavedAgo] = useState("");
-  useEffect(() => {
-    if (!card.updated_at) return;
-    setSavedAgo(relativeTime(card.updated_at));
-    const t = setInterval(() => setSavedAgo(relativeTime(card.updated_at)), 15_000);
-    return () => clearInterval(t);
-  }, [card.updated_at]);
+  const savedAgo = useSavedAgo(card.updated_at);
 
   useEffect(() => {
     setBlockedMessage(null);

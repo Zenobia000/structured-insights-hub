@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Info, ShieldOff } from "lucide-react";
 
 import { AntiFakeCheckPanel } from "@/components/worksheet/card01/AntiFakeCheckPanel";
 import { CardOneExitGateFooter } from "@/components/worksheet/card01/CardOneExitGateFooter";
 import { ExampleReference } from "@/components/worksheet/card01/ExampleReference";
 import { TextField, TextareaField } from "@/components/worksheet/card01/FormFields";
+import { useSavedAgo } from "@/hooks/useSavedAgo";
 import {
   CARD_ONE_ANALYSIS_WORDS,
   detectAnalysisWords,
@@ -28,20 +29,6 @@ export const Route = createFileRoute("/learn/worksheet/01")({
   component: CardOnePage,
 });
 
-/** 顯示 “剛剛” / “3 分鐘前” / 完整時間 */
-function relativeTime(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso).getTime();
-  const diffSec = Math.max(0, Math.floor((Date.now() - d) / 1000));
-  if (diffSec < 5) return "剛剛";
-  if (diffSec < 60) return `${diffSec} 秒前`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
-  return new Date(iso).toLocaleString("zh-TW", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 function CardOnePage() {
   const navigate = useNavigate();
   const card = usePainCardStore((s) => s.card);
@@ -63,14 +50,8 @@ function CardOnePage() {
   const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // 自動儲存指示（每次 updated_at 變動就更新顯示）
-  const [savedAgo, setSavedAgo] = useState("");
-  useEffect(() => {
-    if (!card.updated_at) return;
-    setSavedAgo(relativeTime(card.updated_at));
-    const t = setInterval(() => setSavedAgo(relativeTime(card.updated_at)), 15_000);
-    return () => clearInterval(t);
-  }, [card.updated_at]);
+  // 自動儲存指示（每次 updated_at 變動就更新顯示，每 15 秒 refresh 相對時間）
+  const savedAgo = useSavedAgo(card.updated_at);
 
   const handleAdvance = () => {
     setAttempted(true);

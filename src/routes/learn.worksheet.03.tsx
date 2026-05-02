@@ -8,6 +8,7 @@ import { ClarifyingQAPanel } from "@/components/worksheet/card03/ClarifyingQAPan
 import { ExampleReferenceCard3 } from "@/components/worksheet/card03/ExampleReferenceCard3";
 import { CardThreeExitGateFooter } from "@/components/worksheet/card03/CardThreeExitGateFooter";
 import { evaluateCardThree, interpolatePrompt } from "@/lib/cardThreeValidators";
+import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 
 export const Route = createFileRoute("/learn/worksheet/03")({
@@ -24,15 +25,6 @@ export const Route = createFileRoute("/learn/worksheet/03")({
   }),
   component: CardThreePage,
 });
-
-function relativeTime(iso: string): string {
-  if (!iso) return "";
-  const diffSec = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
-  if (diffSec < 5) return "剛剛";
-  if (diffSec < 60) return `${diffSec} 秒前`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
-  return new Date(iso).toLocaleString("zh-TW", { hour: "2-digit", minute: "2-digit" });
-}
 
 function CardThreePage() {
   const navigate = useNavigate();
@@ -54,13 +46,7 @@ function CardThreePage() {
     [card.complaint.verbatim, card.people.background],
   );
 
-  const [savedAgo, setSavedAgo] = useState("");
-  useEffect(() => {
-    if (!card.updated_at) return;
-    setSavedAgo(relativeTime(card.updated_at));
-    const t = setInterval(() => setSavedAgo(relativeTime(card.updated_at)), 15_000);
-    return () => clearInterval(t);
-  }, [card.updated_at]);
+  const savedAgo = useSavedAgo(card.updated_at);
 
   // 任意輸入變更後清除 blocked message
   useEffect(() => {

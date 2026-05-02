@@ -252,7 +252,29 @@ function CardSevenPage() {
           </div>
         )}
 
-        <ContextSummary card={card} />
+        {showDraftBanner && (
+          <div
+            role="status"
+            className="flex items-start gap-2.5 rounded-md border-2 border-verified/50 bg-verified/5 px-3 py-2.5 text-[13.5px] leading-[1.55] text-text-primary"
+          >
+            <RotateCcw className="h-4 w-4 text-verified shrink-0 mt-0.5" aria-hidden />
+            <div className="flex-1">
+              <p className="font-semibold">已從瀏覽器恢復你的草稿</p>
+              <p className="text-text-secondary mt-0.5">
+                Phase A 猜測、checkpoint 勾選、痛點判斷表與 3 個差異都還在。繼續填即可。
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDraftBannerDismissed(true)}
+              className="text-[12px] text-text-muted hover:text-text-primary px-2 py-1 -my-1"
+              aria-label="關閉恢復提示"
+            >
+              知道了
+            </button>
+          </div>
+        )}
+
 
         {/* Phase A */}
         <PhaseAGuessForm

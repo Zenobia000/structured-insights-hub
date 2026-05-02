@@ -119,6 +119,35 @@ function CardEightPage() {
     setTimeout(() => setHighlightIndex(null), 1000);
   };
 
+  /**
+   * 跳到第一個缺『聯絡方式』的訪談對象 → 高亮卡片 + 捲動 + focus 該欄位
+   * 用在 footer 的「帶我去填」按鈕、以及 advance 卡住時自動觸發
+   */
+  const jumpToMissingContact = () => {
+    const targets = plan.targets;
+    // 優先找「persona 已寫但 contact 還沒填」的；其次第一個空的；都沒有就 0
+    const partialIdx = targets.findIndex(
+      (t) => t.persona.trim().length > 0 && t.contact_info.trim().length < CONTACT_MIN,
+    );
+    const emptyIdx = targets.findIndex((t) => t.contact_info.trim().length < CONTACT_MIN);
+    const idx = partialIdx >= 0 ? partialIdx : emptyIdx >= 0 ? emptyIdx : 0;
+
+    setHighlightIndex(idx);
+    // 等 React 重 render 完再抓 DOM
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`contact-${idx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        // 滾動到位再 focus（避免捲動被 focus 中斷）
+        setTimeout(() => {
+          (el as HTMLTextAreaElement).focus({ preventScroll: true });
+        }, 350);
+      }
+    });
+    // 高亮維持 2.5 秒,給使用者視覺停留
+    setTimeout(() => setHighlightIndex(null), 2500);
+  };
+
   // evaluators
   const targetsEval = useMemo(() => evaluateTargets(plan), [plan]);
   const questionsEval = useMemo(() => evaluateQuestions(plan), [plan]);

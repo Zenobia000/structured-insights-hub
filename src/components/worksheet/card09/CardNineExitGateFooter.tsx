@@ -219,6 +219,7 @@ export function CardNineExitGateFooter({
             aria-labelledby="card9-reflection-toggle"
             tabIndex={-1}
             className="min-h-[5rem] max-h-[min(38dvh,18rem)] sm:max-h-[min(44dvh,24rem)] overflow-y-auto overscroll-contain pr-1 -mr-1 space-y-2 sm:space-y-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md"
+            style={panelMaxH != null ? { maxHeight: `${panelMaxH}px` } : undefined}
           >
             <ul className="space-y-1.5">
               {hints.map((h, i) => (

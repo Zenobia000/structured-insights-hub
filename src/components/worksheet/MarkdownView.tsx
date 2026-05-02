@@ -52,7 +52,7 @@ const TAG_CLASS: Record<string, string> = {
 let hookRegistered = false;
 function ensureHook() {
   if (hookRegistered || typeof window === "undefined") return;
-  DOMPurify.addHook("uponSanitizeElement", (node, data) => {
+  DOMPurify.addHook("uponSanitizeElement", (node: Node, data: { tagName: string }) => {
     if (!(node instanceof Element)) return;
     const tag = data.tagName;
     const cls = TAG_CLASS[tag];

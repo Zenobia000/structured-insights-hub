@@ -1,5 +1,5 @@
 /**
- * ExamplePainCardPreviewSection — 林老師範例。
+ * ExamplePainCardPreviewSection — 林老師範例 (Grok Bento large card)。
  *
  * 規格鐵律：
  * - VerifiedTag 顯示「真痛點」綠色，**禁止顯示 0-25 分數**（R4.1 / R4.2）
@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { SectionFade } from "./SectionFade";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import {
   Dialog,
   DialogContent,
@@ -70,72 +71,106 @@ export function ExamplePainCardPreviewSection() {
   const [open, setOpen] = useState(false);
 
   return (
-    <SectionFade ariaLabelledBy="example-title" className="bg-surface border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <div className="max-w-2xl mb-10">
+    <SectionFade
+      ariaLabelledBy="example-title"
+      className="relative border-t border-border-hairline bg-canvas-base"
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 md:py-32">
+        <div className="max-w-2xl mb-16">
+          <Eyebrow variant="numbered" index={3}>
+            Example output
+          </Eyebrow>
           <h2
             id="example-title"
-            className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary"
+            className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary"
           >
-            30-90 分鐘後，你會產出像這樣的痛點身份證
+            30-90 分鐘後，
+            <br />
+            你會產出像這樣的痛點身份證。
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-text-secondary">
+          <p className="mt-5 text-base sm:text-lg leading-[1.6] text-text-secondary">
             範例：林老師（補習班家長 LINE 案例）
           </p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-6 lg:gap-8 items-start">
-          {/* PainCard preview — 60% */}
+          {/* PainCard preview — Bento large (col 1-3) */}
           <div className="lg:col-span-3">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="group w-full text-left rounded-xl border border-border bg-surface p-6 sm:p-7 shadow-[0_1px_3px_rgba(30,58,95,0.06)] hover:border-secondary hover:shadow-[0_4px_8px_rgba(30,58,95,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+                  className="group relative w-full text-left rounded-lg border border-border-hairline bg-canvas-raised p-8 md:p-10 transition-all duration-300 hover:border-border-default hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-electric focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
                 >
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2">
-                      <span aria-hidden className="text-xl">
-                        🪪
-                      </span>
-                      <span className="font-semibold text-text-primary">最後組合</span>
+                  {/* Subtle accent glow on hover */}
+                  <div
+                    aria-hidden
+                    className="absolute -inset-px rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse 400px 200px at 0% 0%, rgba(91,141,239,0.08), transparent 60%)",
+                    }}
+                  />
+
+                  <div className="relative flex items-center justify-between mb-7">
+                    <div className="flex items-center gap-3">
+                      <Eyebrow variant="numbered" index={9}>
+                        Pain ID · LIN-2026-03-15
+                      </Eyebrow>
                     </div>
                     {/* VerifiedTag — 不顯示分數 */}
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-verified-light text-verified px-2.5 py-1 text-xs font-semibold">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      真痛點
+                    <span className="inline-flex items-center gap-1.5 rounded-md border border-status-success/40 bg-status-success-bg px-2.5 py-1 text-[11px] font-mono uppercase tracking-[0.06em] text-status-success">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Verified Pain
                     </span>
                   </div>
 
-                  <dl className="space-y-3">
+                  <h3 className="relative font-display text-2xl font-semibold tracking-[-0.02em] text-text-primary mb-7">
+                    林老師 · 家長 LINE 寫到半夜
+                  </h3>
+
+                  <dl className="relative space-y-3.5">
                     {SUMMARY_ROWS.map(([k, v]) => (
-                      <div key={k} className="grid grid-cols-[7rem_1fr] gap-3 text-sm">
-                        <dt className="text-text-muted font-medium shrink-0">{k}</dt>
-                        <dd className="text-text-primary leading-[1.55]">{v}</dd>
+                      <div
+                        key={k}
+                        className="grid grid-cols-[7rem_1fr] gap-4 text-[14px] border-b border-border-subtle pb-3.5 last:border-0 last:pb-0"
+                      >
+                        <dt className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-tertiary pt-0.5">
+                          {k}
+                        </dt>
+                        <dd className="text-text-primary leading-[1.6]">{v}</dd>
                       </div>
                     ))}
                   </dl>
 
-                  <div className="mt-5 pt-4 border-t border-border flex items-center justify-between text-xs">
-                    <span className="text-text-muted">點擊查看完整 9 張卡內容</span>
-                    <ExternalLink className="h-3.5 w-3.5 text-secondary group-hover:translate-x-0.5 transition-transform" />
+                  <div className="relative mt-8 pt-6 border-t border-border-subtle flex items-center justify-between">
+                    <span className="text-[12px] text-text-tertiary">點擊查看完整 9 張卡內容</span>
+                    <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-electric group-hover:text-accent-electric-hover">
+                      Open
+                      <ExternalLink className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </span>
                   </div>
                 </button>
               </DialogTrigger>
 
-              <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+              <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-canvas-overlay border-border-default">
                 <DialogHeader>
-                  <DialogTitle>林老師案例 · 完整 9 卡</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="font-display text-xl tracking-[-0.01em]">
+                    林老師案例 · 完整 9 卡
+                  </DialogTitle>
+                  <DialogDescription className="text-text-secondary">
                     這是已完成的 PainCard 範例，每一卡都有具體填寫內容。
                   </DialogDescription>
                 </DialogHeader>
-                <ol className="mt-4 space-y-4">
+                <ol className="mt-4 space-y-3">
                   {FULL_CARDS.map((c) => (
-                    <li key={c.step} className="rounded-md border border-border bg-page p-4">
+                    <li
+                      key={c.step}
+                      className="rounded-md border border-border-hairline bg-canvas-raised p-4"
+                    >
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-mono text-xs text-text-muted">
-                          卡 {String(c.step).padStart(2, "0")}
+                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+                          Card {String(c.step).padStart(2, "0")}
                         </span>
                         <span className="font-semibold text-sm text-text-primary">{c.title}</span>
                       </div>
@@ -147,17 +182,20 @@ export function ExamplePainCardPreviewSection() {
             </Dialog>
           </div>
 
-          {/* Case explainer — 40% */}
-          <div className="lg:col-span-2 space-y-5">
+          {/* Case explainer (col 4-5) */}
+          <div className="lg:col-span-2 space-y-6 lg:pt-4">
             <Explainer
+              eyebrow="01 / origin"
               title="怎麼開始"
               body="林老師的朋友只是隨口抱怨「最近寫家長 LINE 寫到崩潰」。我把那句話原封不動寫進卡 1。"
             />
             <Explainer
+              eyebrow="02 / process"
               title="90 分鐘做了什麼"
               body="卡 1-2 找出 3 個真人。卡 3-7 用 AI 撈 Dcard 補教版證據、發現安親班老師頻率更高。卡 8-9 排好訪談題目。"
             />
             <Explainer
+              eyebrow="03 / outcome"
               title="然後呢"
               body="這張卡不會告訴你「該做什麼產品」。它只告訴你：這個痛是真的，下一步是去訪 2 位安親班老師。"
             />
@@ -168,11 +206,12 @@ export function ExamplePainCardPreviewSection() {
   );
 }
 
-function Explainer({ title, body }: { title: string; body: string }) {
+function Explainer({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
   return (
-    <div>
-      <h3 className="text-[15px] font-semibold text-text-primary mb-1.5">{title}</h3>
-      <p className="text-[14px] leading-[1.65] text-text-secondary">{body}</p>
+    <div className="border-l-2 border-border-hairline pl-5 hover:border-accent-electric transition-colors duration-300">
+      <Eyebrow className="mb-2">{eyebrow}</Eyebrow>
+      <h3 className="text-base font-semibold text-text-primary mb-1.5">{title}</h3>
+      <p className="text-[14px] leading-[1.7] text-text-secondary">{body}</p>
     </div>
   );
 }

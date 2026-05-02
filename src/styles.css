@@ -5,238 +5,518 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * PainMap Brand Design System v1.0
- *
- * Colors use oklch and are mapped to semantic tokens. Never hardcode colors
- * in components — always use the tokens (bg-primary, text-secondary, etc.).
+ * PainMap Design System v2.0 — Grok-inspired Dark-First
  *
  * Design philosophy:
- * - Indigo (primary) — structure & depth
- * - Teal (secondary) — clarity & guidance
- * - Amber (accent) — empowerment & action (CTA only, sparingly)
- * - Verified Green — only for "verified" pain state, NOT for "success"
- * - Avoid large red areas — red is reserved for system errors only
+ * - Pure black canvas with grayscale elevation (no shadows in dark mode)
+ * - Electric blue accent (#5B8DEF) replaces warm amber for primary action
+ * - Hairline borders (1px) and tight radii (max 8px)
+ * - Glow effects replace box-shadows for elevation
+ * - Geist typography with monospace eyebrow markers
+ *
+ * Token usage:
+ * - canvas.* → page-level surfaces (bg-page, bg-surface-raised, bg-surface-overlay)
+ * - surface.* → cards & blocks (bg-surface, bg-surface-hover, bg-surface-active)
+ * - border.* → 1px hairlines (border-hairline default)
+ * - text.* → text scale (text-text-primary, text-text-secondary, text-text-tertiary)
+ * - accent.* → electric blue (bg-accent, text-accent)
+ * - status.* → semantic (success/warning/danger/info)
+ *
+ * Backward-compat aliases preserved for existing components:
+ * - bg-page = canvas.base, bg-surface = canvas.raised, bg-muted-bg = canvas.sunken
+ * - text-primary = neutral text (was indigo, now electric)
+ * - border = hairline
  */
 
 @theme inline {
+  /* ───── Radius (Grok constraint: max 8px) ───── */
+  --radius-none: 0;
+  --radius-xs: 2px;
   --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;     /* alias to lg — Grok caps at 8px */
+  --radius-2xl: 8px;    /* alias to lg */
+  --radius-full: 9999px;
 
+  /* ───── Spacing semantic tokens ───── */
+  --spacing-section-sm: 4rem;     /* 64px */
+  --spacing-section-md: 6rem;     /* 96px */
+  --spacing-section-lg: 8rem;     /* 128px */
+  --spacing-section-xl: 10rem;    /* 160px */
+
+  /* ───── Color: Background / Foreground (shadcn compat) ───── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-page: var(--page);
+  /* ───── Color: Canvas layers (Grok core) ───── */
+  --color-canvas-base: var(--canvas-base);
+  --color-canvas-raised: var(--canvas-raised);
+  --color-canvas-overlay: var(--canvas-overlay);
+  --color-canvas-sunken: var(--canvas-sunken);
+
+  /* ───── Color: Surface (cards) ───── */
   --color-surface: var(--surface);
-  --color-muted-bg: var(--muted-bg);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-surface-elevated: var(--surface-elevated);
 
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  /* Backward-compat aliases */
+  --color-page: var(--canvas-base);
+  --color-muted-bg: var(--canvas-sunken);
 
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-light: var(--primary-light);
+  /* ───── Color: shadcn legacy mapping ───── */
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--canvas-overlay);
+  --color-popover-foreground: var(--text-primary);
 
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  /* Primary = neutral text (Grok primary button = white on black) */
+  --color-primary: var(--text-primary);
+  --color-primary-foreground: var(--canvas-base);
+  --color-primary-light: var(--surface-elevated);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent-light: var(--accent-light);
+  /* Secondary = electric subtle (was teal, now muted electric) */
+  --color-secondary: var(--accent-electric-subtle);
+  --color-secondary-foreground: var(--text-primary);
 
-  --color-verified: var(--verified);
-  --color-verified-foreground: var(--verified-foreground);
-  --color-verified-light: var(--verified-light);
+  /* Accent = Grok electric blue (was warm amber) */
+  --color-accent: var(--accent-electric);
+  --color-accent-foreground: var(--text-primary);
+  --color-accent-light: var(--accent-electric-subtle);
 
-  --color-caution: var(--caution);
-  --color-caution-foreground: var(--caution-foreground);
+  /* Verified = status success */
+  --color-verified: var(--status-success);
+  --color-verified-foreground: var(--canvas-base);
+  --color-verified-light: var(--status-success-bg);
 
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  /* Caution = status warning */
+  --color-caution: var(--status-warning);
+  --color-caution-foreground: var(--canvas-base);
 
+  --color-muted: var(--surface);
+  --color-muted-foreground: var(--text-tertiary);
+
+  /* ───── Color: Text scale ───── */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-muted: var(--text-tertiary);    /* alias */
+  --color-text-disabled: var(--text-disabled);
+  --color-text-inverse: var(--text-inverse);
 
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  /* ───── Color: Status semantic ───── */
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-bg: var(--status-danger-bg);
 
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
+  --color-destructive: var(--status-danger);
+  --color-destructive-foreground: var(--text-primary);
 
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  /* ───── Color: Borders ───── */
+  --color-border: var(--border-hairline);          /* alias to hairline */
+  --color-border-hairline: var(--border-hairline);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
+  --color-border-accent: var(--accent-electric);
 
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-input: var(--border-default);
+  --color-ring: var(--accent-electric);
+  --color-ring-offset-background: var(--canvas-base);
 
-  --font-sans: "Noto Sans TC", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* ───── Color: Accent electric variants ───── */
+  --color-accent-electric: var(--accent-electric);
+  --color-accent-electric-hover: var(--accent-electric-hover);
+  --color-accent-electric-subtle: var(--accent-electric-subtle);
 
-  --shadow-sm: 0 1px 3px rgba(30, 58, 95, 0.06);
-  --shadow-md: 0 4px 8px rgba(30, 58, 95, 0.08);
-  --shadow-lg: 0 12px 24px rgba(30, 58, 95, 0.12);
+  /* ───── Color: Data viz palette ───── */
+  --color-chart-1: var(--viz-1);
+  --color-chart-2: var(--viz-2);
+  --color-chart-3: var(--viz-3);
+  --color-chart-4: var(--viz-4);
+  --color-chart-5: var(--viz-5);
+  --color-viz-1: var(--viz-1);
+  --color-viz-2: var(--viz-2);
+  --color-viz-3: var(--viz-3);
+  --color-viz-4: var(--viz-4);
+  --color-viz-5: var(--viz-5);
+  --color-viz-6: var(--viz-6);
+  --color-viz-7: var(--viz-7);
+  --color-viz-8: var(--viz-8);
+
+  /* ───── Color: Sidebar (shadcn) ───── */
+  --color-sidebar: var(--canvas-raised);
+  --color-sidebar-foreground: var(--text-primary);
+  --color-sidebar-primary: var(--accent-electric);
+  --color-sidebar-primary-foreground: var(--text-primary);
+  --color-sidebar-accent: var(--surface-hover);
+  --color-sidebar-accent-foreground: var(--text-primary);
+  --color-sidebar-border: var(--border-hairline);
+  --color-sidebar-ring: var(--accent-electric);
+
+  /* ───── Typography ───── */
+  --font-sans: "Geist", "Inter", "Noto Sans TC", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-display: "Geist", "Inter Display", -apple-system, sans-serif;
+
+  /* ───── Shadow (light-mode fallback only — dark mode uses glow) ───── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.08);
+
+  /* ───── Glow (Grok dark-mode elevation) ───── */
+  --shadow-glow-focus: 0 0 0 2px var(--accent-electric-glow);
+  --shadow-glow-sm: 0 0 16px var(--accent-electric-glow);
+  --shadow-glow-md: 0 0 32px rgba(91, 141, 239, 0.25);
+  --shadow-glow-lg: 0 0 80px rgba(91, 141, 239, 0.18);
+
+  /* ───── Animation ───── */
+  --ease-standard: cubic-bezier(0.2, 0, 0.13, 1);
+  --ease-out-grok: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-grok: cubic-bezier(0.4, 0, 1, 1);
+  --ease-snappy: cubic-bezier(0.5, 0, 0, 1);
 }
 
+/* ───────────────────────────────────────────────
+ * :root = Dark mode (Grok canonical)
+ * Painmap is dark-first as of v2.0
+ * ─────────────────────────────────────────────── */
 :root {
-  --radius: 0.625rem;
+  --radius: 0.5rem;     /* 8px default (was 0.625rem = 10px) */
 
-  /* Page surfaces */
-  --page: oklch(0.984 0.003 247);          /* #F7F8FA - warm light gray */
-  --surface: oklch(1 0 0);                  /* #FFFFFF */
-  --muted-bg: oklch(0.969 0.005 247);       /* #F1F3F5 */
+  /* Canvas (灰階抬升) */
+  --canvas-base: #000000;
+  --canvas-raised: #0A0A0A;
+  --canvas-overlay: #111111;
+  --canvas-sunken: #050505;
 
-  --background: var(--page);
-  --foreground: oklch(0.22 0.027 257);      /* #1A2332 */
+  /* Surface (卡片狀態) */
+  --surface: #0A0A0A;
+  --surface-hover: #141414;
+  --surface-active: #1A1A1A;
+  --surface-elevated: #181818;
 
-  --card: var(--surface);
-  --card-foreground: var(--foreground);
-  --popover: var(--surface);
-  --popover-foreground: var(--foreground);
+  /* shadcn compat */
+  --background: var(--canvas-base);
+  --foreground: var(--text-primary);
 
-  /* Primary — Deep Indigo #1E3A5F */
-  --primary: oklch(0.345 0.062 257);
-  --primary-foreground: oklch(0.984 0.003 247);
-  --primary-light: oklch(0.945 0.015 257); /* #E8EEF5 */
+  /* Borders */
+  --border-hairline: #1F1F1F;
+  --border-subtle: #161616;
+  --border-default: #2A2A2A;
+  --border-strong: #3F3F3F;
+  --border-focus: #FAFAFA;
 
-  /* Secondary — Deep Teal #2D7D8A */
-  --secondary: oklch(0.55 0.07 200);
-  --secondary-foreground: oklch(1 0 0);
+  /* Text */
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1AA;
+  --text-tertiary: #71717A;
+  --text-disabled: #52525B;
+  --text-inverse: #0A0A0A;
 
-  /* Accent — Warm Amber #E8913A (CTA) */
-  --accent: oklch(0.72 0.14 60);
-  --accent-foreground: oklch(0.22 0.027 257);
-  --accent-light: oklch(0.965 0.025 75);    /* #FEF3E2 */
+  /* Accent — electric blue */
+  --accent-electric: #5B8DEF;
+  --accent-electric-hover: #7BA5F5;
+  --accent-electric-active: #4070D0;
+  --accent-electric-subtle: #1A2540;
+  --accent-electric-glow: rgba(91, 141, 239, 0.35);
 
-  /* Verified — Green #2D9D78 (verified pain only) */
-  --verified: oklch(0.62 0.11 165);
-  --verified-foreground: oklch(1 0 0);
-  --verified-light: oklch(0.955 0.025 165); /* #E6F5EF */
+  /* Status semantic colors (dark mode) */
+  --status-info: #5B8DEF;
+  --status-info-bg: #1A2540;
+  --status-success: #4ADE80;
+  --status-success-bg: #0F2A1B;
+  --status-warning: #FBBF24;
+  --status-warning-bg: #2A1F0A;
+  --status-danger: #F87171;
+  --status-danger-bg: #2A0F0F;
 
-  /* Caution — Amber-ish #D97706 */
-  --caution: oklch(0.66 0.16 50);
-  --caution-foreground: oklch(1 0 0);
-
-  --muted: oklch(0.969 0.005 247);
-  --muted-foreground: oklch(0.55 0.025 257);
-
-  /* Text scale */
-  --text-primary: oklch(0.22 0.027 257);    /* #1A2332 */
-  --text-secondary: oklch(0.48 0.025 250);  /* #5C6B7A */
-  --text-muted: oklch(0.65 0.018 247);      /* #8E99A4 */
-
-  /* Destructive — system errors only, never for pain severity */
-  --destructive: oklch(0.58 0.21 27);
-  --destructive-foreground: oklch(1 0 0);
-
-  --border: oklch(0.91 0.008 247);          /* #DFE3E8 */
-  --input: oklch(0.91 0.008 247);
-  --ring: oklch(0.55 0.07 200);             /* Teal focus ring */
-
-  --chart-1: oklch(0.345 0.062 257);
-  --chart-2: oklch(0.55 0.07 200);
-  --chart-3: oklch(0.72 0.14 60);
-  --chart-4: oklch(0.62 0.11 165);
-  --chart-5: oklch(0.66 0.16 50);
-
-  --sidebar: var(--surface);
-  --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--text-primary);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
+  /* Data viz */
+  --viz-1: #5B8DEF;
+  --viz-2: #8B5CF6;
+  --viz-3: #22D3EE;
+  --viz-4: #4ADE80;
+  --viz-5: #FBBF24;
+  --viz-6: #F87171;
+  --viz-7: #E879F9;
+  --viz-8: #94A3B8;
 }
 
+/* ───────────────────────────────────────────────
+ * .light = Light mode (Grok inverse mapping)
+ * Opt-in only via <html class="light">
+ * ─────────────────────────────────────────────── */
+.light {
+  --canvas-base: #FFFFFF;
+  --canvas-raised: #FAFAFA;
+  --canvas-overlay: #FFFFFF;
+  --canvas-sunken: #F4F4F5;
+
+  --surface: #FFFFFF;
+  --surface-hover: #F4F4F5;
+  --surface-active: #E4E4E7;
+  --surface-elevated: #F4F4F5;
+
+  --border-hairline: #E4E4E7;
+  --border-subtle: #F4F4F5;
+  --border-default: #D4D4D8;
+  --border-strong: #A1A1AA;
+  --border-focus: #0A0A0A;
+
+  --text-primary: #0A0A0A;
+  --text-secondary: #52525B;
+  --text-tertiary: #71717A;
+  --text-disabled: #A1A1AA;
+  --text-inverse: #FAFAFA;
+
+  --accent-electric: #2563EB;
+  --accent-electric-hover: #1D4ED8;
+  --accent-electric-active: #1E40AF;
+  --accent-electric-subtle: #DBEAFE;
+  --accent-electric-glow: rgba(37, 99, 235, 0.25);
+
+  --status-info: #2563EB;
+  --status-info-bg: #DBEAFE;
+  --status-success: #16A34A;
+  --status-success-bg: #DCFCE7;
+  --status-warning: #D97706;
+  --status-warning-bg: #FEF3C7;
+  --status-danger: #DC2626;
+  --status-danger-bg: #FEE2E2;
+}
+
+/* ───────────────────────────────────────────────
+ * .dark = explicit dark (same as :root, kept for shadcn compat)
+ * ─────────────────────────────────────────────── */
 .dark {
-  /* Dark mode kept conservative — PainMap is light-first */
-  --page: oklch(0.18 0.025 257);
-  --surface: oklch(0.24 0.03 257);
-  --muted-bg: oklch(0.28 0.03 257);
-
-  --background: var(--page);
-  --foreground: oklch(0.96 0.005 247);
-
-  --card: var(--surface);
-  --card-foreground: var(--foreground);
-  --popover: var(--surface);
-  --popover-foreground: var(--foreground);
-
-  --primary: oklch(0.55 0.07 200);
-  --primary-foreground: oklch(1 0 0);
-  --primary-light: oklch(0.32 0.04 257);
-
-  --secondary: oklch(0.45 0.06 200);
-  --secondary-foreground: oklch(1 0 0);
-
-  --accent: oklch(0.72 0.14 60);
-  --accent-foreground: oklch(0.18 0.025 257);
-  --accent-light: oklch(0.32 0.04 60);
-
-  --verified: oklch(0.62 0.11 165);
-  --verified-foreground: oklch(1 0 0);
-  --verified-light: oklch(0.3 0.04 165);
-
-  --caution: oklch(0.66 0.16 50);
-  --caution-foreground: oklch(1 0 0);
-
-  --muted: oklch(0.28 0.03 257);
-  --muted-foreground: oklch(0.7 0.018 247);
-
-  --text-primary: oklch(0.96 0.005 247);
-  --text-secondary: oklch(0.78 0.018 247);
-  --text-muted: oklch(0.6 0.015 247);
-
-  --destructive: oklch(0.65 0.19 27);
-  --destructive-foreground: oklch(1 0 0);
-
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.55 0.07 200);
-
-  --sidebar: var(--surface);
-  --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--text-primary);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
+  --canvas-base: #000000;
+  --canvas-raised: #0A0A0A;
+  --canvas-overlay: #111111;
+  --canvas-sunken: #050505;
+  --surface: #0A0A0A;
+  --surface-hover: #141414;
+  --surface-active: #1A1A1A;
+  --surface-elevated: #181818;
+  --border-hairline: #1F1F1F;
+  --border-subtle: #161616;
+  --border-default: #2A2A2A;
+  --border-strong: #3F3F3F;
+  --border-focus: #FAFAFA;
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1AA;
+  --text-tertiary: #71717A;
+  --text-disabled: #52525B;
+  --text-inverse: #0A0A0A;
+  --accent-electric: #5B8DEF;
+  --accent-electric-hover: #7BA5F5;
+  --accent-electric-active: #4070D0;
+  --accent-electric-subtle: #1A2540;
+  --accent-electric-glow: rgba(91, 141, 239, 0.35);
+  --status-info: #5B8DEF;
+  --status-info-bg: #1A2540;
+  --status-success: #4ADE80;
+  --status-success-bg: #0F2A1B;
+  --status-warning: #FBBF24;
+  --status-warning-bg: #2A1F0A;
+  --status-danger: #F87171;
+  --status-danger-bg: #2A0F0F;
 }
 
+/* ───────────────────────────────────────────────
+ * Base layer
+ * ─────────────────────────────────────────────── */
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--border-hairline);
   }
 
   html {
     font-family: var(--font-sans);
+    background-color: var(--canvas-base);
+    color-scheme: dark;
   }
 
   body {
-    background-color: var(--color-page);
-    color: var(--color-text-primary);
-    font-feature-settings: "ss01", "cv11";
+    background-color: var(--canvas-base);
+    color: var(--text-primary);
+    font-feature-settings: "ss01", "cv11", "cv05";
+    font-variant-numeric: oldstyle-nums proportional-nums;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  code, pre, .font-mono {
+  /* Numeric tabular for all numbers (KPIs, stats) */
+  .font-mono,
+  code,
+  pre,
+  kbd,
+  .tabular-nums,
+  [class*="tabular"] {
     font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Headings — Grok display family */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  /* Focus-visible global ring (Grok glow.focus) */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-electric-glow);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--accent-electric-subtle);
+    color: var(--text-primary);
+  }
+
+  /* Scrollbar (subtle, dark) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--canvas-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 9999px;
+    border: 2px solid var(--canvas-base);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ───────────────────────────────────────────────
+ * Utilities — Grok-specific
+ * ─────────────────────────────────────────────── */
+@layer utilities {
+  /* Eyebrow text (Grok signature) */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  /* Hairline divider */
+  .hairline {
+    border-color: var(--border-hairline);
+  }
+  .hairline-subtle {
+    border-color: var(--border-subtle);
+  }
+
+  /* Dot grid backgrounds */
+  .bg-dot-dim {
+    background-image: radial-gradient(circle at 1px 1px, #161616 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .bg-dot-default {
+    background-image: radial-gradient(circle at 1px 1px, #1F1F1F 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .bg-dot-dense {
+    background-image: radial-gradient(circle at 1px 1px, #1F1F1F 1px, transparent 0);
+    background-size: 16px 16px;
+  }
+
+  /* Spotlight (radial gradient) */
+  .bg-spotlight-top {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91, 141, 239, 0.12), transparent 70%);
+  }
+  .bg-spotlight-center {
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(91, 141, 239, 0.10), transparent 70%);
+  }
+  .bg-spotlight-dual {
+    background:
+      radial-gradient(ellipse 50% 50% at 0% 0%, rgba(91, 141, 239, 0.15), transparent 60%),
+      radial-gradient(ellipse 50% 50% at 100% 100%, rgba(139, 92, 246, 0.12), transparent 60%);
+  }
+
+  /* Noise overlay (subtle texture) */
+  .bg-noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* Glow utilities */
+  .glow-focus {
+    box-shadow: 0 0 0 2px var(--accent-electric-glow);
+  }
+  .glow-accent-sm {
+    box-shadow: 0 0 16px var(--accent-electric-glow);
+  }
+  .glow-accent-md {
+    box-shadow: 0 0 32px rgba(91, 141, 239, 0.25);
+  }
+  .glow-accent-lg {
+    box-shadow: 0 0 80px rgba(91, 141, 239, 0.18);
+  }
+
+  /* Section padding utilities */
+  .section-sm { padding-top: 4rem; padding-bottom: 4rem; }
+  .section-md { padding-top: 6rem; padding-bottom: 6rem; }
+  .section-lg { padding-top: 8rem; padding-bottom: 8rem; }
+  .section-xl { padding-top: 10rem; padding-bottom: 10rem; }
+
+  @media (max-width: 768px) {
+    .section-md { padding-top: 4rem; padding-bottom: 4rem; }
+    .section-lg { padding-top: 6rem; padding-bottom: 6rem; }
+    .section-xl { padding-top: 6rem; padding-bottom: 6rem; }
+  }
+
+  /* Grok-style fade-up animation */
+  @keyframes grok-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-grok-fade-up {
+    animation: grok-fade-up 480ms var(--ease-standard) both;
+  }
+
+  @keyframes grok-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-grok-fade-in {
+    animation: grok-fade-in 800ms var(--ease-standard) both;
   }
 }

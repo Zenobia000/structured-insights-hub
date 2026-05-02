@@ -4,10 +4,11 @@
  */
 import { ArrowRight } from "lucide-react";
 import { SectionFade } from "./SectionFade";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 const STAGE_1 = {
   badge: "階段一：先想清楚（你現在在這）",
-  product: "PainMap Worksheet（你正在用的這份）",
+  product: "PainMap Worksheet",
   output: "一張你親手寫完的痛點身份證",
   time: "30 ~ 90 分鐘",
   skills: [
@@ -33,14 +34,21 @@ const STAGE_2 = {
 
 export function StageRelationshipSection() {
   return (
-    <SectionFade ariaLabelledBy="stage-title" className="bg-surface border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <div className="max-w-3xl mb-10">
+    <SectionFade
+      ariaLabelledBy="stage-title"
+      className="relative border-t border-border-hairline bg-canvas-base"
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 md:py-32">
+        <div className="max-w-3xl mb-16">
+          <Eyebrow variant="numbered" index={4}>
+            Two stages · honest scope
+          </Eyebrow>
           <h2
             id="stage-title"
-            className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary"
+            className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary"
           >
-            這份只是階段一 — 那階段二在做什麼？
+            這份只是階段一 — <br />
+            那階段二在做什麼？
           </h2>
         </div>
 
@@ -49,24 +57,24 @@ export function StageRelationshipSection() {
 
           {/* Arrow connector */}
           <div className="flex md:flex-col items-center justify-center px-4 py-2 md:py-0">
-            <div className="hidden md:flex flex-col items-center gap-2 text-text-muted">
-              <ArrowRight className="h-6 w-6" />
-              <span className="text-[11px] font-medium text-center leading-tight max-w-[8rem]">
-                走完階段一
-                <br />
-                再進階段二
+            <div className="hidden md:flex flex-col items-center gap-3 text-text-tertiary">
+              <span className="font-mono text-[10px] uppercase tracking-[0.08em]">
+                走完 → 進階段二
               </span>
+              <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
             </div>
-            <div className="md:hidden flex items-center gap-2 text-text-muted">
-              <ArrowRight className="h-5 w-5 rotate-90" />
-              <span className="text-xs font-medium">走完階段一再進階段二</span>
+            <div className="md:hidden flex items-center gap-2 text-text-tertiary">
+              <ArrowRight className="h-5 w-5 rotate-90" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] uppercase tracking-[0.06em]">
+                走完階段一再進階段二
+              </span>
             </div>
           </div>
 
           <StageBlock {...STAGE_2} />
         </div>
 
-        <p className="mt-8 text-[13px] leading-[1.55] text-text-muted max-w-3xl">
+        <p className="mt-12 text-[13px] leading-[1.65] text-text-tertiary max-w-3xl">
           為什麼要分階段？因為「這個痛點是不是真的」和「能不能賺到錢」是兩件不一樣的事。階段一沒走通，階段二再快也只是用對的方法做錯的事
           — 我們希望你少走那段冤枉路。
         </p>
@@ -87,33 +95,58 @@ type StageProps = {
 function StageBlock({ badge, product, output, time, skills, active }: StageProps) {
   return (
     <article
-      className={`rounded-xl border p-6 sm:p-7 ${
-        active ? "border-secondary bg-primary-light/40" : "border-border bg-page"
-      }`}
+      className={
+        active
+          ? "relative rounded-lg border border-accent-electric/40 bg-canvas-raised p-7 md:p-8 overflow-hidden"
+          : "relative rounded-lg border border-border-hairline bg-canvas-raised/40 p-7 md:p-8"
+      }
     >
+      {active && (
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 opacity-40"
+          style={{
+            background:
+              "radial-gradient(ellipse 400px 200px at 50% 0%, rgba(91,141,239,0.10), transparent 70%)",
+          }}
+        />
+      )}
+
       <div
-        className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold mb-4 ${
-          active ? "bg-secondary text-secondary-foreground" : "bg-muted-bg text-text-secondary"
-        }`}
+        className={
+          active
+            ? "inline-flex items-center gap-2 rounded-md border border-accent-electric/40 bg-accent-electric-subtle px-2.5 py-1 mb-5"
+            : "inline-flex items-center gap-2 rounded-md border border-border-hairline bg-surface-elevated px-2.5 py-1 mb-5"
+        }
       >
-        {badge}
+        <span
+          className={
+            active
+              ? "h-1.5 w-1.5 rounded-full bg-accent-electric shadow-[0_0_8px_rgba(91,141,239,0.6)]"
+              : "h-1.5 w-1.5 rounded-full bg-text-tertiary"
+          }
+        />
+        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-secondary">
+          {badge}
+        </span>
       </div>
 
-      <dl className="space-y-3 mb-4">
-        <Row label="工具" value={product} />
+      <h3 className="text-2xl font-semibold tracking-[-0.02em] text-text-primary mb-5">
+        {product}
+      </h3>
+
+      <dl className="space-y-3 mb-6 pb-6 border-b border-border-subtle">
         <Row label="你會帶走" value={output} />
         <Row label="時間" value={time} />
       </dl>
 
       <div>
-        <p className="text-[11px] font-semibold text-text-muted tracking-wider uppercase mb-2">
-          這階段在練的事
-        </p>
-        <ul className="space-y-1.5">
+        <Eyebrow className="mb-3">這階段在練的事</Eyebrow>
+        <ul className="space-y-2">
           {skills.map((s) => (
-            <li key={s} className="text-[13px] leading-[1.55] text-text-primary flex gap-2">
-              <span aria-hidden className="text-text-muted shrink-0">
-                ·
+            <li key={s} className="flex gap-2.5 text-[13px] leading-[1.6] text-text-primary">
+              <span aria-hidden className="text-accent-electric shrink-0 mt-0.5">
+                →
               </span>
               <span>{s}</span>
             </li>
@@ -126,9 +159,11 @@ function StageBlock({ badge, product, output, time, skills, active }: StageProps
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[4rem_1fr] gap-3 text-sm">
-      <dt className="text-text-muted font-medium">{label}</dt>
-      <dd className="text-text-primary leading-[1.5]">{value}</dd>
+    <div className="grid grid-cols-[5rem_1fr] gap-3">
+      <dt className="font-mono text-[10px] uppercase tracking-[0.06em] text-text-tertiary pt-1">
+        {label}
+      </dt>
+      <dd className="text-[14px] text-text-primary leading-[1.6]">{value}</dd>
     </div>
   );
 }

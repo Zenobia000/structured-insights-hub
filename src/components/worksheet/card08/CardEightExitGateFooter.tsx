@@ -51,55 +51,98 @@ export function CardEightExitGateFooter({
 
   const allPassed = hasContact && questionsAllFilled && taboosUnderstood;
 
-  return (
-    <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-        <h3 className="text-sm font-semibold text-text-primary">反思問題</h3>
-        <ul className="flex flex-col gap-2">
-          <ReflectionHint
-            question="這 3 道題,你今晚就能傳給其中一個人嗎?"
-            state={hasContact && questionsAllFilled ? "ok" : "pending"}
-            hint={
-              !hasContact && !questionsAllFilled
-                ? "還沒寫完 3 題訪談題,且至少 1 位訪談對象的「聯絡方式 / 去哪找他」欄要填 ≥ 5 字。"
-                : !hasContact
-                  ? "回到第一步「訪談對象」卡片,至少 1 位的「聯絡方式」或「你打算去哪找他」欄要填 ≥ 5 字。"
-                  : !questionsAllFilled
-                    ? "3 題訪談題還沒寫完(每題 ≥ 15 字)。"
-                    : undefined
-            }
-            examples={!hasContact ? CONTACT_EXAMPLES : undefined}
-          />
-          <ReflectionHint
-            question="你寫的題,是在問他「怎麼做的」,還是在誘導他說「想用你的解法」?"
-            state={questionsState}
-            hint={
-              !questionsAllFilled
-                ? "每題 ≥ 15 字才算寫完。好題的關鍵描述:① 問「上次/最近一次」的具體經驗(過去式),② 聚焦「怎麼做、用什麼、花多久、卡在哪」,③ 不出現你的產品名 / 解法 / 「會不會想用」這類引導詞。避免:假設性問題(「如果有 XX 你會用嗎」)、是非題、推銷式描述。"
-                : undefined
-            }
-          />
-          <ReflectionHint question="訪談時哪些事不要做,你有清楚嗎?" state={taboosState} />
-          <ReflectionHint
-            question="你已經有能訪談的人了嗎?"
-            state={contactState}
-            hint={
-              !hasContact
-                ? "回到第一步「訪談對象」,把至少 1 位的「聯絡方式 / 去哪找他」欄填上(≥ 5 字)。直接複製下方範例貼進去再改成你的真實資料。"
-                : undefined
-            }
-            examples={!hasContact ? CONTACT_EXAMPLES : undefined}
-          />
-        </ul>
+  // 4 個反思問題裡有幾個還沒過 → 用在 collapsed summary
+  const reflections = [hasContact && questionsAllFilled, questionsAllFilled, taboosUnderstood, hasContact];
+  const remaining = reflections.filter((p) => !p).length;
 
-        {!hasContact && onJumpToMissingContact && (
-          <button
-            type="button"
-            onClick={onJumpToMissingContact}
-            className="inline-flex items-center gap-1.5 self-start rounded-md border border-secondary/40 bg-secondary/10 px-3 py-1.5 text-[12.5px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+  // 預設摺疊,避免反思內容遮擋主畫面;有 blockedMessage 時自動展開
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (blockedMessage) setExpanded(true);
+  }, [blockedMessage]);
+
+  return (
+    <div className="sticky bottom-0 left-0 right-0 z-10 border-t border-border bg-surface/95 backdrop-blur-sm shadow-[0_-4px_12px_-6px_rgba(0,0,0,0.08)]">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2.5">
+        {/* 摺疊 header — 永遠顯示,壓縮高度 */}
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls="card8-reflection-panel"
+          className="flex w-full items-center justify-between gap-3 rounded-md px-1 py-1 text-left transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="text-sm font-semibold text-text-primary shrink-0">反思問題</h3>
+            {allPassed ? (
+              <span className="text-[12px] text-verified inline-flex items-center gap-1">
+                <span aria-hidden>✓</span>4 題都已過
+              </span>
+            ) : (
+              <span className="text-[12px] text-text-secondary truncate">
+                還有 <span className="font-semibold text-secondary">{remaining}</span> 題沒過
+                {!expanded && <span className="text-text-muted">,點開看細節</span>}
+              </span>
+            )}
+          </div>
+          <span className="shrink-0 text-text-muted">
+            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          </span>
+        </button>
+
+        {/* 反思內容 — 摺疊區,加上 max-h + overflow-auto 避免吃掉主畫面 */}
+        {expanded && (
+          <div
+            id="card8-reflection-panel"
+            className="max-h-[40vh] overflow-y-auto pr-1 -mr-1 space-y-3"
           >
-            ↑ 帶我去填「聯絡方式」欄
-          </button>
+            <ul className="flex flex-col gap-2">
+              <ReflectionHint
+                question="這 3 道題,你今晚就能傳給其中一個人嗎?"
+                state={hasContact && questionsAllFilled ? "ok" : "pending"}
+                hint={
+                  !hasContact && !questionsAllFilled
+                    ? "還沒寫完 3 題訪談題,且至少 1 位訪談對象的「聯絡方式 / 去哪找他」欄要填 ≥ 5 字。"
+                    : !hasContact
+                      ? "回到第一步「訪談對象」卡片,至少 1 位的「聯絡方式」或「你打算去哪找他」欄要填 ≥ 5 字。"
+                      : !questionsAllFilled
+                        ? "3 題訪談題還沒寫完(每題 ≥ 15 字)。"
+                        : undefined
+                }
+                examples={!hasContact ? CONTACT_EXAMPLES : undefined}
+              />
+              <ReflectionHint
+                question="你寫的題,是在問他「怎麼做的」,還是在誘導他說「想用你的解法」?"
+                state={questionsState}
+                hint={
+                  !questionsAllFilled
+                    ? "每題 ≥ 15 字才算寫完。好題的關鍵描述:① 問「上次/最近一次」的具體經驗(過去式),② 聚焦「怎麼做、用什麼、花多久、卡在哪」,③ 不出現你的產品名 / 解法 / 「會不會想用」這類引導詞。避免:假設性問題(「如果有 XX 你會用嗎」)、是非題、推銷式描述。"
+                    : undefined
+                }
+              />
+              <ReflectionHint question="訪談時哪些事不要做,你有清楚嗎?" state={taboosState} />
+              <ReflectionHint
+                question="你已經有能訪談的人了嗎?"
+                state={contactState}
+                hint={
+                  !hasContact
+                    ? "回到第一步「訪談對象」,把至少 1 位的「聯絡方式 / 去哪找他」欄填上(≥ 5 字)。直接複製下方範例貼進去再改成你的真實資料。"
+                    : undefined
+                }
+                examples={!hasContact ? CONTACT_EXAMPLES : undefined}
+              />
+            </ul>
+
+            {!hasContact && onJumpToMissingContact && (
+              <button
+                type="button"
+                onClick={onJumpToMissingContact}
+                className="inline-flex items-center gap-1.5 self-start rounded-md border border-secondary/40 bg-secondary/10 px-3 py-1.5 text-[12.5px] font-medium text-secondary transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
+              >
+                ↑ 帶我去填「聯絡方式」欄
+              </button>
+            )}
+          </div>
         )}
 
         {blockedMessage && (
@@ -112,6 +155,7 @@ export function CardEightExitGateFooter({
           <Button
             variant={noContactAtAll ? "default" : "ghost"}
             onClick={onBackToCard2}
+            size="sm"
             className={
               noContactAtAll
                 ? "bg-secondary text-secondary-foreground hover:bg-secondary/90"
@@ -123,6 +167,7 @@ export function CardEightExitGateFooter({
           <Button
             onClick={onAdvance}
             disabled={!allPassed || submitting}
+            size="sm"
             className="bg-accent text-accent-foreground hover:bg-accent/90 disabled:bg-muted disabled:text-text-muted"
           >
             {submitting ? "前往中…" : "繼續到卡 9：真假判斷 →"}

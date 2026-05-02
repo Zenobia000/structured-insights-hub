@@ -15,6 +15,7 @@ import {
   isForbiddenPersonName,
   type Person,
 } from "@/lib/cardTwoValidators";
+import { judge, toCacheEntry } from "@/lib/llmJudge";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 
@@ -79,7 +80,7 @@ function CardTwoPage() {
 
   const setBackground = (v: string) => updateField("people.background", v);
 
-  const handleAdvance = () => {
+  const handleAdvance = async () => {
     setAttempted(true);
 
     // a：欄位填滿
@@ -114,11 +115,35 @@ function CardTwoPage() {
       setFailureCount((c) => c + 1);
       return;
     }
-    // d：background 具體性
+    // d：background 具體性 — hardcoded warn 時，請 LLM 二次確認
+    //    LLM 救得起來（pass）就放行；LLM 確認 warn 或失敗則維持擋
     if (checks.specificBackground !== "pass") {
-      setBlockedMessage("背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。");
-      setFailureCount((c) => c + 1);
-      return;
+      setSubmitting(true);
+      try {
+        const outcome = await judge(
+          "card2.background_specific",
+          background,
+          undefined,
+          card.llm_cache,
+        );
+        if (outcome.source !== "fallback" && outcome.verdict === "pass") {
+          // LLM 救了 — 寫 cache 後繼續往下走
+          const entry = toCacheEntry(outcome);
+          if (entry) updateField("llm_cache.card2.background_specific", entry);
+        } else if (outcome.source !== "fallback") {
+          // LLM 確認 warn — 顯示 LLM 給的具體理由
+          setBlockedMessage(`再想想看：${outcome.reason}`);
+          setFailureCount((c) => c + 1);
+          return;
+        } else {
+          // LLM 失敗 — 退回 hardcoded 訊息
+          setBlockedMessage("背景還太籠統。寫 2 個具體標記（年齡、職業、地點都行）就清楚了。");
+          setFailureCount((c) => c + 1);
+          return;
+        }
+      } finally {
+        setSubmitting(false);
+      }
     }
     // e：commitment
     if (!commitment) {

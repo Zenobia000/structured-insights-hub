@@ -1,11 +1,12 @@
 # PainMap Worksheet — AI Proxy 規格
 
-> **狀態**：規格文件（M1 spec，M2+ 才會實作站內 LLM）
+> **狀態**：MVP（複製模式）+ 站內 LLM 語意判定（已上線於卡 1/2/4/6/8）
 > **真相源**：`product/data_model.md` + `references/ai_prompt_library.md`
 > **核心鐵律**：
 > - **反 solution mode** — AI 任何時候都不可建議解決方案、不可推薦工具、只做痛點探索。違反此鐵律的回應視為不合格、必須擋下。
 > - **反分類學** — AI 不得貼任何編號 / 等級 / 分類學標籤（TRIZ、設計模式、商業書名詞）。
-> - **卡 9 永久禁用 AI** — 判斷層所有欄位（judgment、reason_100w、most_confident_evidence、least_confident、next_action）一律由使用者親自寫，即使 M2+ 站內 LLM 上線也不開放。
+> - **卡 9 永久禁用 AI** — 判斷層所有欄位（judgment、reason_100w、most_confident_evidence、least_confident、next_action）一律由使用者親自寫，站內 LLM 也不開放。
+> - **站內 LLM 僅做語意判定** — 卡 1/2/4/6/8 的硬編碼啟發式（如 background 具體性）改用 gpt-4o-mini 二次判定；只回 verdict + reason，不存原文上後端。原本「複製到外部 ChatGPT」的長 prompt 工作流不變（卡 3/4/6/7/8 仍是複製模式）。
 
 ---
 
@@ -13,15 +14,15 @@
 
 PainMap Worksheet 採「複製模式 → 站內 LLM」漸進式策略，不一次到位：
 
-| 維度 | MVP（複製模式） | M2+（站內 LLM） |
+| 維度 | 複製模式（卡 3/4/6/7/8 長 prompt） | 站內 LLM 語意判定（卡 1/2/4/6/8 短判定，**已上線**） |
 | :--- | :--- | :--- |
-| 互動方式 | 前端產生 prompt 文字 → 使用者複製到外部 ChatGPT / Claude / Perplexity / Gemini → 貼回 worksheet | 使用者按「執行」→ 後端代理呼叫 LLM API → 回應顯示在 worksheet |
-| 後端串接 | 無 | 有（`POST /api/ai/run-prompt`） |
-| API 成本 | 0（使用者自己付給外部服務） | 站內額度 OR BYOK（使用者自帶 API key） |
-| 隱私 | 使用者資料只在自己的 ChatGPT 帳號內 | 後端不長期儲存 prompt / 回應，除非使用者明確 opt-in |
-| 反 solution mode | 前端 prompt 模板已內建 guard | 後端再次注入 system prompt + 後處理 regex / LLM-judge 雙重檢查 |
-| Streaming | 不適用（外部 ChatGPT 自己處理） | 支援 SSE streaming |
-| Fallback | 本身就是 fallback 模式 | 服務當機時自動回退到複製模式 |
+| 互動方式 | 前端產生長 prompt → 使用者複製到外部 ChatGPT / Claude → 貼回 worksheet | 使用者點 Next 時 → server function 呼叫 gpt-4o-mini → 回 verdict + reason |
+| 後端串接 | 無 | TanStack server function（`createServerFn` POST），讀 Workers secret `OPENAI_API_KEY` |
+| API 成本 | 0（使用者付外部服務） | 站方代理 ~$0.0001 / 次判定，IP rate limit 10/min · 1000/day |
+| 隱私 | 使用者資料只在自己的 ChatGPT 帳號 | 只送短判定文字（如 background 句），後端不存、不寫 log；client 用 SHA-256 hash 做 cache key |
+| 反 solution mode | 前端 prompt 模板已內建 guard | 不適用（短判定不會誘發 AI 推銷產品） |
+| Streaming | 不適用 | 不需要（response < 200 tokens） |
+| Fallback | 本身就是 fallback 模式 | LLM 失敗 / no_key / rate_limit → 自動退回原 hardcoded 啟發式 |
 
 ### 為什麼先做複製模式
 

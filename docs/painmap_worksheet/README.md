@@ -22,7 +22,7 @@
 2. **不違反 brand 禁令**：分數、星等、排行榜、徽章、FOMO 永久禁用；資料層完全沒有分數欄位
 3. **Octalysis 只取白帽**：#1 Epic Meaning / #2 Accomplishment / #3 Creativity / #5 Social；黑帽 #6/#7/#8 永久封鎖
 4. **9 張卡片是同一個資料物件**（PainCard）的 9 個欄位，不是 9 個獨立資料
-5. **MVP 範圍**：LocalStorage + 複製 prompt 到外部 ChatGPT；不做雲端帳號、不串站內 LLM API
+5. **資料主權**：使用者寫的痛點原文只存 LocalStorage、不做雲端帳號、不存後端；站內 LLM 僅做匿名語意判定（gpt-4o-mini，純 verdict 無原文回傳），不會因此打破「沒有資料庫收集你的痛點」這條核心承諾
 6. **單一蘇格拉底流程**：所有反思以開放式書寫呈現，不打分數
 
 ---

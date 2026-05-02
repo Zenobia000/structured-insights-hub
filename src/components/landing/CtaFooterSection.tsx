@@ -57,7 +57,8 @@ export function CtaFooterSection() {
         </div>
 
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary leading-[1.7]">
-          ● Local-only &nbsp;·&nbsp; ● No sign-up &nbsp;·&nbsp; ● Export anytime (MD / JSON / PDF)
+          ● Local-first &nbsp;·&nbsp; ● No sign-up &nbsp;·&nbsp; ● AI judging anonymized
+          &nbsp;·&nbsp; ● Export anytime (MD / JSON / PDF)
         </p>
       </div>
     </SectionFade>

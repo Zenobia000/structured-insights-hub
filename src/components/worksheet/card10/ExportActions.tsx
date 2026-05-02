@@ -161,9 +161,10 @@ export function ExportActions() {
         </div>
         <ul className="space-y-2 text-[13px] text-text-secondary">
           {[
-            "所有資料只在你的瀏覽器 LocalStorage",
-            "我們沒有伺服器收集你的痛點",
+            "你寫的痛點內容只在你的瀏覽器 LocalStorage",
+            "我們沒有資料庫收集你的痛點原文",
             "不需要登入、不需要帳號、不需要 Email",
+            "少數 AI 語意判定會匿名經 OpenAI（不含個資、不存後端）",
             "匯出後你完全自管",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2">

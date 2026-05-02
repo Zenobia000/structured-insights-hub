@@ -192,6 +192,8 @@ function emptyPainCard(): PainCard {
       formats: [],
       last_review_at: null,
     },
+
+    llm_cache: {},
   };
 }
 
@@ -373,20 +375,23 @@ export const usePainCardStore = create<PainCardStore>()(
       }),
       // 只持久化 card；hydrated 是 runtime flag、actions 是函式，都不該寫入 localStorage
       partialize: (state) => ({ card: state.card }),
-      version: 4,
+      version: 5,
+      // 增量 migration：純 additive，舊資料補 null/{} 即可。v1/v2 仍直接拋棄（POC 模式）。
       // v3 → v4：interview_plan 新增 ai_audit_findings / interview_guide_md / guide_generated_at
-      // 三個 nullable 欄位（卡 8 三階段虛擬訪談）。純 additive，舊資料補 null 即可。
-      // v1/v2 仍直接拋棄（POC 模式不向下遷移）。
+      // v4 → v5：root 新增 llm_cache（卡 1/2/4/6/8 LLM 語意判定快取）
       migrate: (persistedState: unknown, version: number) => {
         if (version < 3) return persistedState;
+        const state = persistedState as { card?: Record<string, unknown> };
         if (version < 4) {
-          const state = persistedState as { card?: { interview_plan?: Record<string, unknown> } };
-          if (state.card?.interview_plan) {
-            const ip = state.card.interview_plan;
+          const ip = state.card?.interview_plan as Record<string, unknown> | undefined;
+          if (ip) {
             ip.ai_audit_findings ??= null;
             ip.interview_guide_md ??= null;
             ip.guide_generated_at ??= null;
           }
+        }
+        if (version < 5) {
+          if (state.card) state.card.llm_cache ??= {};
         }
         return persistedState;
       },

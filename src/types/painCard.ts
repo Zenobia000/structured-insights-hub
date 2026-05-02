@@ -176,6 +176,20 @@ export type PainCard = {
     formats: Array<"markdown" | "json" | "pdf">;
     last_review_at: string | null;
   };
+
+  // === LLM 語意判定 cache ===
+  // key = JudgeKind（如 "card2.background_specific"）
+  // 用 input_hash 比對是否命中，避免重複呼叫 OpenAI。
+  // 全 optional：v4 → v5 migration 補空物件即可。
+  llm_cache: Record<
+    string,
+    {
+      input_hash: string;
+      verdict: "pass" | "warn";
+      reason: string;
+      judged_at: string;
+    }
+  >;
 };
 
 export const SCHEMA_VERSION = "2.0" as const;

@@ -21,7 +21,6 @@ import {
   exportFilename,
   exportInterviewGuide,
   exportPdf,
-  interviewGuideFilename,
 } from "@/lib/cardTenExport";
 
 export function ExportActions() {

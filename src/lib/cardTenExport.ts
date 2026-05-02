@@ -4,7 +4,7 @@
  * 匯出工具：純前端、不需登入、不打 API
  * - Markdown template
  * - JSON（完整 PainCard 物件）
- * - PDF（使用 jsPDF 文字版輸出）
+ * - PDF（透過瀏覽器列印對話框 → 另存為 PDF，完整支援繁中）
  */
 
 import type { PainCard, Judgment, NextAction } from "@/types/painCard";
@@ -727,7 +727,18 @@ export function buildShareableJson(card: PainCard): string {
 }
 
 export function downloadBlob(filename: string, mime: string, content: string | Blob) {
-  const blob = typeof content === "string" ? new Blob([content], { type: mime }) : content;
+  let blob: Blob;
+  if (typeof content === "string") {
+    // 確保 mime 帶 charset=utf-8，避免 Windows / 部分編輯器以系統預設編碼開啟造成中文亂碼
+    const mimeWithCharset = /charset=/i.test(mime) ? mime : `${mime};charset=utf-8`;
+    // 加上 UTF-8 BOM：讓 Windows 記事本 / Excel / 舊版工具能正確辨識為 UTF-8
+    // 純文字格式（md / json / txt / csv / html）才加 BOM；二進位格式不要動
+    const isText = /^(text\/|application\/(json|xml|javascript|ld\+json))/i.test(mime);
+    const parts: BlobPart[] = isText ? ["\uFEFF", content] : [content];
+    blob = new Blob(parts, { type: mimeWithCharset });
+  } else {
+    blob = content;
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -739,35 +750,132 @@ export function downloadBlob(filename: string, mime: string, content: string | B
 }
 
 /**
- * PDF 匯出 — 使用 jsPDF 文字版（A4，繁中字體 fallback）
- * 為避免大量字型載入，採用 jsPDF 內建字型 + UTF-8 文字繪製
+ * PDF 匯出 — 改用瀏覽器原生列印 → 另存為 PDF
+ *
+ * 為什麼不用 jsPDF？
+ *   jsPDF 內建字型（helvetica）不含 CJK glyph，繁中會渲染成方塊。
+ *   要支援中文得內嵌 ~5–10MB 的 Noto/思源字型，匯出時間 + bundle 都太重。
+ *   改用瀏覽器列印 PDF：零字型依賴、系統字型直接渲染、完整支援繁中。
  */
 export async function exportPdf(card: PainCard): Promise<void> {
-  const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
   const md = buildMarkdown(card);
+  const filename = exportFilename(card, "pdf");
+  const title = `痛點身份證 · ${card.complaint.verbatim.slice(0, 20) || "未命名"}`;
 
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 40;
-  const lineHeight = 14;
-  const maxWidth = pageWidth - margin * 2;
+  const [{ marked }] = await Promise.all([
+    import("marked").catch(() => ({ marked: null as never })),
+  ]);
+  const bodyHtml = marked
+    ? await marked.parse(md, { gfm: true, breaks: true })
+    : `<pre>${escapeHtml(md)}</pre>`;
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-
-  // jsPDF 預設字型不支援繁中，用 splitTextToSize 處理換行；
-  // 中文字會呈現為方塊；建議使用者用 Markdown / JSON 取得最佳結果。
-  const lines = doc.splitTextToSize(md, maxWidth) as string[];
-  let y = margin;
-  for (const line of lines) {
-    if (y > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
+  const html = `<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>${escapeHtml(filename)}</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm 22mm 18mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: "Helvetica Neue", "Segoe UI", -apple-system, BlinkMacSystemFont,
+      "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    color: #334155; font-size: 11pt; line-height: 1.75;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "palt" 1;
+    word-break: normal; overflow-wrap: anywhere; line-break: strict;
+    hanging-punctuation: allow-end last;
+  }
+  header.doc-head { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 24px; }
+  header.doc-head .eyebrow {
+    font-size: 8.5pt; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #0f766e; font-weight: 600; margin-bottom: 6px;
+  }
+  header.doc-head h1 {
+    font-size: 22pt; font-weight: 700; color: #0f172a;
+    letter-spacing: -0.01em; margin: 0; line-height: 1.25;
+  }
+  main h1 { font-size: 16pt; margin: 1.4em 0 0.4em; padding-bottom: 4px; border-bottom: 1.5px solid #0f172a; color: #0f172a; page-break-after: avoid; }
+  main h2 { font-size: 13.5pt; margin: 1.3em 0 0.4em; padding-left: 10px; border-left: 3px solid #0f766e; color: #0f172a; page-break-after: avoid; }
+  main h3 { font-size: 11.5pt; margin: 1em 0 0.3em; color: #1e293b; page-break-after: avoid; }
+  main p { margin: 0.5em 0; orphans: 3; widows: 3; overflow-wrap: anywhere; }
+  main strong { font-weight: 700; color: #0f172a; }
+  main ul, main ol { padding-left: 1.5em; margin: 0.5em 0; }
+  main li { margin: 0.3em 0; page-break-inside: avoid; overflow-wrap: anywhere; }
+  main blockquote {
+    margin: 1em 0; padding: 10px 16px; background: #f8fafc;
+    border-left: 3px solid #0f766e; color: #334155;
+    page-break-inside: avoid; overflow-wrap: anywhere;
+  }
+  main code {
+    font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 9.5pt; background: #f1f5f9; padding: 1px 5px; border-radius: 3px;
+    overflow-wrap: anywhere; word-break: break-word;
+  }
+  main pre {
+    background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 12px;
+    border-radius: 4px; font-size: 9pt; line-height: 1.55;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  main table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 10pt; table-layout: fixed; }
+  main thead { display: table-header-group; }
+  main tr { page-break-inside: avoid; }
+  main th, main td {
+    border: 1px solid #cbd5e1; padding: 7px 9px; text-align: left;
+    vertical-align: top; line-height: 1.6; overflow-wrap: anywhere;
+  }
+  main th {
+    background: #0f172a; color: #fff; font-weight: 600; font-size: 9.5pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  main tbody tr:nth-child(even) td {
+    background: #f8fafc;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  main hr { border: none; border-top: 1px solid #e2e8f0; margin: 1.4em 0; }
+  @media print {
+    body { font-size: 10.5pt; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+  @media screen {
+    body { max-width: 820px; margin: 40px auto; padding: 0 32px; }
+  }
+</style>
+</head>
+<body>
+  <header class="doc-head">
+    <div class="eyebrow">PainMap · Pain Card</div>
+    <h1>${escapeHtml(title)}</h1>
+  </header>
+  <main>${bodyHtml}</main>
+  <script>
+    if (window.opener || window.name === "paincard-print-window") {
+      window.addEventListener("load", function () {
+        setTimeout(function () { window.focus(); window.print(); }, 200);
+      });
     }
-    doc.text(line, margin, y);
-    y += lineHeight;
+  </script>
+</body>
+</html>`;
+
+  try {
+    await printViaIframe(html, filename);
+    return;
+  } catch (iframeErr) {
+    console.warn("[exportPdf] iframe print failed, fallback to popup", iframeErr);
   }
 
-  doc.save(exportFilename(card, "pdf"));
+  const win = window.open("", "paincard-print-window");
+  if (win) {
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    return;
+  }
+
+  downloadBlob(filename.replace(/\.pdf$/, ".html"), "text/html", html);
+  throw new Error(
+    "瀏覽器擋下了列印視窗。已改為下載 HTML 檔給你 — 打開後按 Ctrl/Cmd + P 即可另存為 PDF。",
+  );
 }

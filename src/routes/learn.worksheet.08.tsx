@@ -1,11 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Mic, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 import {
   CONTACT_MIN,
+  PERSONA_MIN,
+  PLANNED_MIN,
   TARGETS_MAX,
   TARGETS_MIN,
   evaluateQuestions,
@@ -91,16 +94,62 @@ function CardEightPage() {
     if (plan.targets.length >= TARGETS_MAX) return;
     const next = [...plan.targets, { ...tpl.data }];
     updateField("interview_plan.targets", next);
-    // 捲動 + 高亮新加的那筆,讓使用者馬上看到
     const newIdx = next.length - 1;
     setHighlightIndex(newIdx);
+
+    // 套用範本後立刻檢查每個欄位是否真的通過,
+    // 若沒通過 → toast 顯示具體缺少原因,並捲動 / focus 到第一個失敗欄位
+    const t = next[newIdx];
+    const personaLen = t.persona.trim().length;
+    const contactLen = t.contact_info.trim().length;
+    const plannedLen = t.planned_time.trim().length;
+
+    type Issue = {
+      field: "persona" | "contact" | "planned";
+      label: string;
+      need: number;
+      have: number;
+    };
+    const issues: Issue[] = [];
+    if (personaLen < PERSONA_MIN)
+      issues.push({ field: "persona", label: "Persona", need: PERSONA_MIN, have: personaLen });
+    if (contactLen < CONTACT_MIN)
+      issues.push({
+        field: "contact",
+        label: t.contact_known ? "聯絡方式" : "去哪找他",
+        need: CONTACT_MIN,
+        have: contactLen,
+      });
+    if (plannedLen < PLANNED_MIN)
+      issues.push({ field: "planned", label: "預計時間", need: PLANNED_MIN, have: plannedLen });
+
+    // 第一個要 focus 的欄位:依 persona → contact → planned 順序
+    const firstField = issues[0]?.field ?? "contact";
+    const elementId = `${firstField === "planned" ? "planned" : firstField}-${newIdx}`;
+
     requestAnimationFrame(() => {
-      const el = document.getElementById(`contact-${newIdx}`);
+      const el = document.getElementById(elementId);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(() => el.focus(), 350);
+        setTimeout(() => (el as HTMLElement).focus(), 350);
       }
     });
+
+    if (issues.length > 0) {
+      const lines = issues.map(
+        (it) => `• ${it.label}：還差 ${it.need - it.have} 字（目前 ${it.have} / ${it.need}）`,
+      );
+      toast.warning("範本已加入,但有欄位還沒過關", {
+        description: `把【方括號】內的占位字換成你的真實資料:\n${lines.join("\n")}`,
+        duration: 6000,
+      });
+    } else {
+      toast.success("範本已加入,所有欄位都已通過 ✓", {
+        description: "記得把【方括號】內的占位字改成你的真實資料,讓對方真的找得到。",
+        duration: 4500,
+      });
+    }
+
     window.setTimeout(() => setHighlightIndex(null), 2500);
   };
 

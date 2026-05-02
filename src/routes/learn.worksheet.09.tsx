@@ -9,6 +9,7 @@ import { REASON_MIN, defaultNextAction, judgmentToStatus } from "@/lib/cardNineV
 import type { Judgment, NextAction } from "@/types/painCard";
 import { JudgmentForm } from "@/components/worksheet/card09/JudgmentForm";
 import { CardNineExitGateFooter } from "@/components/worksheet/card09/CardNineExitGateFooter";
+import { ReflectionInlineHint } from "@/components/worksheet/ReflectionInlineHint";
 import { InterviewTargetsPrefill } from "@/components/worksheet/card09/InterviewTargetsPrefill";
 
 const searchSchema = z.object({

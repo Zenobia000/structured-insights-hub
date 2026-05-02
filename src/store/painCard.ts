@@ -247,6 +247,59 @@ export const usePainCardStore = create<PainCardStore>()(
       },
 
       exportSnapshot: () => get().card,
+
+      commitVerdict: ({ status, nextStep }) => {
+        // 1. 先做整張卡的快照（深拷貝），用於失敗時回滾
+        const snapshot = structuredClone(get().card);
+        try {
+          // 2. 驗證輸入合法性（防呆，避免寫入無效列舉）
+          const validStatuses: PainCardStatus[] = [
+            "draft",
+            "in_progress",
+            "structured",
+            "pending_interview",
+            "archived_fake",
+          ];
+          if (!validStatuses.includes(status)) {
+            throw new Error(`invalid status: ${String(status)}`);
+          }
+          if (
+            ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(nextStep as number)
+          ) {
+            throw new Error(`invalid nextStep: ${String(nextStep)}`);
+          }
+          // 3. 驗證 status / nextStep 一致性：判定後一定要走到第 10 卡
+          if (
+            (status === "structured" ||
+              status === "pending_interview" ||
+              status === "archived_fake") &&
+            nextStep !== 10
+          ) {
+            throw new Error(
+              `verdict status "${status}" requires nextStep=10, got ${nextStep}`,
+            );
+          }
+
+          // 4. 原子寫入：一次 set 同時更新 status + current_step + updated_at
+          set((state) => ({
+            card: {
+              ...state.card,
+              status,
+              current_step: nextStep,
+              updated_at: new Date().toISOString(),
+            },
+          }));
+          return { ok: true };
+        } catch (err) {
+          // 5. 任何失敗 → 回滾整張卡到提交前的快照
+          set({ card: snapshot });
+          const message =
+            err instanceof Error ? err.message : "commitVerdict failed";
+          // eslint-disable-next-line no-console
+          console.error("[commitVerdict] rolled back:", message);
+          return { ok: false, error: message };
+        }
+      },
     }),
     {
       name: STORAGE_KEY,

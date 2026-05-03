@@ -178,7 +178,7 @@ export function VerdictAuditDialog() {
             <button
               type="button"
               onClick={runAudit}
-              className="w-full inline-flex h-10 items-center justify-center gap-2 rounded-md bg-text-primary px-4 text-[13.5px] font-medium text-text-primary hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-overlay"
+              className="w-full inline-flex h-10 items-center justify-center gap-2 rounded-md bg-text-primary px-4 text-[13.5px] font-medium text-text-inverse hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-overlay"
             >
               開始檢查
             </button>

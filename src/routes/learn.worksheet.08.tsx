@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Mic, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
+import { Illustration } from "@/components/Illustration";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 import {
@@ -323,9 +324,17 @@ function CardEightPage() {
               AI 介入：✅ 模擬訪談熱身（可選）
             </span>
           </div>
-          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            想清楚你要找誰，去聊一場
-          </h1>
+          <div className="flex items-start justify-between gap-6">
+            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+              想清楚你要找誰，去聊一場
+            </h1>
+            <Illustration
+              name="e3-personas-halftone"
+              alt="三個半色調圓點頭像 — 訪談對象"
+              aspect="1/1"
+              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
+            />
+          </div>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
             AI 看到的是文字痕跡，不是現場真實。沉默、尷尬、害怕、猶豫、身體語言這些 —
             只有面對面才會浮出來。

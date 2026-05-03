@@ -13,6 +13,7 @@ import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { CompletionHeader } from "@/components/worksheet/card10/CompletionHeader";
+import { NumericStats } from "@/components/worksheet/card10/NumericStats";
 import { PainIdCard } from "@/components/worksheet/card10/PainIdCard";
 import { ExportActions } from "@/components/worksheet/card10/ExportActions";
 import { NextStepCta } from "@/components/worksheet/card10/NextStepCta";
@@ -97,6 +98,7 @@ function ResultPage() {
 
       <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-12 mt-8 space-y-10">
         <CompletionHeader />
+        <NumericStats />
         <PainIdCard />
         <ExportActions />
         <NextStepCta />

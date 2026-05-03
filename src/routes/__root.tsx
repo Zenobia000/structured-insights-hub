@@ -135,8 +135,10 @@ export const Route = createRootRoute({
 const themeBootstrap = `(function(){try{
 var k='painmap.theme';
 var stored=localStorage.getItem(k);
-var pref=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
-var theme=(stored==='light'||stored==='dark')?stored:pref;
+var theme;
+if(stored==='light'||stored==='dark'){theme=stored;}
+else if(stored==='system'&&window.matchMedia){theme=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}
+else{theme='dark';} // default — Grok v1.2 dark-first canon
 var html=document.documentElement;
 html.classList.remove('light','dark');
 html.classList.add(theme);

@@ -2,8 +2,9 @@
  * useTheme — light / dark / system 三態主題切換
  *
  * 行為：
- * - 'system' (default)：跟隨 OS prefers-color-scheme，OS 改動會即時反應
- * - 'light' / 'dark'：使用者明確選擇，寫入 localStorage
+ * - 'dark' (default)：Grok v1.2 dark-first canon — 第一次來訪統一黑底
+ * - 'light'：使用者明確選擇，寫入 localStorage
+ * - 'system'：使用者明確選擇跟隨 OS prefers-color-scheme，OS 改動即時反應
  *
  * 核心：所有切換都透過修改 <html> 的 className（'light' / 'dark'），
  * styles.css 內 :root / .dark / .light 的 CSS variables 會自動生效。
@@ -19,10 +20,10 @@ export type ResolvedTheme = "light" | "dark";
 const STORAGE_KEY = "painmap.theme";
 
 function readStoredChoice(): ThemeChoice {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (stored === "light" || stored === "dark" || stored === "system") return stored;
-  return "system";
+  return "dark";
 }
 
 function resolveSystemTheme(): ResolvedTheme {
@@ -45,16 +46,13 @@ export function useTheme() {
     readStoredChoice() === "system" ? resolveSystemTheme() : (readStoredChoice() as ResolvedTheme),
   );
 
-  // Apply on choice change
+  // Apply on choice change. Note: default 'dark' is also persisted so
+  // bootstrap script + cross-tab sync stay deterministic.
   useEffect(() => {
     const next: ResolvedTheme = choice === "system" ? resolveSystemTheme() : choice;
     setResolved(next);
     applyTheme(next);
-    if (choice === "system") {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } else {
-      window.localStorage.setItem(STORAGE_KEY, choice);
-    }
+    window.localStorage.setItem(STORAGE_KEY, choice);
   }, [choice]);
 
   // Listen to OS changes when in 'system' mode
@@ -80,9 +78,9 @@ export function useTheme() {
     return () => window.removeEventListener("storage", handler);
   }, []);
 
-  /** Cycle: light → dark → system → light ... */
+  /** Cycle: dark → light → system → dark ... (dark-first per Grok v1.2) */
   const cycle = useCallback(() => {
-    setChoice((prev) => (prev === "light" ? "dark" : prev === "dark" ? "system" : "light"));
+    setChoice((prev) => (prev === "dark" ? "light" : prev === "light" ? "system" : "dark"));
   }, []);
 
   return { choice, resolved, setChoice, cycle };

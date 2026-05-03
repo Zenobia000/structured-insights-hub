@@ -193,7 +193,9 @@ export function ExamplePainCardPreviewSection() {
                   </dl>
 
                   <div className="relative mt-8 pt-6 border-t border-border-subtle flex items-center justify-between">
-                    <span className="text-[12px] text-text-tertiary">點擊查看完整 9 張卡與欄位對應</span>
+                    <span className="text-[12px] text-text-tertiary">
+                      點擊查看完整 9 張卡與欄位對應
+                    </span>
                     <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-text-primary group-hover:text-text-primary">
                       Open
                       <ExternalLink className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />

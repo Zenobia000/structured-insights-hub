@@ -26,15 +26,11 @@ export function useFadeInOnScroll<T extends HTMLElement = HTMLElement>(
       return;
     }
 
-    // Already in viewport at mount? Show immediately (avoids stuck-hidden
-    // sections when scroll-restoration lands the user mid-page or when
-    // IntersectionObserver fails to fire).
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      setVisible(true);
-      return;
-    }
-
+    // Note: avoid getBoundingClientRect() here — calling it on every mounted
+    // section during initial render forces a synchronous layout reflow
+    // (Lighthouse flagged ~548ms). IntersectionObserver fires its initial
+    // callback asynchronously for elements already in viewport, which is
+    // sufficient and reflow-free.
     const obs = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {

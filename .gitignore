@@ -40,3 +40,6 @@ dist-ssr
 .playwright-mcp/
 card*-*.png
 *-fullpage.png
+
+# Landing manual test screenshots
+landing-*.png

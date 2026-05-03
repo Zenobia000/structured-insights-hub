@@ -448,6 +448,22 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+    /* View transitions also instant under reduced motion */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  /* View Transitions API cross-fade (Grok v1.2 §10b)
+   * Routes fade in 280ms ease.standard, route exit fades out 180ms.
+   * Only applies on Chromium browsers that support the API.
+   */
+  ::view-transition-old(root) {
+    animation: grok-fade-in 180ms var(--ease-standard) reverse;
+  }
+  ::view-transition-new(root) {
+    animation: grok-fade-in 280ms var(--ease-standard);
   }
 }
 

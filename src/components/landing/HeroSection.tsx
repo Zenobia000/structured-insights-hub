@@ -6,9 +6,11 @@
  * - Single primary CTA + optional secondary text-only link
  * - Pure black canvas + dot-dim texture only (no spotlight/gradient)
  * - Sequence fade-in on title (0ms) → subtitle (120ms) → CTAs (280ms)
+ * - Right-side illustration (E11 listening vessel) on lg+ as accent
  */
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { Illustration } from "@/components/Illustration";
 import { startNewPainCard } from "@/lib/painCardActions";
 
 export function HeroSection() {
@@ -38,50 +40,67 @@ export function HeroSection() {
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-border-hairline" />
 
       <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 section-2xl">
-        <div className="max-w-5xl">
-          <h1
-            id="hero-headline"
-            className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[56px] sm:text-[88px] lg:text-[120px] xl:text-[160px]"
-          >
-            把那句抱怨
-            <br />
-            寫成一張卡。
-          </h1>
-
-          <p
-            className="mt-10 max-w-2xl text-lg sm:text-xl leading-[1.55] text-text-secondary animate-grok-fade-up"
-            style={{ animationDelay: "120ms" }}
-          >
-            9 張卡，陪你從「我覺得有問題」走到「我知道問題在哪」。 第一次 90 分鐘，熟了 30 分鐘 —
-            你只需要會抄、會問、會打電話。
-          </p>
-
-          <div
-            className="mt-12 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 animate-grok-fade-up"
-            style={{ animationDelay: "280ms" }}
-          >
-            <button
-              type="button"
-              onClick={handleStart}
-              className="group inline-flex h-14 items-center justify-center gap-2 rounded-md bg-text-primary px-7 text-[15px] font-medium text-text-inverse transition-colors duration-200 hover:bg-text-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-text-primary focus-visible:outline-offset-2"
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_auto] gap-12 lg:gap-16 items-end">
+          {/* Left: copy */}
+          <div className="max-w-5xl">
+            <h1
+              id="hero-headline"
+              className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[56px] sm:text-[88px] lg:text-[120px] xl:text-[160px]"
             >
-              開始第一張卡
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
+              把那句抱怨
+              <br />
+              寫成一張卡。
+            </h1>
 
-            <a
-              href="#example-paincard"
-              onClick={openExample}
-              className="group inline-flex items-center gap-1.5 text-[15px] font-medium text-text-secondary hover:text-text-primary transition-colors duration-200"
+            <p
+              className="mt-10 max-w-2xl text-lg sm:text-xl leading-[1.55] text-text-secondary animate-grok-fade-up"
+              style={{ animationDelay: "120ms" }}
             >
-              查看範例 ID card
-              <span
-                aria-hidden
-                className="transition-transform duration-200 group-hover:translate-x-0.5"
+              9 張卡，陪你從「我覺得有問題」走到「我知道問題在哪」。 第一次 90 分鐘，熟了 30 分鐘 —
+              你只需要會抄、會問、會打電話。
+            </p>
+
+            <div
+              className="mt-12 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 animate-grok-fade-up"
+              style={{ animationDelay: "280ms" }}
+            >
+              <button
+                type="button"
+                onClick={handleStart}
+                className="group inline-flex h-14 items-center justify-center gap-2 rounded-md bg-text-primary px-7 text-[15px] font-medium text-text-inverse transition-colors duration-200 hover:bg-text-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-text-primary focus-visible:outline-offset-2"
               >
-                ↗
-              </span>
-            </a>
+                開始第一張卡
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </button>
+
+              <a
+                href="#example-paincard"
+                onClick={openExample}
+                className="group inline-flex items-center gap-1.5 text-[15px] font-medium text-text-secondary hover:text-text-primary transition-colors duration-200"
+              >
+                查看範例 ID card
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                >
+                  ↗
+                </span>
+              </a>
+            </div>
+          </div>
+
+          {/* Right: illustration accent (lg+ only) */}
+          <div
+            className="hidden lg:block w-72 xl:w-80 animate-grok-fade-up"
+            style={{ animationDelay: "420ms" }}
+          >
+            <Illustration
+              name="e11-listening-vessel"
+              alt="一隻手心捧著像空容器的耳朵 — 等著被填滿的傾聽"
+              aspect="4/3"
+              loading="eager"
+              className="border-0 bg-transparent"
+            />
           </div>
         </div>
       </div>

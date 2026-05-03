@@ -12,6 +12,7 @@
  * The "stage one vs stage two" info is consolidated into the mission
  * paragraph + a single hairline footnote — no decorative card grid.
  */
+import { Illustration } from "@/components/Illustration";
 import { SectionFade } from "./SectionFade";
 
 export function MissionSection() {
@@ -47,6 +48,15 @@ export function MissionSection() {
             product="PainMap App"
             output="第一筆真的有人付的錢"
             time="72 小時 sprint"
+          />
+        </div>
+
+        <div className="mt-20 max-w-[44em]">
+          <Illustration
+            name="e18-stage-two-horizon"
+            alt="一條線通向遠方地平線 — 階段二是後話"
+            aspect="4/3"
+            className="border-0 bg-transparent"
           />
         </div>
       </div>

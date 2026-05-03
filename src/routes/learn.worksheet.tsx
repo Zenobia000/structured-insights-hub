@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 
 import { CardProgressStepper } from "@/components/worksheet/CardProgressStepper";
+import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePainCardStore } from "@/store/painCard";
 
@@ -45,14 +46,9 @@ function Header() {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
         <Link
           to="/"
-          className="group inline-flex items-center gap-2.5 transition-opacity hover:opacity-80"
+          className="group inline-flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <span
-            aria-hidden
-            className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-text-primary text-text-inverse text-[10px] font-bold"
-          >
-            ◆
-          </span>
+          <Logo size={32} />
           <span className="font-display font-semibold tracking-[-0.01em] text-text-primary">
             PainMap
           </span>

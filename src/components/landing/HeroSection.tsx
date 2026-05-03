@@ -43,9 +43,7 @@ export function HeroSection() {
             id="hero-headline"
             className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[56px] sm:text-[88px] lg:text-[120px] xl:text-[160px]"
           >
-            把那句抱怨
-            <br />
-            寫成一張卡。
+            痛點 ID Card
           </h1>
 
           <p

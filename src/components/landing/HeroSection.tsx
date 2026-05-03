@@ -1,17 +1,14 @@
 /**
- * HeroSection — landing 第一屏 (Grok Hero pattern)。
+ * HeroSection — landing 第一屏 (Variant A manifesto-style per Grok v1.2 §1.0).
  *
- * Grok pattern:
- * - Eyebrow.dotted 開場
- * - display.2xl 主標題（96px desktop / 56px mobile）
- * - spotlight-top + dot-dim 背景組合
- * - 序列進場：eyebrow → headline → subheadline → CTA
- * - Hero 全寬不受 1280 限制（spec 例外）
+ * Spec rules:
+ * - 120-160px headline, left-aligned, no eyebrow
+ * - Single primary CTA + optional secondary text-only link
+ * - Pure black canvas + dot-dim texture only (no spotlight/gradient)
+ * - Sequence fade-in on title (0ms) → subtitle (120ms) → CTAs (280ms)
  */
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { ProgressVisual } from "./ProgressVisual";
-import { Eyebrow } from "@/components/ui/eyebrow";
 import { startNewPainCard } from "@/lib/painCardActions";
 
 export function HeroSection() {
@@ -22,93 +19,69 @@ export function HeroSection() {
     navigate({ to: path });
   };
 
+  const openExample = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document
+      .getElementById("example-paincard")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.location.hash = "example-paincard-open";
+  };
+
   return (
     <section
       aria-labelledby="hero-headline"
       className="relative isolate overflow-hidden bg-canvas-base"
     >
-      {/* Dot grid texture overlay */}
+      {/* Dot grid texture (v1.2 §10 allowed exception) */}
       <div aria-hidden className="absolute inset-0 bg-dot-dim opacity-50" />
       {/* Bottom hairline */}
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-border-hairline" />
 
-      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-          {/* Left: copy (col 1-7) */}
-          <div className="lg:col-span-7">
-            <div className="animate-grok-fade-up" style={{ animationDelay: "0ms" }}>
-              <Eyebrow variant="dotted">PainMap Worksheet · 9 張卡，陪你走一次</Eyebrow>
-            </div>
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 section-2xl">
+        <div className="max-w-5xl">
+          <h1
+            id="hero-headline"
+            className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[56px] sm:text-[88px] lg:text-[120px] xl:text-[160px]"
+          >
+            把那句抱怨
+            <br />
+            寫成一張卡。
+          </h1>
 
-            <h1
-              id="hero-headline"
-              className="mt-6 font-display text-[44px] sm:text-6xl lg:text-[80px] xl:text-[96px] font-bold leading-[0.96] tracking-[-0.04em] text-text-primary animate-grok-fade-up"
-              style={{ animationDelay: "120ms" }}
+          <p
+            className="mt-10 max-w-2xl text-lg sm:text-xl leading-[1.55] text-text-secondary animate-grok-fade-up"
+            style={{ animationDelay: "120ms" }}
+          >
+            9 張卡，陪你從「我覺得有問題」走到「我知道問題在哪」。 第一次 90 分鐘，熟了 30 分鐘 —
+            你只需要會抄、會問、會打電話。
+          </p>
+
+          <div
+            className="mt-12 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 animate-grok-fade-up"
+            style={{ animationDelay: "280ms" }}
+          >
+            <button
+              type="button"
+              onClick={handleStart}
+              className="group inline-flex h-14 items-center justify-center gap-2 rounded-md bg-text-primary px-7 text-[15px] font-medium text-text-inverse transition-colors duration-200 hover:bg-text-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-text-primary focus-visible:outline-offset-2"
             >
-              痛點 ID card
-            </h1>
+              開始第一張卡
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
 
-            <p
-              className="mt-8 max-w-xl text-base sm:text-lg leading-[1.7] text-text-secondary animate-grok-fade-up"
-              style={{ animationDelay: "280ms" }}
+            <a
+              href="#example-paincard"
+              onClick={openExample}
+              className="group inline-flex items-center gap-1.5 text-[15px] font-medium text-text-secondary hover:text-text-primary transition-colors duration-200"
             >
-              這份填空簿陪你做的事很簡單：把那句話原原本本寫下來，找出說這句話的人，再用 AI
-              找證據對照你自己的猜測。第一次 90 分鐘，熟了 30 分鐘 — 你只需要會抄、會問、會打電話。
-            </p>
-
-            <div
-              className="mt-10 flex flex-col sm:flex-row gap-3 animate-grok-fade-up"
-              style={{ animationDelay: "420ms" }}
-            >
-              <button
-                type="button"
-                onClick={handleStart}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-text-primary px-6 text-[15px] font-medium text-text-inverse transition-all duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
-              >
-                從第一張卡開始整理痛點
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-              <a
-                href="#example-paincard"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("example-paincard")
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  // 設定 hash 觸發 modal 自動開啟（Section 內 useEffect 監聽）
-                  window.location.hash = "example-paincard-open";
-                }}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border-default bg-transparent px-6 text-[15px] font-medium text-text-primary transition-colors duration-200 hover:bg-surface-hover hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base"
-              >
-                查看範例 ID card
-              </a>
-            </div>
-
-            <p
-              className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary animate-grok-fade-up"
-              style={{ animationDelay: "560ms" }}
-            >
-              <span className="h-1 w-1 rounded-full bg-status-success" />
-              No sign-up · Local-only · 隨時匯出帶走
-            </p>
-          </div>
-
-          {/* Right: 9-dot ProgressVisual (col 8-12) */}
-          <div className="lg:col-span-5 animate-grok-fade-up" style={{ animationDelay: "320ms" }}>
-            <div className="relative rounded-lg border border-border-hairline bg-canvas-raised p-6 sm:p-8">
-              <div
+              查看範例 ID card
+              <span
                 aria-hidden
-                className="absolute inset-0 -z-10 rounded-lg bg-dot-dense opacity-40"
-              />
-              <Eyebrow variant="dotted" className="mb-4">
-                Flow preview
-              </Eyebrow>
-              <p className="text-base font-semibold text-text-primary mb-1">9 張卡，3 個階段</p>
-              <p className="text-[13px] leading-[1.6] text-text-tertiary mb-6">
-                從聽見一句抱怨，到寫下你自己的判斷 — 陪你走完一次。
-              </p>
-              <ProgressVisual />
-            </div>
+                className="transition-transform duration-200 group-hover:translate-x-0.5"
+              >
+                ↗
+              </span>
+            </a>
           </div>
         </div>
       </div>

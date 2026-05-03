@@ -19,9 +19,9 @@ type StartViewTransition = (cb: () => void | Promise<void>) => {
   finished: Promise<void>;
 };
 
-interface DocumentWithViewTransition extends Document {
+type DocumentWithViewTransition = Document & {
   startViewTransition?: StartViewTransition;
-}
+};
 
 /**
  * Run `update` inside a View Transition if the browser supports it.

@@ -117,10 +117,17 @@ export const Route = createRootRoute({
         href: "/fonts/geist-mono-variable.woff2",
         crossOrigin: "anonymous",
       },
+      // Non-blocking load: fetch as 'print' then swap to 'all' on load so it
+      // doesn't block FCP.
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap",
-      },
+        media: "print",
+        onLoad: "this.media='all'",
+      } as unknown as React.DetailedHTMLProps<
+        React.LinkHTMLAttributes<HTMLLinkElement>,
+        HTMLLinkElement
+      >,
       {
         rel: "stylesheet",
         href: appCss,

@@ -1,8 +1,8 @@
 /**
- * AuditFindingsPanel — 顯示 Stage 2 UX researcher audit 結果的解讀面板
+ * AuditFindingsPanel — UX researcher audit 結果（Hairline Ledger 風格）。
  *
- * 純展示層：把使用者貼回的 AI 文字內容做最簡單的可讀化處理（區塊標題 highlight）。
- * 不做 AI 解析，不做評分 — 只是讓使用者好讀。
+ * Pure display layer: render user-pasted AI audit text inside an
+ * editorial code-block frame with mono eyebrow header.
  */
 import { ClipboardCheck } from "lucide-react";
 
@@ -12,15 +12,20 @@ type Props = {
 
 export function AuditFindingsPanel({ content }: Props) {
   return (
-    <section className="rounded-md border border-border-hairline bg-canvas-base/60 p-5">
-      <header className="flex items-center gap-2 mb-3">
-        <ClipboardCheck className="h-4 w-4 text-status-success shrink-0" aria-hidden />
-        <h3 className="text-[14px] font-semibold text-text-primary">Audit 結果（你貼回的內容）</h3>
+    <section className="rounded-md border border-border-hairline overflow-hidden">
+      <header className="flex items-center justify-between gap-3 px-5 py-2.5 border-b border-border-hairline bg-canvas-raised">
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-text-tertiary inline-flex items-center gap-2">
+          <ClipboardCheck className="h-3 w-3 text-text-primary" aria-hidden />
+          Audit / Findings
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+          you pasted
+        </span>
       </header>
-      <pre className="font-mono text-[12.5px] leading-[1.65] text-text-primary whitespace-pre-wrap max-h-96 overflow-auto">
+      <pre className="font-mono text-[12.5px] leading-[1.7] text-text-primary whitespace-pre-wrap max-h-96 overflow-auto px-5 py-4 bg-canvas-sunken">
         {content}
       </pre>
-      <p className="mt-3 text-[12px] leading-[1.55] text-text-tertiary">
+      <p className="px-5 py-3 border-t border-border-subtle text-[12px] leading-[1.55] text-text-tertiary">
         把這份 audit 當作「真人訪談前的提醒清單」 — 別跟受訪者唸出來，自己看就好。
       </p>
     </section>

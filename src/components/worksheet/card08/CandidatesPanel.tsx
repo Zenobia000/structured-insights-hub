@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Button } from "@/components/ui/button";
 import { parseQ8Candidates } from "@/lib/cardEightValidators";
 
@@ -9,6 +10,7 @@ type Props = {
 
 export function CandidatesPanel({ q8Raw, onPick }: Props) {
   const candidates = useMemo(() => parseQ8Candidates(q8Raw), [q8Raw]);
+  const [pillsRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
 
   if (!q8Raw.trim()) {
     return (
@@ -31,7 +33,7 @@ export function CandidatesPanel({ q8Raw, onPick }: Props) {
       <p className="text-[13px] text-text-secondary">
         卡 6 給的候選人群（點一下會帶到下方第 1 個還沒填的 persona 欄位）：
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div ref={pillsRef} className="flex flex-wrap gap-2">
         {candidates.map((c) => (
           <Button
             key={c}
@@ -39,7 +41,7 @@ export function CandidatesPanel({ q8Raw, onPick }: Props) {
             variant="outline"
             size="sm"
             onClick={() => onPick(c)}
-            className="h-8 rounded-full border-secondary/40 text-text-primary hover:bg-secondary/10"
+            className="h-8 rounded-full border-border-default text-text-primary hover:bg-surface-hover hover:border-text-primary"
           >
             {c}
           </Button>

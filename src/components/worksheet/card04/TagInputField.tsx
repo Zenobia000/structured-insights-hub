@@ -4,6 +4,7 @@
  */
 import { useState, type KeyboardEvent } from "react";
 import { X, AlertTriangle } from "lucide-react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -34,6 +35,7 @@ export function TagInputField({
   highlight,
 }: Props) {
   const [draft, setDraft] = useState("");
+  const [tagsRef] = useAutoAnimate<HTMLUListElement>({ duration: 180 });
 
   const commit = () => {
     const v = draft.trim();
@@ -88,7 +90,7 @@ export function TagInputField({
           "focus-within:ring-2 focus-within:ring-ring focus-within:border-secondary",
         )}
       >
-        <ul className="flex flex-wrap gap-1.5">
+        <ul ref={tagsRef} className="flex flex-wrap gap-1.5">
           {values.map((v, i) => (
             <li
               key={`${v}-${i}`}

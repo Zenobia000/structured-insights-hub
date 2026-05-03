@@ -31,12 +31,7 @@ export function NumericStats() {
       aria-label="痛點填空簿完成統計"
       className="grid grid-cols-1 sm:grid-cols-3 border border-border-hairline rounded-lg overflow-hidden bg-canvas-base"
     >
-      <Stat
-        eyebrow="01 / scope"
-        value="09"
-        unit="cards"
-        caption="9 張卡，全部走完"
-      />
+      <Stat eyebrow="01 / scope" value="09" unit="cards" caption="9 張卡，全部走完" />
       <Stat
         eyebrow="02 / pace"
         value={minutes >= 100 ? String(minutes) : String(minutes).padStart(2, "0")}

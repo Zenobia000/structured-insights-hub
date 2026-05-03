@@ -1,16 +1,16 @@
 /**
- * WorksheetCardHeader — 9 卡頁面共用標題區 (Grok dark)。
+ * WorksheetCardHeader — Card header with OS-window chrome (Grok v1.2 §03.6 / C3).
  *
- * 結構：
- * - Eyebrow: Card NN / 09
- * - AI 介入標籤（disabled / enabled / required）
- * - h1 主標題
- * - intro callout（規則）
- * - intro paragraph
+ * Structure:
+ * - 28px chrome strip: card index (left) · AI mode badge (right), hairline below
+ * - Content area: h1 title · optional rule callout · optional intro paragraph
+ *
+ * The chrome treats each card as a "panel" without committing the surrounding
+ * page to a console split — keeps shell minimal while giving each card a
+ * window-frame visual identity.
  */
 import type { ReactNode } from "react";
 import { Info, ShieldOff, Sparkles } from "lucide-react";
-import { Eyebrow } from "@/components/ui/eyebrow";
 import { cn } from "@/lib/utils";
 
 type AiStatus = "disabled" | "enabled" | "required";
@@ -20,9 +20,9 @@ type Props = {
   totalCards?: number;
   aiStatus?: AiStatus;
   title: ReactNode;
-  /** 黃底框內顯示「規則」 */
+  /** Boxed callout for cards rule */
   rule?: ReactNode;
-  /** 標題下方說明段（regular paragraph） */
+  /** Body paragraph below the title */
   intro?: ReactNode;
   className?: string;
 };
@@ -55,40 +55,58 @@ export function WorksheetCardHeader({
   className,
 }: Props) {
   const ai = aiStatus ? aiBadgeMap[aiStatus] : null;
+  const idx = String(cardNumber).padStart(2, "0");
+  const total = String(totalCards).padStart(2, "0");
+
   return (
-    <header className={cn("mb-10", className)}>
-      <div className="flex items-center justify-between gap-4 mb-5">
-        <Eyebrow variant="numbered" index={cardNumber}>
-          Card {String(cardNumber).padStart(2, "0")} / {String(totalCards).padStart(2, "0")}
-        </Eyebrow>
+    <header className={cn("mb-12", className)}>
+      {/* Chrome strip — OS-window title bar */}
+      <div className="flex items-center justify-between border border-border-hairline bg-canvas-raised px-4 sm:px-5 h-9 rounded-t-md">
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Three-dot tab marker (single-color, no neon) */}
+          <div className="hidden sm:flex items-center gap-1.5" aria-hidden>
+            <span className="h-1.5 w-1.5 rounded-full bg-border-strong" />
+            <span className="h-1.5 w-1.5 rounded-full bg-border-default" />
+            <span className="h-1.5 w-1.5 rounded-full bg-border-default" />
+          </div>
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-text-tertiary truncate">
+            <span className="text-text-secondary">card</span>
+            <span className="mx-1.5 text-text-primary tabular-nums">{idx}</span>
+            <span className="text-border-strong">/</span>
+            <span className="ml-1.5 tabular-nums">{total}</span>
+          </span>
+        </div>
         {ai && (
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.06em]",
+              "inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.08em]",
               ai.cls,
             )}
             aria-label={ai.label}
           >
-            <ai.Icon className="h-3 w-3" aria-hidden />
-            {ai.label}
+            <ai.Icon className="h-2.5 w-2.5" aria-hidden />
+            <span className="hidden sm:inline">{ai.label}</span>
           </span>
         )}
       </div>
 
-      <h1 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
-        {title}
-      </h1>
+      {/* Content area — sits flush against chrome strip via shared border */}
+      <div className="border-x border-b border-border-hairline rounded-b-md bg-canvas-base px-5 sm:px-7 py-7 sm:py-9">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
+          {title}
+        </h1>
 
-      {rule && (
-        <div className="mt-7 flex items-start gap-3 rounded-md border border-text-primary/30 bg-surface-active/40 p-4">
-          <Info className="h-4 w-4 text-text-primary shrink-0 mt-0.5" aria-hidden />
-          <div className="text-[14.5px] leading-[1.65] text-text-primary">{rule}</div>
-        </div>
-      )}
+        {rule && (
+          <div className="mt-7 flex items-start gap-3 rounded-md border border-text-primary/30 bg-surface-active/40 p-4">
+            <Info className="h-4 w-4 text-text-primary shrink-0 mt-0.5" aria-hidden />
+            <div className="text-[14.5px] leading-[1.65] text-text-primary">{rule}</div>
+          </div>
+        )}
 
-      {intro && (
-        <p className="mt-5 text-[15px] leading-[1.7] text-text-secondary max-w-3xl">{intro}</p>
-      )}
+        {intro && (
+          <p className="mt-5 text-[15px] leading-[1.7] text-text-secondary max-w-3xl">{intro}</p>
+        )}
+      </div>
     </header>
   );
 }

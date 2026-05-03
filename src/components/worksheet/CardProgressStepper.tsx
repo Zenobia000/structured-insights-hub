@@ -135,7 +135,7 @@ export function CardProgressStepper() {
               className={cn(
                 "h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-medium transition-all duration-200",
                 resultState === "completed"
-                  ? "bg-text-primary text-text-primary"
+                  ? "bg-text-primary text-text-inverse"
                   : "border border-border-hairline bg-canvas-raised text-text-tertiary hover:border-border-default",
               )}
             >
@@ -193,7 +193,7 @@ const StepDot = memo(function StepDot({ step, state }: { step: CurrentStep; stat
       to={pathFor(step)}
       aria-current="step"
       aria-label={`卡 ${step}（進行中）`}
-      className={cn(baseClasses, "bg-text-primary text-text-primary")}
+      className={cn(baseClasses, "bg-text-primary text-text-inverse")}
     >
       {numberLabel}
     </Link>

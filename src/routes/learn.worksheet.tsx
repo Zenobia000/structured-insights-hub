@@ -49,7 +49,7 @@ function Header() {
         >
           <span
             aria-hidden
-            className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-text-primary text-text-primary text-[10px] font-bold"
+            className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-text-primary text-text-inverse text-[10px] font-bold"
           >
             ◆
           </span>

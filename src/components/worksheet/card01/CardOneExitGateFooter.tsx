@@ -86,7 +86,7 @@ export function CardOneExitGateFooter({
                 "transition-all duration-200",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-base",
                 canAdvance
-                  ? "bg-text-primary text-text-primary hover:bg-surface-hover"
+                  ? "bg-text-primary text-text-inverse hover:bg-surface-hover"
                   : "border border-border-hairline bg-surface-elevated text-text-tertiary cursor-not-allowed",
               )}
             >

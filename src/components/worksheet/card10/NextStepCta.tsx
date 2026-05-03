@@ -63,7 +63,7 @@ function PrimaryButton({
   to?: string;
 }) {
   const cls =
-    "inline-flex h-11 items-center justify-center gap-2 rounded-md bg-text-primary px-5 text-[14px] font-medium text-text-primary transition-all hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-raised";
+    "inline-flex h-11 items-center justify-center gap-2 rounded-md bg-text-primary px-5 text-[14px] font-medium text-text-inverse transition-all hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-raised";
   if (href)
     return (
       <a href={href} rel="noopener" className={cls}>

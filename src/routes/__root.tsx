@@ -87,6 +87,15 @@ export const Route = createRootRoute({
       // WebP favicon — PainMap continuous-line brand mark
       { rel: "icon", type: "image/webp", href: "/logo.webp" },
       { rel: "apple-touch-icon", href: "/logo.webp" },
+      // Preload above-the-fold visual assets so they fetch in parallel
+      // with the JS bundle (LCP optimization). Logo + Hero illustration.
+      { rel: "preload", as: "image", href: "/logo.webp", type: "image/webp" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/illustrations/e11-listening-vessel.webp",
+        type: "image/webp",
+      },
       // Preconnect Google Fonts only (Noto Sans TC). Geist self-hosted
       // → no jsdelivr connection needed.
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

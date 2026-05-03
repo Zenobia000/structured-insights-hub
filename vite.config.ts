@@ -60,6 +60,17 @@ export default defineConfig({
             if (id.match(/[\\/]node_modules[\\/]lucide-react[\\/]/)) {
               return "icons-vendor";
             }
+            // Motion library (framer-motion successor) — only used for
+            // MotionConfig wrapper + AnimatePresence; isolate so it caches
+            // independently of app code (rarely changes).
+            if (id.match(/[\\/]node_modules[\\/](motion|framer-motion)[\\/]/)) {
+              return "motion-vendor";
+            }
+            // Markdown renderer — only used by MarkdownView in worksheet
+            // result + a couple cards. Already large enough to chunk alone.
+            if (id.match(/[\\/]node_modules[\\/]marked[\\/]/)) {
+              return "marked-vendor";
+            }
             return undefined;
           },
         },

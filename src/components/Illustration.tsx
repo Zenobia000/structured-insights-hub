@@ -40,10 +40,31 @@ type Props = {
   className?: string;
   /** Eager-load above-the-fold illustrations (Hero/Card01). Default lazy. */
   loading?: "lazy" | "eager";
+  /**
+   * `fetchpriority` hint — set "high" for the LCP element (Hero illustration)
+   * to outrun script-blocking resource discovery. Defaults to "auto".
+   */
+  fetchPriority?: "high" | "low" | "auto";
 };
 
-export function Illustration({ name, alt, aspect = "4/3", className, loading = "lazy" }: Props) {
+// Asset native dimensions (Midjourney v7 output). Hard-coded so <img>
+// can declare width/height and reserve layout box before bytes arrive
+// — eliminates Cumulative Layout Shift on first paint.
+const ASPECT_DIMS = {
+  "4/3": { w: 2048, h: 1536 },
+  "1/1": { w: 2048, h: 2048 },
+} as const;
+
+export function Illustration({
+  name,
+  alt,
+  aspect = "4/3",
+  className,
+  loading = "lazy",
+  fetchPriority = "auto",
+}: Props) {
   const aspectClass = aspect === "1/1" ? "aspect-square" : "aspect-[4/3]";
+  const dims = ASPECT_DIMS[aspect];
   return (
     <figure
       className={cn(
@@ -55,8 +76,11 @@ export function Illustration({ name, alt, aspect = "4/3", className, loading = "
       <img
         src={`/illustrations/${name}.webp`}
         alt={alt}
+        width={dims.w}
+        height={dims.h}
         loading={loading}
         decoding="async"
+        fetchPriority={fetchPriority}
         // Asset PNGs are white-line-on-black-background. mix-blend-screen
         // makes the asset's black background transparent against any dark
         // canvas (white stays white). For light mode, .light wrapper flips

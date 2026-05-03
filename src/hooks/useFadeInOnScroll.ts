@@ -26,6 +26,15 @@ export function useFadeInOnScroll<T extends HTMLElement = HTMLElement>(
       return;
     }
 
+    // Already in viewport at mount? Show immediately (avoids stuck-hidden
+    // sections when scroll-restoration lands the user mid-page or when
+    // IntersectionObserver fails to fire).
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
     const obs = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
@@ -36,7 +45,15 @@ export function useFadeInOnScroll<T extends HTMLElement = HTMLElement>(
       }
     }, options);
     obs.observe(el);
-    return () => obs.disconnect();
+
+    // Safety net: if observer hasn't fired within 1.5s (can happen on
+    // some headless browsers / iframes / Safari quirks), reveal anyway.
+    const fallbackId = window.setTimeout(() => setVisible(true), 1500);
+
+    return () => {
+      obs.disconnect();
+      window.clearTimeout(fallbackId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

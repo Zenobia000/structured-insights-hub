@@ -61,6 +61,10 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
+    // Grok v1.2 §10b — wrap navigations in document.startViewTransition()
+    // when supported (Chromium 2026). Browser auto-fallback to instant
+    // navigation on Safari / Firefox. CSS in styles.css governs timing.
+    defaultViewTransition: true,
   });
 
   return router;

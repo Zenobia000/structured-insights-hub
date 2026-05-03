@@ -97,6 +97,7 @@ export function HeroSection() {
               alt="一隻手心捧著像空容器的耳朵 — 等著被填滿的傾聽"
               aspect="4/3"
               loading="eager"
+              fetchPriority="high"
               className="border-0 bg-transparent"
             />
           </div>

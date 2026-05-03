@@ -53,7 +53,7 @@ export function Illustration({ name, alt, aspect = "4/3", className, loading = "
       )}
     >
       <img
-        src={`/illustrations/${name}.png`}
+        src={`/illustrations/${name}.webp`}
         alt={alt}
         loading={loading}
         decoding="async"

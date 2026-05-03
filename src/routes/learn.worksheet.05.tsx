@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { GitMerge, AlertCircle } from "lucide-react";
 
+import { Illustration } from "@/components/Illustration";
 import { TextareaField } from "@/components/worksheet/card01/FormFields";
 import { ExampleReferenceCard5 } from "@/components/worksheet/card05/ExampleReferenceCard5";
 import { CardFiveExitGateFooter } from "@/components/worksheet/card05/CardFiveExitGateFooter";
@@ -94,9 +95,17 @@ function CardFivePage() {
           <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-secondary mb-3">
             卡 5 / 9
           </p>
-          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-            兩件他都想要，可是只能選一個
-          </h1>
+          <div className="flex items-start justify-between gap-6">
+            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+              兩件他都想要，可是只能選一個
+            </h1>
+            <Illustration
+              name="e14-contradiction-scale"
+              alt="古老天平向一邊傾斜 — TRIZ 矛盾"
+              aspect="1/1"
+              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
+            />
+          </div>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <GitMerge className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />

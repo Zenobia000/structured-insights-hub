@@ -29,7 +29,7 @@ export function Logo({ variant = "mark", size = 36, className }: Props) {
   if (variant === "full") {
     return (
       <img
-        src="/logo.png"
+        src="/logo.webp"
         alt="PainMap"
         width={size}
         height={size}
@@ -59,7 +59,7 @@ export function Logo({ variant = "mark", size = 36, className }: Props) {
       style={{ width: size, height: size }}
     >
       <img
-        src="/logo.png"
+        src="/logo.webp"
         alt=""
         aria-hidden
         className={cn(

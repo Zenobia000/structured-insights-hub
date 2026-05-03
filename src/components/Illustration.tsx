@@ -13,6 +13,7 @@
 import { cn } from "@/lib/utils";
 
 type IllustrationName =
+  // Core 8 — original prompts
   | "e1-knot-unraveling"
   | "e2-fake-pain-anatomy"
   | "e3-personas-halftone"
@@ -20,7 +21,16 @@ type IllustrationName =
   | "e5-emotional-topo"
   | "e6-magnifier-question"
   | "e9-pain-blueprint"
-  | "e10-interviewer-portrait";
+  | "e10-interviewer-portrait"
+  // Extended 8 — see docs/illustrations-prompt-library.md
+  | "e11-listening-vessel"
+  | "e12-three-named-people"
+  | "e13-stuck-loop"
+  | "e14-contradiction-scale"
+  | "e15-evidence-stack"
+  | "e16-verdict-gavel"
+  | "e17-capstone-certificate"
+  | "e18-stage-two-horizon";
 
 type Props = {
   name: IllustrationName;

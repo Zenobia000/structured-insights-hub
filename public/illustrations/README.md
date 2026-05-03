@@ -9,6 +9,8 @@ AI-generated monochrome illustrations referenced by `src/components/Illustration
 - **Color**: Pure black/white/gray only — Grok v1.2 §10 forbids any color (electric blue, risograph, etc.)
 - **Naming**: Must match the `IllustrationName` union in `src/components/Illustration.tsx`
 
+> **Master reference**: `docs/illustrations-prompt-library.md` holds all 16 prompts (the 8 below + 8 extended) with detailed style families, generation checklist, and series-locking workflow.
+
 ## Prompt library (Midjourney v7 / Flux)
 
 General template:

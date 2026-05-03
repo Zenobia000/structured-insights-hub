@@ -53,11 +53,15 @@ export function Illustration({ name, alt, aspect = "4/3", className, loading = "
       )}
     >
       <img
-        src={`/illustrations/${name}.webp`}
+        src={`/illustrations/${name}.png`}
         alt={alt}
         loading={loading}
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
+        // Asset PNGs are white-line-on-black-background. mix-blend-screen
+        // makes the asset's black background transparent against any dark
+        // canvas (white stays white). For light mode, .light wrapper flips
+        // the blend to multiply + invert so it reads as black-on-white.
+        className="absolute inset-0 h-full w-full object-cover mix-blend-screen [.light_&]:mix-blend-multiply [.light_&]:invert"
         onError={(e) => {
           // Graceful fallback: hide broken image, show placeholder pattern
           e.currentTarget.style.display = "none";

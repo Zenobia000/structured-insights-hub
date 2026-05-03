@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { Illustration } from "@/components/Illustration";
 import { Toaster } from "@/components/ui/sonner";
 import { GrokMotionConfig } from "@/lib/motion";
 import appCss from "../styles.css?url";
@@ -8,6 +9,13 @@ function NotFoundComponent() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-canvas-base px-4">
       <div className="relative max-w-md text-center">
+        <Illustration
+          name="e6-magnifier-question"
+          alt="放大鏡疊著問號"
+          aspect="1/1"
+          loading="eager"
+          className="mx-auto mb-8 w-32 sm:w-40"
+        />
         <p className="eyebrow mb-6">● ERROR / NOT_FOUND</p>
         <h1 className="font-mono text-7xl font-bold tracking-tight text-text-primary tabular-nums">
           404
@@ -76,12 +84,9 @@ export const Route = createRootRoute({
       },
     ],
     links: [
-      // Inline SVG favicon — 避免 favicon.ico 404，用品牌 ◆ glyph
-      {
-        rel: "icon",
-        type: "image/svg+xml",
-        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2300d4ff'/%3E%3Ctext x='50%25' y='52%25' text-anchor='middle' dominant-baseline='middle' font-size='40' font-weight='bold' fill='%23000'%3E%E2%97%86%3C/text%3E%3C/svg%3E",
-      },
+      // PNG favicon — PainMap continuous-line brand mark
+      { rel: "icon", type: "image/png", href: "/logo.png" },
+      { rel: "apple-touch-icon", href: "/logo.png" },
       // Preconnect Google Fonts only (Noto Sans TC). Geist self-hosted
       // → no jsdelivr connection needed.
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

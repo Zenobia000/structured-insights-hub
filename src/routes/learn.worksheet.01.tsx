@@ -160,6 +160,8 @@ function CardOnePage() {
           cardNumber={1}
           aiStatus="disabled"
           title="把那句話原原本本寫下來"
+          illustration="e1-knot-unraveling"
+          illustrationAlt="一段糾結的線慢慢拉直 — 從混亂走向清楚"
           rule={
             <>
               <span className="font-semibold">規則：</span>

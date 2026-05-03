@@ -12,6 +12,7 @@
  */
 import { useEffect, useState } from "react";
 import { CheckCircle2, ExternalLink, ChevronRight } from "lucide-react";
+import { Illustration } from "@/components/Illustration";
 import { SectionFade } from "./SectionFade";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import {
@@ -312,6 +313,12 @@ export function ExamplePainCardPreviewSection() {
 
           {/* Case explainer (col 4-5) */}
           <div className="lg:col-span-2 space-y-6 lg:pt-4">
+            <Illustration
+              name="e10-interviewer-portrait"
+              alt="一位專注傾聽的訪談者側臉肖像（木刻版畫風）"
+              aspect="4/3"
+              className="border-0 bg-transparent mb-2"
+            />
             <Explainer
               eyebrow="01 / origin"
               title="怎麼開始"

@@ -214,6 +214,8 @@ ${stuck}
           cardNumber={4}
           aiStatus="required"
           title="他現在到底怎麼解這個問題？"
+          illustration="e2-fake-pain-anatomy"
+          illustrationAlt="假痛點被解剖如昆蟲標本 — 19 世紀科學蝕刻風"
           rule={
             <>
               <span className="font-semibold">為什麼要看這個：</span>

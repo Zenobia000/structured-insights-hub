@@ -1,6 +1,7 @@
 /**
- * CompletionHeader — 卡 10 沉穩標頭 (Grok dark hero variant)
+ * CompletionHeader — 卡 10 沉穩標頭 (Grok dark hero variant) + capstone illustration
  */
+import { Illustration } from "@/components/Illustration";
 import { usePainCardStore } from "@/store/painCard";
 import { JUDGMENT_LABEL } from "@/lib/cardTenExport";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -43,12 +44,21 @@ export function CompletionHeader() {
       <div aria-hidden className="absolute inset-0 -z-10 bg-dot-dim opacity-40" />
 
       <div className="px-7 sm:px-12 py-10 sm:py-14 max-w-4xl mx-auto">
-        <Eyebrow variant="dotted">You finished · Pain ID is ready</Eyebrow>
-
-        <h1 className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
-          你寫完了 —<br />
-          這是你的痛點身份證。
-        </h1>
+        <div className="grid sm:grid-cols-[minmax(0,1fr)_auto] gap-8 sm:gap-12 items-center">
+          <div>
+            <Eyebrow variant="dotted">You finished · Pain ID is ready</Eyebrow>
+            <h1 className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
+              你寫完了 —<br />
+              這是你的痛點身份證。
+            </h1>
+          </div>
+          <Illustration
+            name="e17-capstone-certificate"
+            alt="一枚蠟印按在空白羊皮紙上，光線向外輻射 — 完成的封印"
+            aspect="1/1"
+            className="hidden sm:block w-32 lg:w-40 border-0 bg-transparent"
+          />
+        </div>
 
         <p className="mt-5 text-base sm:text-lg leading-[1.65] text-text-secondary max-w-2xl">
           9 張卡走過的痕跡，全部收在這一頁。看一遍，挑一個格式匯出帶走，再去做你想做的下一步。

@@ -1,4 +1,5 @@
 import { Check, ChevronDown, Sparkles, Trash2 } from "lucide-react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,9 +46,10 @@ export function TargetsForm({
   onAddFromTemplate,
   onRemove,
 }: Props) {
+  const [gridRef] = useAutoAnimate<HTMLDivElement>({ duration: 220 });
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div ref={gridRef} className="grid gap-4 lg:grid-cols-2">
         {targets.map((t, i) => {
           const personaOk = t.persona.trim().length >= PERSONA_MIN;
           const contactOk = t.contact_info.trim().length >= CONTACT_MIN;

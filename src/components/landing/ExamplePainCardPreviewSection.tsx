@@ -144,7 +144,7 @@ export function ExamplePainCardPreviewSection() {
           </Eyebrow>
           <h2
             id="example-title"
-            className="mt-5 font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-text-primary"
+            className="mt-5 font-display font-bold leading-[1.05] tracking-[-0.03em] text-text-primary text-[clamp(32px,5vw,64px)]"
           >
             30-90 分鐘後，
             <br />
@@ -155,9 +155,9 @@ export function ExamplePainCardPreviewSection() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-6 lg:gap-8 items-start">
-          {/* PainCard preview — Bento large (col 1-3) */}
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-12 gap-6 lg:gap-10 items-start">
+          {/* PainCard preview — editorial main exhibit (left 7 cols on lg+) */}
+          <div className="col-span-12 lg:col-span-7">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <button
@@ -311,12 +311,13 @@ export function ExamplePainCardPreviewSection() {
             </Dialog>
           </div>
 
-          {/* Case explainer (col 4-5) */}
-          <div className="lg:col-span-2 space-y-6 lg:pt-4">
+          {/* Case explainer (right 5 cols on lg+) */}
+          <div className="col-span-12 lg:col-span-5 space-y-6 lg:pt-4">
             <Illustration
               name="e10-interviewer-portrait"
               alt="一位專注傾聽的訪談者側臉肖像（木刻版畫風）"
               aspect="4/3"
+              sizes="(min-width: 1024px) 40vw, 100vw"
               className="border-0 bg-transparent mb-2"
             />
             <Explainer

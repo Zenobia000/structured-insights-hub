@@ -276,12 +276,15 @@
  * Opt-in only via <html class="light">
  * ─────────────────────────────────────────────── */
 .light {
+  /* Canvas layers — distinct values produce editorial section rhythm.
+     base (#FFFFFF) → raised (#FAFAFA) → sunken (#F0F0F0) for alternating sections,
+     overlay (#F8F8F8) reserved for popover/modal float surfaces. */
   --canvas-base: #FFFFFF;
   --canvas-raised: #FAFAFA;
-  --canvas-overlay: #FFFFFF;
-  --canvas-sunken: #F4F4F5;
+  --canvas-overlay: #F8F8F8;
+  --canvas-sunken: #F0F0F0;
 
-  --surface: #FFFFFF;
+  --surface: #FAFAFA;
   --surface-hover: #F4F4F5;
   --surface-active: #E4E4E7;
   --surface-elevated: #F4F4F5;
@@ -292,10 +295,11 @@
   --border-strong: #A1A1AA;
   --border-focus: #0A0A0A;
 
-  /* Text (light mode: text-primary = black = accent) */
+  /* Text (light mode: text-primary = black = accent).
+     tertiary tuned to #6B6B6F → ≥ 4.5:1 on canvas-base/raised/surface-elevated (WCAG AA). */
   --text-primary: #0A0A0A;
   --text-secondary: #52525B;
-  --text-tertiary: #71717A;
+  --text-tertiary: #6B6B6F;
   --text-disabled: #A1A1AA;
   --text-inverse: #FAFAFA;
 

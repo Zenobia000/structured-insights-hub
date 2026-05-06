@@ -45,6 +45,14 @@ type Props = {
    * to outrun script-blocking resource discovery. Defaults to "auto".
    */
   fetchPriority?: "high" | "low" | "auto";
+  /**
+   * Responsive sizing hint. Defaults to "(min-width: 1024px) 60vw, 100vw"
+   * which matches editorial layout (5/7 split on desktop, full-bleed on mobile).
+   * Override for sections with different intrinsic widths.
+   */
+  sizes?: string;
+  /** Convenience: priority illustrations get loading=eager + fetchPriority=high. */
+  priority?: boolean;
 };
 
 // Asset native dimensions (Midjourney v7 output). Hard-coded so <img>
@@ -60,11 +68,15 @@ export function Illustration({
   alt,
   aspect = "4/3",
   className,
-  loading = "lazy",
-  fetchPriority = "auto",
+  loading,
+  fetchPriority,
+  sizes = "(min-width: 1024px) 60vw, 100vw",
+  priority = false,
 }: Props) {
   const aspectClass = aspect === "1/1" ? "aspect-square" : "aspect-[4/3]";
   const dims = ASPECT_DIMS[aspect];
+  const effectiveLoading = loading ?? (priority ? "eager" : "lazy");
+  const effectiveFetchPriority = fetchPriority ?? (priority ? "high" : "auto");
   return (
     <figure
       className={cn(
@@ -78,9 +90,10 @@ export function Illustration({
         alt={alt}
         width={dims.w}
         height={dims.h}
-        loading={loading}
+        sizes={sizes}
+        loading={effectiveLoading}
         decoding="async"
-        fetchPriority={fetchPriority}
+        fetchPriority={effectiveFetchPriority}
         // Asset PNGs are white-line-on-black-background. mix-blend-screen
         // makes the asset's black background transparent against any dark
         // canvas (white stays white). For light mode, .light wrapper flips

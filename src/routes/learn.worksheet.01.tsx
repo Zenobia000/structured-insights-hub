@@ -5,6 +5,7 @@ import { AntiFakeCheckPanel } from "@/components/worksheet/card01/AntiFakeCheckP
 import { CardOneExitGateFooter } from "@/components/worksheet/card01/CardOneExitGateFooter";
 import { ExampleReference } from "@/components/worksheet/card01/ExampleReference";
 import { TextField, TextareaField } from "@/components/worksheet/card01/FormFields";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { WorksheetCardHeader } from "@/components/worksheet/WorksheetCardHeader";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import {
@@ -156,12 +157,14 @@ function CardOnePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
+        <CardHero
+          illustration="e1-knot-unraveling"
+          alt="一段糾結的線慢慢拉直 — 從混亂走向清楚"
+        />
         <WorksheetCardHeader
           cardNumber={1}
           aiStatus="disabled"
           title="把那句話原原本本寫下來"
-          illustration="e1-knot-unraveling"
-          illustrationAlt="一段糾結的線慢慢拉直 — 從混亂走向清楚"
           rule={
             <>
               <span className="font-semibold">規則：</span>

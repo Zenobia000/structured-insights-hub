@@ -3,24 +3,18 @@
  *
  * Structure:
  * - 28px chrome strip: card index (left) · AI mode badge (right), hairline below
- * - Content area: h1 title (+ optional kicker illustration on right) ·
- *   optional rule callout · optional intro paragraph
+ * - Content area: h1 title · optional rule callout · optional intro paragraph
  *
  * The chrome treats each card as a "panel" without committing the surrounding
  * page to a console split — keeps shell minimal while giving each card a
- * window-frame visual identity.
- *
- * Optional `illustration` prop: when set, renders the named monochrome
- * illustration as a kicker accent at top-right of the content area
- * (sm+ only — collapses on mobile to keep title legible).
+ * window-frame visual identity. The illustration is now rendered as a full-
+ * width hero strip via <CardHero> placed before this header in each route.
  */
-import type { ReactNode, ComponentProps } from "react";
+import type { ReactNode } from "react";
 import { Info, ShieldOff, Sparkles } from "lucide-react";
-import { Illustration } from "@/components/Illustration";
 import { cn } from "@/lib/utils";
 
 type AiStatus = "disabled" | "enabled" | "required";
-type IllustrationName = ComponentProps<typeof Illustration>["name"];
 
 type Props = {
   cardNumber: number;
@@ -31,10 +25,6 @@ type Props = {
   rule?: ReactNode;
   /** Body paragraph below the title */
   intro?: ReactNode;
-  /** Optional illustration name from the prompt library — renders top-right */
-  illustration?: IllustrationName;
-  /** Alt text for the illustration */
-  illustrationAlt?: string;
   className?: string;
 };
 
@@ -63,8 +53,6 @@ export function WorksheetCardHeader({
   title,
   rule,
   intro,
-  illustration,
-  illustrationAlt,
   className,
 }: Props) {
   const ai = aiStatus ? aiBadgeMap[aiStatus] : null;
@@ -105,24 +93,9 @@ export function WorksheetCardHeader({
 
       {/* Content area — sits flush against chrome strip via shared border */}
       <div className="border-x border-b border-border-hairline rounded-b-md bg-canvas-base px-5 sm:px-7 py-7 sm:py-9">
-        <div
-          className={cn(
-            "grid gap-6",
-            illustration ? "sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-8" : "",
-          )}
-        >
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
-            {title}
-          </h1>
-          {illustration && (
-            <Illustration
-              name={illustration}
-              alt={illustrationAlt ?? ""}
-              aspect="1/1"
-              className="hidden sm:block w-24 lg:w-28 border-0 bg-transparent self-start"
-            />
-          )}
-        </div>
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold leading-[1.05] tracking-[-0.03em] text-text-primary">
+          {title}
+        </h1>
 
         {rule && (
           <div className="mt-7 flex items-start gap-3 rounded-md border border-text-primary/30 bg-surface-active/40 p-4">

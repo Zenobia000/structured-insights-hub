@@ -7,6 +7,7 @@ import { AIPromptCopyBlock } from "@/components/worksheet/AIPromptCopyBlock";
 import { TagInputField } from "@/components/worksheet/card04/TagInputField";
 import { ExampleReferenceCard4 } from "@/components/worksheet/card04/ExampleReferenceCard4";
 import { CardFourExitGateFooter } from "@/components/worksheet/card04/CardFourExitGateFooter";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { WorksheetCardHeader } from "@/components/worksheet/WorksheetCardHeader";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import {
@@ -210,12 +211,14 @@ ${stuck}
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-10">
+        <CardHero
+          illustration="e2-fake-pain-anatomy"
+          alt="假痛點被解剖如昆蟲標本 — 19 世紀科學蝕刻風"
+        />
         <WorksheetCardHeader
           cardNumber={4}
           aiStatus="required"
           title="他現在到底怎麼解這個問題？"
-          illustration="e2-fake-pain-anatomy"
-          illustrationAlt="假痛點被解剖如昆蟲標本 — 19 世紀科學蝕刻風"
           rule={
             <>
               <span className="font-semibold">為什麼要看這個：</span>

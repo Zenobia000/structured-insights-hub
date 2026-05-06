@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Sparkles, Copy, Check, ExternalLink, AlertCircle } from "lucide-react";
 
-import { Illustration } from "@/components/Illustration";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { AiToolSelector } from "@/components/worksheet/card06/AiToolSelector";
 import { EightAnswersForm } from "@/components/worksheet/card06/EightAnswersForm";
 import { AntiSolutionCheck } from "@/components/worksheet/card06/AntiSolutionCheck";
@@ -199,6 +199,10 @@ function CardSixPage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40 space-y-8">
+        <CardHero
+          illustration="e4-validation-funnel"
+          alt="等距線框漏斗剖面 — 五階驗證"
+        />
         {/* card_intro */}
         <header>
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -213,17 +217,9 @@ function CardSixPage() {
               AI 介入：✅ 8 題證據蒐集
             </span>
           </div>
-          <div className="flex items-start justify-between gap-6">
-            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-              讓 AI 幫你找公開證據
-            </h1>
-            <Illustration
-              name="e4-validation-funnel"
-              alt="等距線框漏斗剖面 — 五階驗證"
-              aspect="1/1"
-              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
-            />
-          </div>
+          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+            讓 AI 幫你找公開證據
+          </h1>
 
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
             你已經有自己的猜測（卡 1-5）。現在請 AI 一起翻翻公開資料，看看你的猜測有沒有人佐證。

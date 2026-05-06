@@ -1,12 +1,13 @@
 /**
- * HeroSection — landing 第一屏 (Variant A manifesto-style per Grok v1.2 §1.0).
+ * HeroSection — landing 第一屏 (Editorial 5/7 split).
  *
- * Spec rules:
- * - 120-160px headline, left-aligned, no eyebrow
- * - Single primary CTA + optional secondary text-only link
- * - Pure black canvas + dot-dim texture only (no spotlight/gradient)
- * - Sequence fade-in on title (0ms) → subtitle (120ms) → CTAs (280ms)
- * - Right-side illustration (E11 listening vessel) on lg+ as accent
+ * Editorial principles:
+ * - lg+: illustration occupies left 7 cols (≈58vw), copy occupies right 5 cols
+ * - Mobile: illustration full-bleed on top, copy stacked below
+ * - Headline scaled to clamp(56px, 8vw, 128px) so it fills 5-col gutter on desktop
+ *   without overflow, while staying punchy on mobile
+ * - Pure monochrome canvas + dot-dim texture (v1.2 §10 allowed exception)
+ * - Sequence fade-in on illustration → title → subtitle → CTAs
  */
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
@@ -34,33 +35,44 @@ export function HeroSection() {
       aria-labelledby="hero-headline"
       className="relative isolate overflow-hidden bg-canvas-base"
     >
-      {/* Dot grid texture (v1.2 §10 allowed exception) */}
       <div aria-hidden className="absolute inset-0 bg-dot-dim opacity-50" />
-      {/* Bottom hairline */}
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-border-hairline" />
 
       <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 section-2xl">
-        <div className="grid lg:grid-cols-[minmax(0,1fr)_auto] gap-12 lg:gap-16 items-end">
-          {/* Left: copy */}
-          <div className="max-w-5xl">
+        <div className="grid grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Illustration: mobile full-bleed top; lg+ left 7 cols */}
+          <div className="col-span-12 lg:col-span-7 lg:order-1 animate-grok-fade-up">
+            <Illustration
+              name="e11-listening-vessel"
+              alt="一隻手心捧著像空容器的耳朵 — 等著被填滿的傾聽"
+              aspect="4/3"
+              priority
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="border-0 bg-transparent"
+            />
+          </div>
+
+          {/* Copy: mobile stacked below; lg+ right 5 cols */}
+          <div className="col-span-12 lg:col-span-5 lg:order-2">
             <h1
               id="hero-headline"
-              className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[56px] sm:text-[88px] lg:text-[120px] xl:text-[160px]"
+              className="font-display font-bold leading-[0.92] tracking-[-0.05em] text-text-primary animate-grok-fade-up text-[clamp(56px,8vw,128px)]"
+              style={{ animationDelay: "120ms" }}
             >
               痛點 ID Card
             </h1>
 
             <p
-              className="mt-10 max-w-2xl text-lg sm:text-xl leading-[1.55] text-text-secondary animate-grok-fade-up"
-              style={{ animationDelay: "120ms" }}
+              className="mt-8 max-w-prose text-lg sm:text-xl leading-[1.55] text-text-secondary animate-grok-fade-up"
+              style={{ animationDelay: "240ms" }}
             >
               9 張卡，陪你從「我覺得有問題」走到「我知道問題在哪」。 第一次 90 分鐘，熟了 30 分鐘 —
               你只需要會抄、會問、會打電話。
             </p>
 
             <div
-              className="mt-12 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 animate-grok-fade-up"
-              style={{ animationDelay: "280ms" }}
+              className="mt-10 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 animate-grok-fade-up"
+              style={{ animationDelay: "360ms" }}
             >
               <button
                 type="button"
@@ -85,21 +97,6 @@ export function HeroSection() {
                 </span>
               </a>
             </div>
-          </div>
-
-          {/* Right: illustration accent (lg+ only) */}
-          <div
-            className="hidden lg:block w-72 xl:w-80 animate-grok-fade-up"
-            style={{ animationDelay: "420ms" }}
-          >
-            <Illustration
-              name="e11-listening-vessel"
-              alt="一隻手心捧著像空容器的耳朵 — 等著被填滿的傾聽"
-              aspect="4/3"
-              loading="eager"
-              fetchPriority="high"
-              className="border-0 bg-transparent"
-            />
           </div>
         </div>
       </div>

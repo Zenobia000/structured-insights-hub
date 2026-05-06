@@ -314,8 +314,8 @@ export function ExamplePainCardPreviewSection() {
           {/* Case explainer (right 5 cols on lg+) */}
           <div className="col-span-12 lg:col-span-5 space-y-6 lg:pt-4">
             <Illustration
-              name="e10-interviewer-portrait"
-              alt="一位專注傾聽的訪談者側臉肖像（木刻版畫風）"
+              name="e3-personas-halftone"
+              alt="多元職業人物 halftone 風格 — 對應 5 種職業的痛點證據"
               aspect="4/3"
               sizes="(min-width: 1024px) 40vw, 100vw"
               className="border-0 bg-transparent mb-2"

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Users, ShieldOff } from "lucide-react";
 
-import { Illustration } from "@/components/Illustration";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { TextareaField } from "@/components/worksheet/card01/FormFields";
 import { AiDisabledCallout } from "@/components/worksheet/card02/AiDisabledCallout";
 import { AntiFakeCheckPanelCard2 } from "@/components/worksheet/card02/AntiFakeCheckPanelCard2";
@@ -262,6 +262,10 @@ function CardTwoPage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
+        <CardHero
+          illustration="e12-three-named-people"
+          alt="三個有名字的姓名牌掛在一條髮絲線上"
+        />
         {/* Card intro */}
         <header className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -276,17 +280,9 @@ function CardTwoPage() {
               AI 介入：❌ 禁用（鐵律）
             </span>
           </div>
-          <div className="flex items-start justify-between gap-6">
-            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-              找出 3 個有名字的人
-            </h1>
-            <Illustration
-              name="e12-three-named-people"
-              alt="三個有名字的姓名牌掛在一條髮絲線上"
-              aspect="1/1"
-              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
-            />
-          </div>
+          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+            找出 3 個有名字的人
+          </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Users className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Edit, Sparkles } from "lucide-react";
 
-import { Illustration } from "@/components/Illustration";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { AiPromptBlock } from "@/components/worksheet/card03/AiPromptBlock";
 import { AiResponseInput } from "@/components/worksheet/card03/AiResponseInput";
 import { ClarifyingQAPanel } from "@/components/worksheet/card03/ClarifyingQAPanel";
@@ -110,6 +110,10 @@ function CardThreePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-40">
+        <CardHero
+          illustration="e13-stuck-loop"
+          alt="一個自己指向自己的封閉迴圈，在某處斷掉"
+        />
         {/* card intro */}
         <header className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -124,17 +128,9 @@ function CardThreePage() {
               AI 介入：✅ 校對 prompt
             </span>
           </div>
-          <div className="flex items-start justify-between gap-6">
-            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-              把抱怨翻譯成「卡關公式」
-            </h1>
-            <Illustration
-              name="e13-stuck-loop"
-              alt="一個自己指向自己的封閉迴圈，在某處斷掉"
-              aspect="1/1"
-              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
-            />
-          </div>
+          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+            把抱怨翻譯成「卡關公式」
+          </h1>
 
           <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-light/60 p-4">
             <Edit className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />

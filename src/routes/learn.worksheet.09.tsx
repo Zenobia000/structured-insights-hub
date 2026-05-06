@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Sparkles, ShieldOff, Award, MessageCircleQuestion } from "lucide-react";
 
-import { Illustration } from "@/components/Illustration";
+import { CardHero } from "@/components/worksheet/CardHero";
 import { useSavedAgo } from "@/hooks/useSavedAgo";
 import { usePainCardStore } from "@/store/painCard";
 import { REASON_MIN, defaultNextAction, judgmentToStatus } from "@/lib/cardNineValidators";
@@ -120,6 +120,10 @@ function CardNinePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-9rem)] bg-canvas-base">
       <main className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-16 pb-32 space-y-8">
+        <CardHero
+          illustration="e16-verdict-gavel"
+          alt="法官木槌停在敲下的瞬間 — 判斷時刻"
+        />
         {/* card_intro */}
         <header>
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -134,17 +138,9 @@ function CardNinePage() {
               AI 介入：❌ 完全禁用（鐵律）
             </span>
           </div>
-          <div className="flex items-start justify-between gap-6">
-            <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
-              最後這一題，留給你自己
-            </h1>
-            <Illustration
-              name="e16-verdict-gavel"
-              alt="法官木槌停在敲下的瞬間 — 判斷時刻"
-              aspect="1/1"
-              className="hidden sm:block w-20 lg:w-24 border-0 bg-transparent shrink-0"
-            />
-          </div>
+          <h1 className="text-2xl sm:text-[28px] font-bold leading-[1.3] text-text-primary">
+            最後這一題，留給你自己
+          </h1>
           <p className="mt-3 text-[16px] leading-[1.65] text-text-secondary">
             走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」
           </p>

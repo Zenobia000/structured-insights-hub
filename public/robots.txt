@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /learn/worksheet/
+
+Sitemap: https://structured-insights-hub.lovable.app/sitemap.xml

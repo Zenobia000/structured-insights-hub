@@ -20,10 +20,19 @@ export const Route = createFileRoute("/learn/worksheet/03")({
       {
         name: "description",
         content:
-          "把那句模糊的抱怨翻譯成「我每次要 X，都會卡在 Y」。你先寫初版，再讓 AI 校對並列出還沒問清楚的事。",
+          "把那句模糊抱怨翻譯成「我每次要 X，都會卡在 Y」的卡關公式。你先寫初版，再讓 AI 校對，並列出還沒問清楚的細節。",
+      },
+      { property: "og:title", content: "卡 3 卡關公式 — PainMap Worksheet" },
+      {
+        property: "og:description",
+        content: "把模糊抱怨翻譯成「我每次要 X，都會卡在 Y」，再讓 AI 校對缺漏。",
       },
     ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/03" },
+    ],
   }),
+
   component: CardThreePage,
 });
 

@@ -19,10 +19,19 @@ export const Route = createFileRoute("/learn/worksheet/05")({
       {
         name: "description",
         content:
-          "用主人翁自己的話，寫出他同時想要的 A、B 兩件事 — 以及他通常會放掉哪一邊、為什麼放得下。",
+          "用主人翁自己的話，寫出他同時想要的 A、B 兩件事 — 以及他通常會放掉哪一邊、為什麼放得下。這個矛盾就是真痛點的指紋。",
+      },
+      { property: "og:title", content: "卡 5 兩件事不能同時要 — PainMap Worksheet" },
+      {
+        property: "og:description",
+        content: "寫出主人翁同時想要的 A、B 兩件事，以及他通常放掉哪一邊 — 矛盾就是真痛點的指紋。",
       },
     ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/05" },
+    ],
   }),
+
   component: CardFivePage,
 });
 

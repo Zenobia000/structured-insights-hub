@@ -30,6 +30,14 @@ export const Route = createFileRoute("/learn/worksheet/02")({
         content:
           "找出 3 個你叫得出名字的真人，且今天就能聯絡到至少 1 位。AI 不能幫忙 — 虛構的人不會付錢，也說不出真話。",
       },
+      { property: "og:title", content: '卡 2 三個有名字的人 — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '找出 3 個你叫得出名字的真人，且今天就能聯絡到至少 1 位 — 虛構的人不會付錢，也說不出真話。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/02" },
     ],
   }),
   component: CardTwoPage,

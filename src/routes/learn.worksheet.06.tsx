@@ -29,6 +29,14 @@ export const Route = createFileRoute("/learn/worksheet/06")({
         content:
           "用 AI 跑 8 題證據蒐集，把回覆原文與整理後的答案存下來。AI 在這張卡只能找證據 — 不能推銷產品。",
       },
+      { property: "og:title", content: '卡 6 用 AI 蒐集證據 — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '用 AI 跑 8 題證據蒐集 — 在這張卡 AI 只能找證據，不能推銷產品。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/06" },
     ],
   }),
   component: CardSixPage,

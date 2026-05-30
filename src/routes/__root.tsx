@@ -49,28 +49,18 @@ export const Route = createRootRoute({
           "把一團模糊的抱怨整理成你說得清楚的問題 — 9 張卡片，陪你從「我覺得有問題」走到「我知道問題在哪」。",
       },
       { name: "author", content: "PainMap" },
+      { property: "og:site_name", content: "PainMap" },
       { property: "og:title", content: "PainMap 題眼 · 痛點填空簿" },
       {
         property: "og:description",
         content: "9 張卡片，陪你親手寫出一張屬於自己的痛點身份證。",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "PainMap 題眼 · 痛點填空簿" },
       {
-        name: "description",
-        content:
-          "PainMap Studio structures pain points into actionable problems for problem solvers.",
-      },
-      {
-        property: "og:description",
-        content:
-          "PainMap Studio structures pain points into actionable problems for problem solvers.",
-      },
-      {
         name: "twitter:description",
-        content:
-          "PainMap Studio structures pain points into actionable problems for problem solvers.",
+        content: "9 張卡片,陪你親手寫出一張屬於自己的痛點身份證。",
       },
       {
         property: "og:image",
@@ -83,6 +73,7 @@ export const Route = createRootRoute({
           "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fd2ca7ed-977c-4db7-9a9e-827d1a78fa75/id-preview-a4a4d1e5--d0139ee1-9f0d-4539-a1a8-5a4fdd46360e.lovable.app-1777712052394.png",
       },
     ],
+
     links: [
       // WebP favicon — PainMap continuous-line brand mark
       { rel: "icon", type: "image/webp", href: "/logo.webp" },

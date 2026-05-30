@@ -25,10 +25,19 @@ export const Route = createFileRoute("/learn/worksheet/01")({
       {
         name: "description",
         content:
-          "把那句抱怨原原本本寫下來，不美化、不解釋、不分析 — AI 不能進來，因為有些事只有真人會說出口。",
+          "把那句抱怨原原本本寫下來 — 不美化、不解釋、不分析。AI 不能進來，因為有些話只有真人會說出口，那才是判斷真痛點的起點。",
+      },
+      { property: "og:title", content: "卡 1 抱怨原句 — PainMap Worksheet" },
+      {
+        property: "og:description",
+        content: "原原本本寫下那句抱怨，不美化也不分析 — 真痛點判斷的第一步。",
       },
     ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/01" },
+    ],
   }),
+
   component: CardOnePage,
 });
 

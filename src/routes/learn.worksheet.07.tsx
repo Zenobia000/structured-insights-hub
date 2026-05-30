@@ -35,6 +35,14 @@ export const Route = createFileRoute("/learn/worksheet/07")({
         content:
           "兩段式練習：你先寫下對痛點主人翁的 4 欄猜測，再讀 AI 回覆，看看差在哪。AI 是來補強的，不是替你想的。",
       },
+      { property: "og:title", content: '卡 7 自己先猜，再讀 AI — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '你先寫下對痛點主人翁的 4 欄猜測，再讀 AI 回覆，看看差在哪。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/07" },
     ],
   }),
   component: CardSevenPage,

@@ -34,6 +34,14 @@ export const Route = createFileRoute("/learn/worksheet/08")({
         content:
           "想清楚要找誰聊 2 位、要問哪 3 題，再讀過訪談禁忌。AI 看不到沉默和猶豫 — 那些只有真人對話會出現。",
       },
+      { property: "og:title", content: '卡 8 真人訪談規劃 — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '想清楚要找誰聊 2 位、要問哪 3 題，再讀過訪談禁忌 — 真人對話才看得到沉默。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/08" },
     ],
   }),
   component: CardEightPage,

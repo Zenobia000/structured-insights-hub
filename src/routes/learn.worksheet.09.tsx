@@ -37,6 +37,14 @@ export const Route = createFileRoute("/learn/worksheet/09")({
         content:
           "走到這裡只剩一件事：寫下「這是真痛點還是假痛點？為什麼？」AI 不參與判斷 — 這一題，留給你自己。",
       },
+      { property: "og:title", content: '卡 9 真假痛點的書面判斷 — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '寫下「這是真痛點還是假痛點？為什麼？」— AI 不參與判斷，這一題留給你自己。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/09" },
     ],
   }),
   component: CardNinePage,

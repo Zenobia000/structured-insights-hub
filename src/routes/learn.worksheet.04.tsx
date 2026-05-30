@@ -30,6 +30,14 @@ export const Route = createFileRoute("/learn/worksheet/04")({
         content:
           "看看主人翁現在用什麼方法在解這個痛點。AI 可以提案 5 個常見 workaround，但「不滿在哪」這件事必須從真人嘴裡聽到。",
       },
+      { property: "og:title", content: '卡 4 現在怎麼解 — PainMap Worksheet' },
+      {
+        property: "og:description",
+        content: '看看主人翁現在用什麼方法在解這個痛點 — AI 提案 workaround，真實不滿從真人嘴裡聽。',
+      },
+    ],
+    links: [
+      { rel: "canonical", href: "https://structured-insights-hub.lovable.app/learn/worksheet/04" },
     ],
   }),
   component: CardFourPage,

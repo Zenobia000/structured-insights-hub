@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { LandingPage } from "@/components/landing/LandingPage";
 
+const SITE_URL = "https://structured-insights-hub.lovable.app";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -20,6 +22,32 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content: "從一句抱怨開始，走完 9 張卡片，寫下一張屬於你自己的痛點身份證。",
+      },
+      { property: "og:url", content: SITE_URL + "/" },
+    ],
+    links: [{ rel: "canonical", href: SITE_URL + "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "PainMap",
+              url: SITE_URL,
+              description:
+                "PainMap 是一套把模糊抱怨整理成可行動問題的痛點判斷工具。",
+            },
+            {
+              "@type": "WebSite",
+              name: "PainMap Worksheet",
+              url: SITE_URL,
+              description:
+                "9 張卡片陪你走過一次真痛點判斷，30 分鐘寫出一張屬於自己的痛點身份證。",
+            },
+          ],
+        }),
       },
     ],
   }),
